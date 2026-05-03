@@ -98,9 +98,10 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
           <div
             style={{
               fontFamily: "Inter, ui-sans-serif, system-ui",
-              fontSize: 18,
-              fontWeight: 600,
+              fontSize: 19,
+              fontWeight: 800,
               color: "#0b1f3a",
+              letterSpacing: "-0.005em",
             }}
           >
             {toolName}
@@ -139,11 +140,11 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
       <div style={{ marginBottom: 18 }}>
         <div
           style={{
-            fontSize: 28,
-            lineHeight: 1.12,
-            fontWeight: 600,
+            fontSize: 30,
+            lineHeight: 1.1,
+            fontWeight: 800,
             color: "#0b1f3a",
-            letterSpacing: "-0.01em",
+            letterSpacing: "-0.018em",
             marginBottom: 6,
           }}
         >
@@ -154,7 +155,8 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
             style={{
               fontFamily: "Inter, ui-sans-serif, system-ui",
               fontSize: 12.5,
-              color: "#475569",
+              color: "#334155",
+              fontWeight: 500,
               lineHeight: 1.45,
             }}
           >
@@ -190,8 +192,9 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
               </div>
               <div
                 style={{
-                  fontSize: 22,
-                  fontWeight: 600,
+                  fontSize: 23,
+                  fontWeight: 800,
+                  letterSpacing: "-0.01em",
                   color:
                     m.tone === "positive"
                       ? "#15803d"
@@ -232,22 +235,23 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
           <div
             style={{
               fontFamily: "Inter, ui-sans-serif, system-ui",
-              fontSize: 10,
+              fontSize: 10.5,
+              fontWeight: 700,
               letterSpacing: "0.18em",
               textTransform: "uppercase",
-              color: "#64748b",
+              color: "#0b1f3a",
               marginBottom: 6,
-              borderTop: "1px solid #e2e8f0",
+              borderTop: "1.5px solid #0b1f3a",
               paddingTop: 10,
             }}
           >
             {s.heading}
           </div>
           {s.body ? (
-            <div style={{ fontSize: 13, lineHeight: 1.55, color: "#0f172a" }}>{s.body}</div>
+            <div style={{ fontSize: 13, lineHeight: 1.55, color: "#0f172a", fontWeight: 500 }}>{s.body}</div>
           ) : null}
           {s.paragraphs?.map((p, j) => (
-            <div key={j} style={{ fontSize: 12.5, lineHeight: 1.55, color: "#0f172a", marginBottom: 6 }}>
+            <div key={j} style={{ fontSize: 12.5, lineHeight: 1.55, color: "#0f172a", marginBottom: 6, fontWeight: 500 }}>
               {p}
             </div>
           ))}
@@ -256,8 +260,8 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
               <tbody>
                 {s.rows.map((r, j) => (
                   <tr key={j} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "6px 0", color: "#475569", width: "55%" }}>{r.label}</td>
-                    <td style={{ padding: "6px 0", color: "#0b1f3a", textAlign: "right", fontWeight: 500 }}>{r.value}</td>
+                    <td style={{ padding: "6px 0", color: "#334155", width: "55%", fontWeight: 600 }}>{r.label}</td>
+                    <td style={{ padding: "6px 0", color: "#0b1f3a", textAlign: "right", fontWeight: 700 }}>{r.value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -266,23 +270,41 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
         </div>
       ))}
 
+      {/* DISCLAIMER */}
+      <div
+        style={{
+          marginTop: 22,
+          paddingTop: 14,
+          paddingBottom: 10,
+          borderTop: "1.5px solid #0b1f3a",
+          fontFamily: "Inter, ui-sans-serif, system-ui",
+          fontSize: 9.5,
+          lineHeight: 1.5,
+          color: "#475569",
+          fontStyle: "italic",
+        }}
+      >
+        <span style={{ fontWeight: 700, fontStyle: "normal", color: "#0b1f3a", textTransform: "uppercase", letterSpacing: "0.14em", fontSize: 9 }}>Disclaimer · </span>
+        This brief is an editorial reconstruction of published peer-reviewed natural-experiment research, prepared by a high-school student for educational purposes. Causal estimates and magnitudes are summarized from the original studies cited; readers should consult the underlying papers before drawing policy conclusions. Not investment, legal, or policy advice.
+      </div>
+
       {/* FOOTER */}
       <div
         style={{
-          borderTop: "1px solid #e2e8f0",
-          marginTop: 22,
-          paddingTop: 12,
+          paddingTop: 10,
           display: "flex",
           justifyContent: "space-between",
           fontFamily: "Inter, ui-sans-serif, system-ui",
           fontSize: 9.5,
-          color: "#94a3b8",
-          letterSpacing: "0.12em",
+          fontWeight: 700,
+          color: "#0b1f3a",
+          letterSpacing: "0.14em",
           textTransform: "uppercase",
+          borderTop: "1px solid #e2e8f0",
         }}
       >
         <span>{footerNote ?? "Illustrative · Not investment advice"}</span>
-        <span>Saras Totey · econ.mom</span>
+        <span>Saras Totey · econ.mom · Issue Nº 1 · Vol. I · MMXXVI</span>
       </div>
     </div>
   );

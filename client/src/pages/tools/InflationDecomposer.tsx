@@ -1,11 +1,11 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { decomposeInflation, DECOMPOSE_PRESETS, type DecomposeInput } from "@/lib/inflation/decompose";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, ReferenceLine } from "recharts";
-import { Download, RefreshCw, Loader2 } from "lucide-react";
+import { Download, RefreshCw, Loader2, RotateCcw, Sparkles } from "lucide-react";
 import { BriefDocument } from "@/components/brief/BriefDocument";
 import { exportBriefAsPdf } from "@/lib/brief/exportBrief";
 import { fetchInflationSnapshot } from "@/lib/fred";
@@ -72,6 +72,46 @@ export default function InflationDecomposer() {
   const result = useMemo(() => decomposeInflation(input), [input]);
   const chartData = result.components.map((c) => ({ name: c.label, value: c.value, color: c.color }));
 
+  // Auto-load live FRED on mount
+  useEffect(() => {
+    loadLive();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Gemini deep explanation
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiData, setAiData] = useState<{
+    narrative: string;
+    drivers: { label: string; explanation: string }[];
+    supplyVsDemand: { supplyPp: number; demandPp: number; explanation: string };
+    fedImplication: string;
+    historicalContext: string;
+    watchNext: string[];
+  } | null>(null);
+
+  async function explainWithGemini() {
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/gemini-inflation-explain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          headlineCpi: input.headlineCpi,
+          components: result.components.map((c) => ({ label: c.label, value: c.value })),
+        }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setAiData(data);
+    } catch (e: any) {
+      setAiError(e?.message ?? "Gemini unavailable");
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
   function set<K extends keyof DecomposeInput>(k: K, v: number) {
     setInput((p) => ({ ...p, [k]: v }));
   }
@@ -115,6 +155,13 @@ export default function InflationDecomposer() {
           >
             {loadingLive ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
             {loadingLive ? "Loading FRED\u2026" : "Pull live FRED data"}
+          </button>
+          <button
+            onClick={() => { setInput(DECOMPOSE_PRESETS[0].input); setLiveAsOf(null); setAiData(null); }}
+            className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1.5 text-xs hover:border-foreground/40 transition"
+            data-testid="button-reset"
+          >
+            <RotateCcw className="h-3 w-3" /> Reset
           </button>
           {liveAsOf && (
             <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
@@ -214,6 +261,74 @@ export default function InflationDecomposer() {
         <Card className="mt-6 p-6 border-primary/40">
           <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-2">Policy take</div>
           <div className="text-base">{result.recommendation}</div>
+        </Card>
+
+        {/* Gemini deep explanation */}
+        <Card className="mt-6 p-6 border-primary/30 bg-primary/5">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-1 flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3" /> Deep explanation
+              </div>
+              <div className="text-xs text-muted-foreground">Read your decomposition like a chief economist would.</div>
+            </div>
+            <Button onClick={explainWithGemini} disabled={aiLoading} variant="default" data-testid="button-deep-explain">
+              {aiLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+              {aiLoading ? "Reading the data\u2026" : aiData ? "Refresh explanation" : "Explain this decomposition"}
+            </Button>
+          </div>
+          {aiError && <div className="text-xs text-destructive">{aiError}</div>}
+          {aiData && !aiError && (
+            <div className="space-y-5">
+              <div className="prose-serif text-[0.95rem] text-foreground/90 leading-relaxed">{aiData.narrative}</div>
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                <div className="rounded-lg border border-border bg-background p-4">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-1">Supply contribution</div>
+                  <div className="text-2xl font-semibold tabular-nums">{aiData.supplyVsDemand.supplyPp >= 0 ? "+" : ""}{aiData.supplyVsDemand.supplyPp.toFixed(2)} pp</div>
+                </div>
+                <div className="rounded-lg border border-border bg-background p-4">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-1">Demand contribution</div>
+                  <div className="text-2xl font-semibold tabular-nums">{aiData.supplyVsDemand.demandPp >= 0 ? "+" : ""}{aiData.supplyVsDemand.demandPp.toFixed(2)} pp</div>
+                </div>
+              </div>
+              <div className="text-sm text-foreground/85">{aiData.supplyVsDemand.explanation}</div>
+
+              {aiData.drivers?.length > 0 && (
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-2">Driver-by-driver</div>
+                  <div className="space-y-2">
+                    {aiData.drivers.map((d, i) => (
+                      <div key={i} className="rounded-md border border-border bg-background p-3">
+                        <div className="text-sm font-medium mb-0.5">{d.label}</div>
+                        <div className="text-xs text-foreground/80">{d.explanation}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid md:grid-cols-2 gap-3">
+                <div className="rounded-lg border border-border bg-background p-4">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-1">Fed implication</div>
+                  <div className="text-sm text-foreground/90">{aiData.fedImplication}</div>
+                </div>
+                <div className="rounded-lg border border-border bg-background p-4">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-1">Historical context</div>
+                  <div className="text-sm text-foreground/90">{aiData.historicalContext}</div>
+                </div>
+              </div>
+
+              {aiData.watchNext?.length > 0 && (
+                <div className="rounded-lg border border-primary/30 bg-background p-4">
+                  <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-2">Watch next</div>
+                  <ul className="list-disc pl-5 space-y-1 text-sm text-foreground/85">
+                    {aiData.watchNext.map((w, i) => <li key={i}>{w}</li>)}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </Card>
       </section>
 

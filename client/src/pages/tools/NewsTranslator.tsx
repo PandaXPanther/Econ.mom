@@ -1,10 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
-import { Newspaper, Sparkles, ArrowDown, ExternalLink } from "lucide-react";
+import { Newspaper, Sparkles, ArrowDown, ExternalLink, TrendingUp, History, Telescope } from "lucide-react";
 
 const COMP = TOOL_BY_SLUG["news-translator"];
 
@@ -300,11 +300,57 @@ function classify(headline: string): Translation | null {
   return null;
 }
 
+interface GeminiNewsEnrichment {
+  model?: string;
+  curve?: string;
+  direction?: string;
+  shortRun?: string;
+  longRun?: string;
+  fredSeries?: string[];
+  magnitudeNumbers?: {
+    gdpEffectPct: number;
+    inflationEffectPp: number;
+    unemploymentEffectPp: number;
+    policyRateEffectBps: number;
+    horizonMonths: number;
+  };
+  historicalAnalog?: { event: string; date: string; outcome: string; magnitude: string };
+  forecast?: { watch: string; range: string; confidence: string; reasoning: string };
+}
+
 export default function NewsTranslator() {
   const [headline, setHeadline] = useState("");
   const [submitted, setSubmitted] = useState("");
+  const [enrichment, setEnrichment] = useState<GeminiNewsEnrichment | null>(null);
+  const [enrichLoading, setEnrichLoading] = useState(false);
+  const [enrichError, setEnrichError] = useState<string | null>(null);
 
   const result = useMemo(() => classify(submitted), [submitted]);
+
+  // Whenever a headline is submitted, fire Gemini for numbers + analog + forecast.
+  useEffect(() => {
+    if (!submitted) { setEnrichment(null); setEnrichError(null); return; }
+    let cancel = false;
+    setEnrichment(null);
+    setEnrichError(null);
+    setEnrichLoading(true);
+    fetch("/api/gemini-news", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ headline: submitted }),
+    })
+      .then(async (r) => {
+        if (!r.ok) {
+          const j = await r.json().catch(() => ({}));
+          throw new Error(j.error || `HTTP ${r.status}`);
+        }
+        return r.json();
+      })
+      .then((d) => { if (!cancel) setEnrichment(d); })
+      .catch((e) => { if (!cancel) setEnrichError(e?.message || "failed"); })
+      .finally(() => { if (!cancel) setEnrichLoading(false); });
+    return () => { cancel = true; };
+  }, [submitted]);
 
   return (
     <PageShell>
@@ -384,12 +430,26 @@ export default function NewsTranslator() {
                   key="nomatch"
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-xl border border-border bg-card p-8"
+                  className="space-y-4"
                 >
-                  <div className="label-cap mb-3 text-destructive">No clean match</div>
-                  <p className="prose-serif text-foreground/80">
-                    The translator could not confidently route this headline to a single canonical model. Try rephrasing toward an explicit policy or shock — e.g., "Fed cuts rates 25bp", "OPEC cuts production", "tariff imposed on steel".
-                  </p>
+                  <div className="rounded-xl border border-primary/40 bg-primary/5 p-6">
+                    <div className="label-cap mb-2 text-primary">Routed to Gemini</div>
+                    <p className="prose-serif text-[0.95rem] text-foreground/85">
+                      No clean rule-based match. Gemini will decode this headline using AP Macro models, real elasticities, a historical analog, and a forecast.
+                    </p>
+                  </div>
+                  {enrichLoading && (
+                    <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-8 text-center">
+                      <Sparkles size={20} className="mx-auto animate-pulse text-primary" />
+                      <p className="prose-serif mt-3 text-muted-foreground">Gemini is calibrating numbers and finding the analog…</p>
+                    </div>
+                  )}
+                  {enrichError && (
+                    <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 text-[0.9rem] text-destructive">{enrichError}</div>
+                  )}
+                  {enrichment && (
+                    <GeminiBlock e={enrichment} />
+                  )}
                 </motion.div>
               ) : (
                 <motion.div
@@ -459,6 +519,14 @@ export default function NewsTranslator() {
                       ))}
                     </div>
                   </div>
+
+                  {enrichLoading && (
+                    <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6 text-center">
+                      <Sparkles size={16} className="mx-auto animate-pulse text-primary" />
+                      <p className="prose-serif mt-2 text-sm text-muted-foreground">Gemini is layering on numbers, the historical analog, and a forecast…</p>
+                    </div>
+                  )}
+                  {enrichment && <GeminiBlock e={enrichment} />}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -618,6 +686,61 @@ function renderModel(m: ModelKey, dir: Direction) {
     );
   }
   return null;
+}
+
+function GeminiBlock({ e }: { e: GeminiNewsEnrichment }) {
+  const m = e.magnitudeNumbers;
+  return (
+    <div className="space-y-4">
+      {m && (
+        <div className="rounded-xl border border-border bg-card p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <TrendingUp size={14} className="text-primary" />
+            <div className="label-cap">Quantitative magnitude · Gemini</div>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+            <NumStat label="ΔGDP" value={`${m.gdpEffectPct >= 0 ? "+" : ""}${m.gdpEffectPct?.toFixed(2)}%`} />
+            <NumStat label="Δπ" value={`${m.inflationEffectPp >= 0 ? "+" : ""}${m.inflationEffectPp?.toFixed(2)}pp`} />
+            <NumStat label="Δu" value={`${m.unemploymentEffectPp >= 0 ? "+" : ""}${m.unemploymentEffectPp?.toFixed(2)}pp`} />
+            <NumStat label="Δr" value={`${m.policyRateEffectBps >= 0 ? "+" : ""}${m.policyRateEffectBps}bp`} />
+            <NumStat label="Horizon" value={`${m.horizonMonths}mo`} />
+          </div>
+        </div>
+      )}
+      {e.historicalAnalog && (
+        <div className="rounded-xl border border-border bg-card p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <History size={14} className="text-primary" />
+            <div className="label-cap">Historical analog</div>
+          </div>
+          <div className="font-display text-[1.05rem] font-medium">{e.historicalAnalog.event}</div>
+          <div className="font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground mt-0.5">{e.historicalAnalog.date}</div>
+          <p className="prose-serif text-[0.92rem] text-foreground/85 mt-2">{e.historicalAnalog.outcome}</p>
+          <div className="mt-2 inline-block rounded-md bg-muted/40 px-2 py-1 font-mono text-[0.78rem]">{e.historicalAnalog.magnitude}</div>
+        </div>
+      )}
+      {e.forecast && (
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-5">
+          <div className="mb-3 flex items-center gap-2">
+            <Telescope size={14} className="text-primary" />
+            <div className="label-cap text-primary">Forecast · confidence {e.forecast.confidence}</div>
+          </div>
+          <p className="prose-serif text-[0.95rem] text-foreground/90"><strong>Watch:</strong> {e.forecast.watch}</p>
+          <p className="prose-serif text-[0.95rem] text-foreground/90 mt-2"><strong>Range:</strong> {e.forecast.range}</p>
+          <p className="prose-serif text-[0.9rem] text-foreground/75 mt-2">{e.forecast.reasoning}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function NumStat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-md border border-border bg-background px-2 py-2 text-center">
+      <div className="font-mono text-[0.6rem] uppercase tracking-wider text-muted-foreground">{label}</div>
+      <div className="mt-0.5 font-mono text-sm font-semibold">{value}</div>
+    </div>
+  );
 }
 
 function Arrow({ from, to }: { from: [number, number]; to: [number, number] }) {

@@ -4,7 +4,7 @@ import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
-import { Sliders, ArrowUpRight, RotateCcw, Download } from "lucide-react";
+import { Sliders, ArrowUpRight, RotateCcw, Download, Sparkles, Loader2 } from "lucide-react";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -50,6 +50,37 @@ export default function EconLever() {
 
   const result = useMemo(() => simulate(L), [L]);
   const reset = () => setL({ ...ENGINE_PRESETS[0].levers });
+
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiResult, setAiResult] = useState<{ label: string; regime: string; rationale: string; expectedRegime: string } | null>(null);
+
+  const suggestPreset = async () => {
+    if (!aiPrompt.trim()) return;
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/gemini-preset", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: aiPrompt }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      setL({
+        topMarginalTax: data.topMarginalTax,
+        corporateTax: data.corporateTax,
+        welfareSpending: data.welfareSpending,
+        fedFundsRate: data.fedFundsRate,
+      });
+      setAiResult({ label: data.label, regime: data.regime, rationale: data.rationale, expectedRegime: data.expectedRegime });
+    } catch (e: any) {
+      setAiError(e?.message ?? "Failed to suggest preset");
+    } finally {
+      setAiLoading(false);
+    }
+  };
 
   const handleExport = async () => {
     if (!briefRef.current) return;
@@ -210,6 +241,40 @@ export default function EconLever() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* GEMINI PRESET SUGGESTER */}
+            <div className="mt-4 rounded-xl border border-primary/30 bg-primary/5 p-5">
+              <div className="label-cap mb-3 flex items-center gap-2 text-[0.6rem] text-primary">
+                <Sparkles size={11} /> Describe a scenario, get a preset
+              </div>
+              <textarea
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="e.g. Nordic-style social democracy with high taxes and strong safety net"
+                data-testid="input-preset-prompt"
+                rows={3}
+                className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 font-mono text-[0.78rem] text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+              />
+              <button
+                onClick={suggestPreset}
+                disabled={aiLoading || !aiPrompt.trim()}
+                data-testid="button-suggest-preset"
+                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-3 py-2 font-mono text-[0.7rem] uppercase tracking-widest text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {aiLoading ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
+                {aiLoading ? "Calibrating…" : "Suggest preset"}
+              </button>
+              {aiError && (
+                <div className="mt-2 font-mono text-[0.62rem] text-destructive">{aiError}</div>
+              )}
+              {aiResult && !aiError && (
+                <div className="mt-3 space-y-1.5 border-t border-primary/20 pt-3">
+                  <div className="font-display text-[0.95rem] font-semibold leading-tight">{aiResult.label}</div>
+                  <div className="font-mono text-[0.6rem] uppercase tracking-widest text-primary">Expected regime · {aiResult.expectedRegime}</div>
+                  <div className="prose-serif text-[0.82rem] text-foreground/85">{aiResult.rationale}</div>
+                </div>
+              )}
             </div>
           </div>
 

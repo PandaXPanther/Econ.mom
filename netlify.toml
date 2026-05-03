@@ -44,6 +44,48 @@
   status = 200
   force  = true
 
+# Gemini-powered shock interpreter for ShockSim.
+[[redirects]]
+  from = "/api/gemini-shock"
+  to   = "/.netlify/functions/gemini-shock"
+  status = 200
+  force  = true
+
+# Gemini-powered news translator with numbers, analog, forecast.
+[[redirects]]
+  from = "/api/gemini-news"
+  to   = "/.netlify/functions/gemini-news"
+  status = 200
+  force  = true
+
+# Gemini-powered paper decoder (URL or pasted text).
+[[redirects]]
+  from = "/api/gemini-paper"
+  to   = "/.netlify/functions/gemini-paper"
+  status = 200
+  force  = true
+
+# Gemini-powered counterfactual scenario generator.
+[[redirects]]
+  from = "/api/gemini-scenario"
+  to   = "/.netlify/functions/gemini-scenario"
+  status = 200
+  force  = true
+
+# Gemini-powered EconLever preset suggester.
+[[redirects]]
+  from = "/api/gemini-preset"
+  to   = "/.netlify/functions/gemini-preset"
+  status = 200
+  force  = true
+
+# Gemini-powered inflation deep explanation.
+[[redirects]]
+  from = "/api/gemini-inflation-explain"
+  to   = "/.netlify/functions/gemini-inflation-explain"
+  status = 200
+  force  = true
+
 # SPA fallback for hash-routed React app.
 [[redirects]]
   from = "/*"

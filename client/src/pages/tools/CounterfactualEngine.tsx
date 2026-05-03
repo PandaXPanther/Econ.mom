@@ -4,18 +4,38 @@ import { TOOL_BY_SLUG } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Slider } from "@/components/ui/slider";
-import { COUNTERFACTUAL_SCENARIOS, SCENARIO_BY_ID } from "@/lib/counterfactual/scenarios";
+import { COUNTERFACTUAL_SCENARIOS, SCENARIO_BY_ID, type CounterfactualScenario, type ScenarioParam, type SeriesPoint } from "@/lib/counterfactual/scenarios";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Download } from "lucide-react";
+import { Download, Sparkles, Loader2 } from "lucide-react";
 import { BriefDocument } from "@/components/brief/BriefDocument";
 import { exportBriefAsPdf } from "@/lib/brief/exportBrief";
+
+// Linear simulator factory used for AI-generated scenarios:
+// counterfactual[i] = actual[i] + Σ coeff_k * (param_k − defaultActual_k)
+function makeLinearSimulator(paramsWithCoeff: (ScenarioParam & { coefficient: number })[]) {
+  return (params: Record<string, number>, base: SeriesPoint[]): number[] => {
+    return base.map((p) => {
+      let delta = 0;
+      for (const meta of paramsWithCoeff) {
+        const v = params[meta.key] ?? meta.defaultCounterfactual;
+        delta += (meta.coefficient ?? 0) * (v - meta.defaultActual);
+      }
+      return p.actual + delta;
+    });
+  };
+}
 
 const SLUG = "counterfactual-engine";
 
 export default function CounterfactualEngine() {
   const tool = TOOL_BY_SLUG[SLUG];
+  // Runtime AI-generated scenarios (additive on top of curated ones).
+  const [aiScenarios, setAiScenarios] = useState<CounterfactualScenario[]>([]);
+  const allScenarios = useMemo(() => [...COUNTERFACTUAL_SCENARIOS, ...aiScenarios], [aiScenarios]);
+  const allById = useMemo(() => Object.fromEntries(allScenarios.map((s) => [s.id, s])) as Record<string, CounterfactualScenario>, [allScenarios]);
+
   const [scenarioId, setScenarioId] = useState(COUNTERFACTUAL_SCENARIOS[0].id);
-  const scenario = SCENARIO_BY_ID[scenarioId];
+  const scenario = allById[scenarioId] ?? COUNTERFACTUAL_SCENARIOS[0];
   const [paramValues, setParamValues] = useState<Record<string, number>>(() =>
     Object.fromEntries(scenario.params.map((p) => [p.key, p.defaultCounterfactual])),
   );
@@ -23,8 +43,61 @@ export default function CounterfactualEngine() {
 
   function selectScenario(id: string) {
     setScenarioId(id);
-    const s = SCENARIO_BY_ID[id];
+    const s = allById[id] ?? SCENARIO_BY_ID[id];
     setParamValues(Object.fromEntries(s.params.map((p) => [p.key, p.defaultCounterfactual])));
+  }
+
+  // Gemini custom scenario
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  async function generateScenario() {
+    if (!aiPrompt.trim()) return;
+    setAiLoading(true);
+    setAiError(null);
+    try {
+      const res = await fetch("/api/gemini-scenario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: aiPrompt }),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const paramsWithCoeff = (data.params ?? []).map((p: any) => ({
+        key: String(p.key),
+        label: String(p.label),
+        description: String(p.description ?? ""),
+        min: Number(p.min),
+        max: Number(p.max),
+        step: Number(p.step ?? 0.1),
+        defaultActual: Number(p.defaultActual),
+        defaultCounterfactual: Number(p.defaultCounterfactual),
+        unit: String(p.unit ?? ""),
+        coefficient: Number(p.coefficient ?? 0),
+      }));
+      const newScenario: CounterfactualScenario = {
+        id: `ai-${Date.now()}`,
+        title: String(data.title ?? "Custom counterfactual"),
+        era: String(data.era ?? "User-defined"),
+        question: String(data.question ?? ""),
+        context: String(data.context ?? ""),
+        outcomeUnit: String(data.outcomeUnit ?? ""),
+        outcomeLabel: String(data.outcomeLabel ?? "Outcome"),
+        params: paramsWithCoeff.map(({ coefficient, ...p }: any) => p),
+        series: (data.series ?? []).map((p: any) => ({ t: String(p.t), actual: Number(p.actual) })),
+        simulate: makeLinearSimulator(paramsWithCoeff),
+        citations: data.citations ?? [],
+      };
+      setAiScenarios((s) => [...s, newScenario]);
+      setScenarioId(newScenario.id);
+      setParamValues(Object.fromEntries(newScenario.params.map((p) => [p.key, p.defaultCounterfactual])));
+      setAiPrompt("");
+    } catch (e: any) {
+      setAiError(e?.message ?? "Could not generate scenario");
+    } finally {
+      setAiLoading(false);
+    }
   }
 
   const chartData = useMemo(() => {
@@ -64,19 +137,46 @@ export default function CounterfactualEngine() {
         </div>
 
         {/* Scenario picker */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-6">
-          {COUNTERFACTUAL_SCENARIOS.map((s) => (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
+          {allScenarios.map((s) => (
             <button
               key={s.id}
               onClick={() => selectScenario(s.id)}
-              className={`text-left rounded-xl border p-4 transition ${scenarioId === s.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"}`}
+              className={`text-left rounded-xl border p-4 transition ${scenarioId === s.id ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"} ${s.id.startsWith("ai-") ? "ring-1 ring-primary/30" : ""}`}
               data-testid={`scenario-${s.id}`}
             >
-              <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-1">{s.era}</div>
+              <div className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground mb-1">
+                {s.id.startsWith("ai-") ? <span className="text-primary">AI · {s.era}</span> : s.era}
+              </div>
               <div className="font-medium leading-snug text-sm">{s.title}</div>
             </button>
           ))}
         </div>
+
+        {/* Custom AI scenario builder */}
+        <Card className="p-5 mb-6 border-primary/30 bg-primary/5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="flex-1 min-w-[260px]">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-1 flex items-center gap-1.5">
+                <Sparkles className="h-3 w-3" /> Build a custom counterfactual
+              </div>
+              <div className="text-xs text-muted-foreground mb-2">Describe a historical “what if”. Gemini calibrates parameters, sliders, and a baseline path.</div>
+              <textarea
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="e.g. What if the Smoot-Hawley tariff had passed at half its actual rate in 1930?"
+                rows={2}
+                data-testid="input-custom-scenario"
+                className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <Button onClick={generateScenario} disabled={aiLoading || !aiPrompt.trim()} data-testid="button-generate-scenario">
+              {aiLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+              {aiLoading ? "Calibrating…" : "Generate scenario"}
+            </Button>
+          </div>
+          {aiError && <div className="mt-2 text-xs text-destructive">{aiError}</div>}
+        </Card>
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Levers */}

@@ -242,6 +242,9 @@ export default function USEcon() {
       .filter((s) => (region === "All" ? true : s.region === region))
       .filter((s) => (query ? s.name.toLowerCase().includes(query.toLowerCase()) || s.abbr.toLowerCase().includes(query.toLowerCase()) : true))
       .sort((a, b) => {
+        // Colorado is pinned first as the home-county case study
+        if (a.abbr === "CO" && b.abbr !== "CO") return -1;
+        if (b.abbr === "CO" && a.abbr !== "CO") return 1;
         const dir = sortDir === "asc" ? 1 : -1;
         const av = a[sortKey];
         const bv = b[sortKey];
@@ -363,7 +366,8 @@ export default function USEcon() {
                           return p ? `${p.name} (${p.abbr})` : "";
                         }}
                       />
-                      <Scatter data={STATES} fill="hsl(var(--primary))" fillOpacity={0.7} stroke="hsl(var(--primary))" />
+                      <Scatter data={filtered} fill="hsl(var(--primary))" fillOpacity={0.7} stroke="hsl(var(--primary))" />
+                      <Scatter data={filtered.filter((s) => s.abbr === "CO")} fill="hsl(var(--destructive))" fillOpacity={1} stroke="hsl(var(--destructive))" strokeWidth={2} />
                     </ScatterChart>
                   </ResponsiveContainer>
                 </div>
