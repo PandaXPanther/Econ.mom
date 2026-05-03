@@ -27,6 +27,50 @@ import CounterfactualEngine from "@/pages/tools/CounterfactualEngine";
 
 import { useLocation } from "wouter";
 
+// All canonical routes the app knows about. Used by NormalizeUrl below to
+// turn path-style deep links ("/tarifflab", "/shock-sim#/", etc.) into the
+// hash-router form ("/#/tarifflab") before the router gets to render anything.
+const KNOWN_ROUTES = new Set<string>([
+  "/",
+  "/tools",
+  "/methodology",
+  "/founder",
+  "/frq-grader",
+  "/tarifflab",
+  "/textbook-atlas",
+  "/shock-sim",
+  "/shadow-fed",
+  "/paper-decoder",
+  "/news-translator",
+  "/us-econ",
+  "/econlever",
+  "/inflation-decomposer",
+  "/natural-experiments",
+  "/counterfactual-engine",
+  "/extemp-engine",
+  "/colorado-econ",
+  "/lever",
+  "/el",
+]);
+
+// If the user hits /tarifflab (Netlify SPA fallback served index.html) or
+// /tarifflab#/ (path AND empty hash), rewrite the URL to /#/tarifflab so
+// the hash router actually picks up the route. Runs synchronously before
+// React first paints, so there's no flash of the wrong page.
+function normalizeUrl() {
+  if (typeof window === "undefined") return;
+  const { pathname, hash, search } = window.location;
+  if (pathname === "/" || pathname === "") return;
+  if (!KNOWN_ROUTES.has(pathname)) return;
+  // If a real hash route is already present (and it isn't just "#/"), respect it.
+  if (hash && hash.length > 2 && hash !== "#/") return;
+  const target = `/#${pathname}${search}`;
+  window.history.replaceState(null, "", target);
+}
+
+// Run once at module load, before React mounts.
+normalizeUrl();
+
 function ScrollToTop() {
   const [location] = useLocation();
   useEffect(() => {
