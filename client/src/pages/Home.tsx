@@ -349,8 +349,9 @@ function KineticHeadline() {
         <motion.span
           whileHover={{ rotate: -2, x: -2 }}
           transition={{ type: "spring", stiffness: 220, damping: 12 }}
-          className="inline-block italic font-normal text-primary"
+          className="inline-block italic font-normal text-primary tracking-[0.01em] [letter-spacing:0.01em]"
           data-testid="text-hero-mother"
+          style={{ fontFeatureSettings: '"kern" 0' }}
         >
           Mother
         </motion.span>{" "}
