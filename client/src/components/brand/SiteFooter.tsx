@@ -14,7 +14,7 @@ export function SiteFooter() {
               debaters, and policymakers the textbooks forgot.
             </p>
             <p className="mt-6 font-mono text-[0.7rem] text-muted-foreground">
-              Built with care from Bennett, Colorado · MMXXVI
+              econ.mom · Issue Nº 1 · Vol. I · MMXXVI
             </p>
           </div>
 
@@ -78,7 +78,7 @@ export function SiteFooter() {
 
         <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-border pt-8 text-[0.75rem] text-muted-foreground sm:flex-row sm:items-center">
           <div className="font-mono">
-            © MMXXVI The Mother of Econ · econ.mom · Saras Totey
+            © MMXXVI The Mother of Econ · econ.mom
           </div>
           <div className="font-mono">
             "Economia, Mater Omnium." — Editorial Note, Issue Nº 1

@@ -1,6 +1,7 @@
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring, useMotionValue, useInView } from "framer-motion";
 import { ArrowUpRight, Sparkles } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/brand/PageShell";
 import { SEO } from "@/components/brand/SEO";
 import { TOOLS } from "@/lib/tools";
@@ -33,130 +34,7 @@ export default function Home() {
         path="/"
         jsonLd={HOME_JSONLD}
       />
-      {/* HERO — Editorial cathedral */}
-      <section className="relative grain overflow-hidden border-b border-border">
-        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background to-muted/30" />
-        <div className="mx-auto max-w-7xl px-6 pt-16 pb-24 lg:px-10 lg:pt-24 lg:pb-32">
-          {/* Issue masthead */}
-          <motion.div
-            initial="hidden"
-            animate="show"
-            variants={fadeUp}
-            className="flex items-center justify-between border-y border-border py-3 mb-12 font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground"
-          >
-            <div>Issue Nº 1 · Vol. I</div>
-            <div className="hidden sm:block">Founded MMXXVI · Bennett, Colorado</div>
-            <div>econ.mom</div>
-          </motion.div>
-
-          <div className="grid items-end gap-12 lg:grid-cols-12">
-            <div className="lg:col-span-8">
-              <motion.div
-                initial="hidden"
-                animate="show"
-                custom={0}
-                variants={fadeUp}
-                className="label-cap mb-6 text-foreground/70"
-              >
-                A library of economic instruments
-              </motion.div>
-              <motion.h1
-                initial="hidden"
-                animate="show"
-                custom={1}
-                variants={fadeUp}
-                className="text-editorial text-[3rem] font-light text-foreground sm:text-[4.25rem] lg:text-[5.75rem]"
-              >
-                The <span className="italic font-normal">Mother</span> <span className="text-muted-foreground">of</span> Econ.
-              </motion.h1>
-              <motion.p
-                initial="hidden"
-                animate="show"
-                custom={2}
-                variants={fadeUp}
-                className="prose-serif mt-8 max-w-2xl text-[1.125rem] text-foreground/80"
-              >
-                Eight free, citation-rigorous tools for the students, debaters, and
-                policy nerds the textbooks forgot. From <span className="italic">AP free-response grading</span> to <span className="italic">live tariff modeling</span> to a <span className="italic">Shadow Fed</span> with a public track record — every formula shown, every dataset cited.
-              </motion.p>
-              <motion.div
-                initial="hidden"
-                animate="show"
-                custom={3}
-                variants={fadeUp}
-                className="mt-10 flex flex-wrap items-center gap-4"
-              >
-                <Link href="/tools">
-                  <a
-                    data-testid="button-explore-tools"
-                    className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 font-medium text-background transition-transform hover:-translate-y-0.5"
-                  >
-                    Explore the eight
-                    <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                  </a>
-                </Link>
-                <Link href="/methodology">
-                  <a
-                    data-testid="button-methodology"
-                    className="inline-flex items-center gap-2 border-b border-foreground/40 pb-1 text-sm font-medium text-foreground/80 hover:border-foreground hover:text-foreground"
-                  >
-                    Read the methodology
-                  </a>
-                </Link>
-              </motion.div>
-            </div>
-
-            <motion.div
-              initial="hidden"
-              animate="show"
-              custom={4}
-              variants={fadeUp}
-              className="lg:col-span-4"
-            >
-              <div className="rounded-lg border border-border bg-card/60 p-6 shadow-sm">
-                <div className="label-cap mb-3">Editor's Note</div>
-                <p className="prose-serif text-[0.95rem] text-foreground/85">
-                  When the National Economics Challenge finalist who built
-                  <Link href="/founder">
-                    <a className="editorial-link cursor-pointer mx-1 italic">EconLever</a>
-                  </Link>
-                  noticed that the tools his classmates needed didn't exist anywhere on the public internet, he built them himself. This is the result.
-                </p>
-                <div className="rule mt-6" />
-                <div className="mt-4 grid grid-cols-3 gap-4 font-mono">
-                  <Stat n="8" label="Tools" />
-                  <Stat n="∞" label="Free" />
-                  <Stat n="0" label="Paywalls" />
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-
-        {/* Marquee of categories */}
-        <div className="overflow-hidden border-t border-border bg-card/40 py-3">
-          <div className="marquee gap-12 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.2em] text-muted-foreground">
-            {[...Array(2)].map((_, k) => (
-              <div key={k} className="flex gap-12 pr-12">
-                <span>· AP Macro</span>
-                <span>· AP Micro</span>
-                <span>· Trade Policy</span>
-                <span>· Monetary Policy</span>
-                <span>· Fiscal Policy</span>
-                <span>· Inequality</span>
-                <span>· FRED-Live</span>
-                <span>· College Board Rubric</span>
-                <span>· Peterson Institute</span>
-                <span>· NBER Working Papers</span>
-                <span>· Colorado Local Data</span>
-                <span>· NSDA Extemp</span>
-                <span>· No Sign-In</span>
-                <span>· Open Methodology</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <HeroCathedral />
 
       {/* THE EIGHT — Tool index, editorial layout */}
       <section className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
@@ -211,44 +89,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* THESIS — Founder pitch */}
-      <section className="border-y border-border bg-muted/30">
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-24 lg:grid-cols-12 lg:gap-16 lg:px-10 lg:py-32">
-          <div className="lg:col-span-5">
-            <div className="label-cap mb-4">The Thesis</div>
-            <h2 className="text-editorial text-[2rem] sm:text-[2.75rem]">
-              Economics is too important to lock behind a Bloomberg terminal.
-            </h2>
-          </div>
-          <div className="lg:col-span-7">
-            <p className="prose-serif text-[1.05rem] text-foreground/85">
-              Every tool on econ.mom answers a question that, until now, had no
-              public answer — or whose answer was paywalled, stale, or wrong. The
-              <span className="italic"> AP FRQ Grader </span> turns the College Board's own rubric into something a student can use. <span className="italic">TariffLab </span> shows you the deadweight-loss triangle the news anchors keep getting wrong. The
-              <span className="italic"> Shadow Fed </span> publishes a Taylor-rule recommendation every Monday and logs the gap when the FOMC actually decides — a public, accountable track record nobody else runs.
-            </p>
-            <div className="rule mt-10" />
-            <div className="mt-10 grid gap-8 sm:grid-cols-2">
-              <Pillar
-                title="Open methodology"
-                body="Every formula and dataset behind every tool is documented on the Methodology page. No black boxes. No 'trust me.'"
-              />
-              <Pillar
-                title="Cited primary sources"
-                body="Data from FRED, BLS, BEA, USITC, NBER, the College Board, and the Federal Reserve — never a third-hand summary."
-              />
-              <Pillar
-                title="Free forever"
-                body="No accounts, no paywalls, no ads. Built for AP students, debaters, and the curious."
-              />
-              <Pillar
-                title="Built by a student"
-                body="Designed by a National Economics Challenge finalist who needed these tools and couldn't find them."
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* THESIS — Editorial pull-quote */}
+      <ThesisBand />
 
       {/* CTA strip */}
       <section className="mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
@@ -297,6 +139,312 @@ function Pillar({ title, body }: { title: string; body: string }) {
     <div>
       <div className="font-display text-[1.05rem] font-medium text-foreground">{title}</div>
       <p className="prose-serif mt-2 text-[0.9rem] text-muted-foreground">{body}</p>
+    </div>
+  );
+}
+
+/* ============================================================
+ * HERO — Cathedral
+ * Massive editorial display. Parallax. Animated ticker. Live clock.
+ * Hero word ‘Mother’ has a hover micro-interaction (italic glide).
+ * ============================================================ */
+function HeroCathedral() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  const y1 = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const y2 = useTransform(scrollYProgress, [0, 1], [0, -60]);
+  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+
+  return (
+    <section ref={ref} className="relative grain overflow-hidden border-b border-border">
+      {/* Layered background — oxblood wash, ambient gradient */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background to-muted/20" />
+      <div
+        aria-hidden
+        className="absolute -top-40 -right-40 -z-10 h-[36rem] w-[36rem] rounded-full opacity-[0.10] blur-3xl"
+        style={{ background: "radial-gradient(closest-side, hsl(var(--primary)), transparent)" }}
+      />
+      <div
+        aria-hidden
+        className="absolute -bottom-32 -left-32 -z-10 h-[28rem] w-[28rem] rounded-full opacity-[0.08] blur-3xl"
+        style={{ background: "radial-gradient(closest-side, hsl(var(--accent)), transparent)" }}
+      />
+
+      <div className="mx-auto max-w-7xl px-6 pt-12 pb-24 lg:px-10 lg:pt-20 lg:pb-36">
+        {/* Masthead bar */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="flex items-center justify-between border-y-2 border-foreground/15 py-3 mb-12 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground"
+        >
+          <div className="flex items-center gap-3">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+            <span>Issue Nº 1 · Vol. I</span>
+          </div>
+          <div className="hidden sm:block">Founded MMXXVI</div>
+          <LiveClock />
+        </motion.div>
+
+        {/* The cathedral */}
+        <motion.div style={{ y: y2, opacity }} className="relative">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="label-cap mb-8 text-foreground/70"
+          >
+            <span className="text-primary">§</span>  A library of economic instruments
+          </motion.div>
+
+          <h1 className="text-editorial relative text-foreground">
+            <KineticHeadline />
+          </h1>
+
+          <div className="mt-10 grid gap-12 lg:grid-cols-12 lg:items-end">
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.45 }}
+              className="prose-serif lg:col-span-7 text-[1.18rem] leading-[1.6] text-foreground/80"
+            >
+              Eight free, citation-rigorous tools for the students, debaters, and
+              policy desks the textbooks forgot. From{" "}
+              <span className="italic text-foreground">AP free-response grading</span> to{" "}
+              <span className="italic text-foreground">live tariff modeling</span> to a{" "}
+              <span className="italic text-foreground">Shadow Fed</span> with a public track record — every formula shown, every dataset cited.
+            </motion.p>
+
+            {/* Editor counter card with animated metrics */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.55 }}
+              className="lg:col-span-5"
+            >
+              <div className="relative rounded-xl border border-border bg-card/70 p-6 shadow-md backdrop-blur-sm">
+                <div className="absolute -top-3 left-6 bg-card px-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-primary">
+                  Editor's Note
+                </div>
+                <p className="prose-serif mt-2 text-[0.98rem] text-foreground/85">
+                  Eight instruments. Built for the reader who refuses to memorize what they could simply <span className="italic">model</span>. Every formula shown, every source cited, every paywall absent.
+                </p>
+                <div className="mt-6 grid grid-cols-3 gap-4 border-t border-border pt-4">
+                  <CountStat to={8} label="Tools" />
+                  <Stat n="∞" label="Free" />
+                  <Stat n="0" label="Paywalls" />
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.7 }}
+            className="mt-12 flex flex-wrap items-center gap-4"
+          >
+            <Link href="/tools">
+              <a
+                data-testid="button-explore-tools"
+                className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-foreground px-7 py-3.5 font-medium text-background transition-transform hover:-translate-y-0.5"
+              >
+                <span className="relative z-10">Explore the eight</span>
+                <ArrowUpRight size={16} className="relative z-10 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                <span className="absolute inset-0 -translate-x-full bg-primary transition-transform duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:translate-x-0" />
+              </a>
+            </Link>
+            <Link href="/methodology">
+              <a
+                data-testid="button-methodology"
+                className="editorial-link inline-flex items-center gap-2 text-sm font-medium text-foreground/80"
+              >
+                Read the methodology →
+              </a>
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        {/* Latin pull-quote, large, parallaxed */}
+        <motion.div
+          style={{ y: y1 }}
+          aria-hidden
+          className="pointer-events-none absolute right-6 top-32 hidden font-display italic text-foreground/[0.035] lg:block"
+        >
+          <div className="text-[16rem] leading-none">M</div>
+        </motion.div>
+      </div>
+
+      {/* Ticker tape — dual rows opposite directions */}
+      <div className="border-y border-foreground/15 bg-card/40 py-2.5">
+        <div className="marquee gap-10 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.2em] text-muted-foreground">
+          {[...Array(2)].map((_, k) => (
+            <div key={k} className="flex gap-10 pr-10">
+              {TICKER.map((t, i) => (
+                <span key={i} className="flex items-center gap-2">
+                  <span className="h-1 w-1 rounded-full bg-primary/60" />
+                  {t}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="bg-card/20 py-2.5">
+        <div className="marquee-reverse gap-10 whitespace-nowrap font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted-foreground/70">
+          {[...Array(2)].map((_, k) => (
+            <div key={k} className="flex gap-10 pr-10">
+              {SOURCES.map((t, i) => (
+                <span key={i}>{t}</span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const TICKER = [
+  "AP Macro", "AP Micro", "Trade Policy", "Monetary Policy", "Fiscal Policy",
+  "Inequality", "FRED · Live", "College Board Rubric", "Peterson Institute",
+  "NBER Working Papers", "Colorado Local Data", "NSDA Extemp", "No Sign-In", "Open Methodology",
+];
+const SOURCES = [
+  "Source: FRED", "Source: BLS", "Source: BEA", "Source: USITC",
+  "Source: NBER", "Source: College Board", "Source: Federal Reserve",
+  "Source: Peterson Institute", "Source: CBO", "Source: U.S. Treasury",
+];
+
+/* Live UTC clock — reinforces the ‘terminal’ feel without extra deps. */
+function LiveClock() {
+  const [now, setNow] = useState<string>("");
+  useEffect(() => {
+    const tick = () => {
+      const d = new Date();
+      const hh = String(d.getUTCHours()).padStart(2, "0");
+      const mm = String(d.getUTCMinutes()).padStart(2, "0");
+      const ss = String(d.getUTCSeconds()).padStart(2, "0");
+      setNow(`${hh}:${mm}:${ss} UTC`);
+    };
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, []);
+  return <span data-testid="text-live-clock">{now}</span>;
+}
+
+/* Kinetic headline — dramatic display, hover-italic transformation on ‘Mother’. */
+function KineticHeadline() {
+  return (
+    <span className="block">
+      <motion.span
+        initial={{ opacity: 0, y: 18 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+        className="block text-[3.5rem] font-light leading-[0.95] text-foreground sm:text-[5.25rem] lg:text-[8rem]"
+      >
+        The{" "}
+        <motion.span
+          whileHover={{ rotate: -2, x: -2 }}
+          transition={{ type: "spring", stiffness: 220, damping: 12 }}
+          className="inline-block italic font-normal text-primary"
+          data-testid="text-hero-mother"
+        >
+          Mother
+        </motion.span>{" "}
+        <span className="text-foreground/35">of</span>{" "}
+        <span className="relative inline-block">
+          Econ
+          <motion.span
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
+            transition={{ duration: 0.9, delay: 0.7, ease: [0.65, 0, 0.35, 1] }}
+            style={{ originX: 0 }}
+            className="absolute -bottom-1 left-0 right-0 h-[3px] bg-primary"
+          />
+        </span>
+        <span className="text-primary">.</span>
+      </motion.span>
+    </span>
+  );
+}
+
+/* Animated number that counts from 0 to `to` when scrolled into view. */
+function CountStat({ to, label }: { to: number; label: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.5 });
+  const mv = useMotionValue(0);
+  const spring = useSpring(mv, { stiffness: 80, damping: 24, mass: 0.9 });
+  const [val, setVal] = useState(0);
+  useEffect(() => {
+    if (inView) mv.set(to);
+  }, [inView, to, mv]);
+  useEffect(() => spring.on("change", (v) => setVal(Math.round(v))), [spring]);
+  return (
+    <div ref={ref}>
+      <div className="num-display text-[1.75rem] leading-none text-foreground" data-testid={`count-${label.toLowerCase()}`}>
+        {val}
+      </div>
+      <div className="label-cap mt-2 text-[0.625rem]">{label}</div>
+    </div>
+  );
+}
+
+/* ============================================================
+ * THESIS BAND — Big editorial pull-quote with sticky display.
+ * ============================================================ */
+function ThesisBand() {
+  return (
+    <section className="relative border-y border-border bg-foreground text-background overflow-hidden">
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.06]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(135deg, hsl(var(--background)) 0 1px, transparent 1px 14px)",
+        }}
+      />
+      <div className="relative mx-auto max-w-7xl px-6 py-28 lg:px-10 lg:py-40">
+        <div className="label-cap mb-6 text-background/60">§ The Thesis</div>
+        <motion.h2
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="text-editorial text-[2.25rem] sm:text-[3.5rem] lg:text-[5rem] leading-[0.98] max-w-5xl"
+        >
+          Economics is too important to lock behind a{" "}
+          <span className="italic text-primary">Bloomberg terminal</span>.
+        </motion.h2>
+        <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+          <Pillar2
+            title="Open methodology"
+            body="Every formula and dataset documented. No black boxes. No 'trust me.'"
+          />
+          <Pillar2
+            title="Cited primary sources"
+            body="FRED · BLS · BEA · USITC · NBER · College Board · Federal Reserve. Never third-hand."
+          />
+          <Pillar2
+            title="Free, forever"
+            body="No accounts. No paywalls. No ads. Built for students and the curious."
+          />
+          <Pillar2
+            title="Citation-rigorous"
+            body="Every output attributable. Every retraction logged. A public record, not a sandbox."
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+function Pillar2({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="border-t border-background/20 pt-5">
+      <div className="font-display text-[1.05rem] font-medium text-background">{title}</div>
+      <p className="prose-serif mt-2 text-[0.95rem] text-background/65">{body}</p>
     </div>
   );
 }

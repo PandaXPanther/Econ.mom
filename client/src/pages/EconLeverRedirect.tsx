@@ -24,7 +24,7 @@ export default function EconLeverRedirect() {
     <>
       <SEO
         title="EconLever — Redirecting · The Mother of Econ"
-        description="Sending you over to EconLever — Saras Totey's first economics project."
+        description="Redirecting to EconLever — the sister project to The Mother of Econ."
         path="/econlever"
         noindex
       />
@@ -38,8 +38,8 @@ export default function EconLeverRedirect() {
             Off to <span className="italic">EconLever</span>.
           </h1>
           <p className="prose-serif text-lg opacity-80">
-            EconLever is the sibling project — a live policy dashboard and the
-            place where this whole thing started. We're sending you there now.
+            EconLever is the sister project — a live policy dashboard with four
+            macro levers, ten-year projections, and exportable briefs.
           </p>
           <a
             href={target}

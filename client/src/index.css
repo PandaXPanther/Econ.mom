@@ -258,15 +258,29 @@
     border-color: hsl(var(--primary) / 0.25);
   }
 
-  /* Marquee */
+  /* Marquee — dual direction */
   @keyframes marquee {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
+  }
+  @keyframes marquee-reverse {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
   }
   .marquee {
     display: flex;
     width: max-content;
     animation: marquee 60s linear infinite;
+  }
+  .marquee-reverse {
+    display: flex;
+    width: max-content;
+    animation: marquee-reverse 80s linear infinite;
+  }
+
+  /* Glow halo for primary chips */
+  .halo-primary {
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.25), 0 8px 32px -8px hsl(var(--primary) / 0.40);
   }
 
   /* Scroll bar refinement */

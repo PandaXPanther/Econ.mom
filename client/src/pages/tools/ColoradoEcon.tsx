@@ -138,9 +138,9 @@ export default function ColoradoEcon() {
 
         {/* FOUNDER NOTE */}
         <div className="mt-16 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6">
-          <div className="label-cap mb-2 text-primary">Founder's note · why Colorado</div>
+          <div className="label-cap mb-2 text-primary">Editorial note · why Colorado</div>
           <p className="prose-serif text-[0.95rem] text-foreground/85">
-            I live in Bennett, on the eastern Adams County plains. National data tell a story; the data inside our state tells the truth. The Mother of Econ ships a Colorado dashboard so any AP student in this state — Pueblo, Grand Junction, Aurora, here — can see their county on a chart that costs nothing.
+            National data tell a story; state-level data tells the truth. This dashboard puts every Colorado AP student's county on a chart that costs nothing — Pueblo to Grand Junction, Aurora to the eastern plains. Twelve counties; four lenses; one thesis: economics is local before it is anything else.
           </p>
         </div>
       </section>
