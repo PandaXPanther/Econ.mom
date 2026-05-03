@@ -45,6 +45,16 @@ export function SiteHeader() {
               </Link>
             );
           })}
+          <a
+            href="https://econlever.org"
+            target="_blank"
+            rel="noreferrer"
+            data-testid="link-nav-econlever"
+            className="text-[0.85rem] font-medium tracking-wide text-muted-foreground transition-colors hover:text-foreground"
+            title="EconLever — sister site"
+          >
+            EconLever <span aria-hidden="true">↗</span>
+          </a>
           <ThemeToggle />
         </nav>
 
@@ -71,6 +81,16 @@ export function SiteHeader() {
                 </a>
               </Link>
             ))}
+            <a
+              href="https://econlever.org"
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setOpen(false)}
+              data-testid="link-mobile-econlever"
+              className="text-base font-medium text-foreground"
+            >
+              EconLever ↗
+            </a>
             <div className="pt-2">
               <ThemeToggle />
             </div>

@@ -20,6 +20,7 @@ import ShadowFed from "@/pages/tools/ShadowFed";
 import PaperDecoder from "@/pages/tools/PaperDecoder";
 import ExtempEngine from "@/pages/tools/ExtempEngine";
 import ColoradoEcon from "@/pages/tools/ColoradoEcon";
+import EconLeverRedirect from "@/pages/EconLeverRedirect";
 
 import { useLocation } from "wouter";
 
@@ -60,6 +61,11 @@ function AppRouter() {
         <Route path="/paper-decoder" component={PaperDecoder} />
         <Route path="/extemp-engine" component={ExtempEngine} />
         <Route path="/colorado-econ" component={ColoradoEcon} />
+
+        {/* EconLever redirects — multiple aliases bounce to econlever.org */}
+        <Route path="/econlever" component={EconLeverRedirect} />
+        <Route path="/lever" component={EconLeverRedirect} />
+        <Route path="/el" component={EconLeverRedirect} />
 
         <Route component={NotFound} />
       </Switch>

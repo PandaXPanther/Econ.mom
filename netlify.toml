@@ -5,6 +5,33 @@
 [build.environment]
   NODE_VERSION = "20"
 
+# EconLever redirects — short-circuit before React even loads.
+# 302 (not 301) so we keep flexibility to change the target later without
+# browsers caching the redirect forever.
+[[redirects]]
+  from = "/econlever"
+  to = "https://econlever.org"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/econlever/*"
+  to = "https://econlever.org/:splat"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/lever"
+  to = "https://econlever.org"
+  status = 302
+  force = true
+
+[[redirects]]
+  from = "/el"
+  to = "https://econlever.org"
+  status = 302
+  force = true
+
 # SPA fallback so wouter hash routing works on direct visits to any path
 [[redirects]]
   from = "/*"

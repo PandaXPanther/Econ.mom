@@ -6,6 +6,7 @@ interface SEOProps {
   path?: string;            // canonical path, e.g. /frq-grader
   ogImage?: string;
   jsonLd?: Record<string, unknown>;
+  noindex?: boolean;        // pages that shouldn't be indexed (e.g. redirects)
 }
 
 const SITE = "https://econ.mom";
@@ -15,12 +16,13 @@ const SITE = "https://econ.mom";
  * URL, and an optional JSON-LD blob. Mounts on render, restores nothing
  * on unmount (router will overwrite on next page).
  */
-export function SEO({ title, description, path = "/", ogImage, jsonLd }: SEOProps) {
+export function SEO({ title, description, path = "/", ogImage, jsonLd, noindex }: SEOProps) {
   useEffect(() => {
     document.title = title;
 
     const tags: Array<[string, string, string]> = [
       ["name", "description", description],
+      ["name", "robots", noindex ? "noindex,nofollow" : "index,follow,max-image-preview:large"],
       ["property", "og:title", title],
       ["property", "og:description", description],
       ["property", "og:type", "website"],
