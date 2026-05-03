@@ -1,70 +1,23 @@
+# Netlify build & deploy configuration for The Mother of Econ.
+# Static frontend served from dist/public; serverless functions handle /api/*.
+
 [build]
   command = "npm run build"
   publish = "dist/public"
+  functions = "netlify/functions"
 
-[build.environment]
-  NODE_VERSION = "20"
+[functions]
+  node_bundler = "esbuild"
 
-# EconLever redirects — short-circuit before React even loads.
-# 302 (not 301) so we keep flexibility to change the target later without
-# browsers caching the redirect forever.
+# Route /api/grade-frq to the Netlify Function of the same name.
 [[redirects]]
-  from = "/econlever"
-  to = "https://econlever.org"
-  status = 302
-  force = true
+  from = "/api/grade-frq"
+  to   = "/.netlify/functions/grade-frq"
+  status = 200
+  force  = true
 
-[[redirects]]
-  from = "/econlever/*"
-  to = "https://econlever.org/:splat"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/lever"
-  to = "https://econlever.org"
-  status = 302
-  force = true
-
-[[redirects]]
-  from = "/el"
-  to = "https://econlever.org"
-  status = 302
-  force = true
-
-# SPA fallback so wouter hash routing works on direct visits to any path
+# SPA fallback for hash-routed React app.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to   = "/index.html"
   status = 200
-
-# Cache hashed Vite assets aggressively, never cache the HTML shell
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.html"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-# SEO files — short cache, always served fresh
-[[headers]]
-  for = "/sitemap.xml"
-  [headers.values]
-    Cache-Control = "public, max-age=3600"
-
-[[headers]]
-  for = "/robots.txt"
-  [headers.values]
-    Cache-Control = "public, max-age=3600"
-
-# Security & SEO-friendly headers
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "SAMEORIGIN"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
