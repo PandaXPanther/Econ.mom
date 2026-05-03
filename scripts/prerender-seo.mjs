@@ -286,7 +286,7 @@ function buildPage(route) {
     `<link rel="canonical" href="${url}" />`
   );
 
-  // If this is a tool page, inject SoftwareApplication JSON-LD before </head>.
+  // If this is a tool page, inject SoftwareApplication + BreadcrumbList JSON-LD before </head>.
   if (route.app) {
     const appLd = {
       "@context": "https://schema.org",
@@ -297,12 +297,59 @@ function buildPage(route) {
       operatingSystem: "Any (web)",
       isAccessibleForFree: true,
       offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-      creator: { "@type": "Person", name: "Saras Totey", url: `${SITE}/founder` },
+      creator: {
+        "@type": "Person",
+        name: "Saras Totey",
+        url: `${SITE}/founder`,
+        sameAs: [
+          "https://thedividendcollective.com/saras-totey",
+          "https://econlever.org",
+          "https://www.linkedin.com/in/saras-totey-64a777334/",
+        ],
+      },
       publisher: { "@type": "Organization", name: "The Mother Of Econ", url: SITE },
       description: route.app.description,
       inLanguage: "en-US",
     };
-    const tag = `<script type="application/ld+json" id="page-app-jsonld">${JSON.stringify(appLd)}</script>`;
+    const breadcrumbLd = {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "econ.mom", item: SITE },
+        { "@type": "ListItem", position: 2, name: "Tools", item: `${SITE}/tools` },
+        { "@type": "ListItem", position: 3, name: route.app.name, item: url },
+      ],
+    };
+    const appTag = `<script type="application/ld+json" id="page-app-jsonld">${JSON.stringify(appLd)}</script>`;
+    const crumbTag = `<script type="application/ld+json" id="page-breadcrumb-jsonld">${JSON.stringify(breadcrumbLd)}</script>`;
+    html = html.replace("</head>", `    ${appTag}\n    ${crumbTag}\n  </head>`);
+  }
+
+  // For the founder page, inject a richer Person JSON-LD with sameAs that closes
+  // the identity loop with thedividendcollective.com/saras-totey.
+  if (route.slug === "founder") {
+    const founderLd = {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      url,
+      mainEntity: {
+        "@type": "Person",
+        name: "Saras Totey",
+        givenName: "Saras",
+        familyName: "Totey",
+        jobTitle: "Founder, The Mother Of Econ",
+        url,
+        sameAs: [
+          "https://econlever.org",
+          "https://thedividendcollective.com/saras-totey",
+          "https://thedividendcollective.com/",
+          "https://www.linkedin.com/in/saras-totey-64a777334/",
+          "https://www.instagram.com/sarastotey_/",
+          "https://github.com/PandaXPanther",
+        ],
+      },
+    };
+    const tag = `<script type="application/ld+json" id="page-founder-jsonld">${JSON.stringify(founderLd)}</script>`;
     html = html.replace("</head>", `    ${tag}\n  </head>`);
   }
 

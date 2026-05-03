@@ -20,6 +20,11 @@ const FOUNDER_JSONLD = {
       "@type": "Organization",
       name: "The Dividend Collective",
       url: "https://thedividendcollective.com/",
+      member: {
+        "@type": "Person",
+        name: "Saras Totey",
+        url: "https://thedividendcollective.com/saras-totey",
+      },
     },
     {
       "@type": "EducationalOrganization",
@@ -40,6 +45,7 @@ const FOUNDER_JSONLD = {
     "https://www.linkedin.com/in/saras-totey-64a777334/",
     "https://www.instagram.com/sarastotey_/",
     "https://thedividendcollective.com/",
+    "https://thedividendcollective.com/saras-totey",
   ],
 };
 
@@ -95,7 +101,7 @@ export default function Founder() {
               Fairview High School student in Boulder, Colorado. Research Analyst Assistant at
               Northeastern University. Head Economics Researcher at{" "}
               <a
-                href="https://thedividendcollective.com/"
+                href="https://thedividendcollective.com/saras-totey"
                 target="_blank"
                 rel="noreferrer"
                 className="editorial-link italic"
@@ -144,7 +150,7 @@ export default function Founder() {
                 Instagram
               </a>
               <a
-                href="https://thedividendcollective.com/"
+                href="https://thedividendcollective.com/saras-totey"
                 target="_blank"
                 rel="noreferrer"
                 data-testid="link-founder-tdc-pill"
@@ -173,7 +179,7 @@ export default function Founder() {
             welfare retrenchment shaped post-tax income disparity. He also
             serves as Head Economics Researcher at{" "}
             <a
-              href="https://thedividendcollective.com/"
+              href="https://thedividendcollective.com/saras-totey"
               target="_blank"
               rel="noreferrer"
               className="editorial-link italic"
