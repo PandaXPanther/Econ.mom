@@ -1,10 +1,17 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
-import { Sliders, ArrowUpRight, RotateCcw } from "lucide-react";
+import { Sliders, ArrowUpRight, RotateCcw, Download } from "lucide-react";
+import {
+  PolicyBrief,
+  HiddenBriefSlot,
+  type BriefRow,
+  type BriefKPI,
+} from "@/components/brand/PolicyBrief";
+import { exportBriefFromElement } from "@/lib/export-brief";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -134,11 +141,105 @@ const PRESETS: { name: string; tag: string; levers: Levers; description: string 
   },
 ];
 
+function classifyRegime(L: Levers): string {
+  const supplySide =
+    L.topMarginal < BASELINE.topMarginal - 4 &&
+    L.corporateTax < BASELINE.corporateTax - 3;
+  const redistributive =
+    L.topMarginal > BASELINE.topMarginal + 4 &&
+    L.welfarePctGDP > BASELINE.welfarePctGDP + 2;
+  const hawkish = L.fedFunds > BASELINE.fedFunds + 2;
+  if (supplySide) return "REGIME · SUPPLY-SIDE";
+  if (redistributive) return "REGIME · REDISTRIBUTIVE";
+  if (hawkish) return "REGIME · MONETARY HAWK";
+  return "REGIME · MIXED / CENTRIST";
+}
+
+function analysisFor(
+  L: Levers,
+  result: ReturnType<typeof projectScenario>
+): { headline: string; body: string } {
+  const regime = classifyRegime(L);
+  const dGdp = result.avgGDP - BASELINE.gdpGrowth;
+  const dGini = result.finalGini - BASELINE.gini;
+
+  if (regime.includes("SUPPLY-SIDE")) {
+    return {
+      headline: "Supply-side mix: faster nominal growth, widening disparity.",
+      body: `Cuts to top marginal (${L.topMarginal.toFixed(1)}%) and corporate (${L.corporateTax.toFixed(1)}%) lift average growth by ${dGdp.toFixed(2)} percentage points but shift the final-year Gini to ${result.finalGini.toFixed(3)} (Δ ${dGini >= 0 ? "+" : ""}${dGini.toFixed(3)}). Watch the deficit channel: lower revenue compounds at scale.`,
+    };
+  }
+  if (regime.includes("REDISTRIBUTIVE")) {
+    return {
+      headline: "Redistributive mix: tighter income spread, deficit pressure.",
+      body: `Higher top marginal (${L.topMarginal.toFixed(1)}%) and welfare expansion (${L.welfarePctGDP.toFixed(1)}% GDP) compress the final Gini to ${result.finalGini.toFixed(3)} (Δ ${dGini >= 0 ? "+" : ""}${dGini.toFixed(3)}). GDP growth averages ${result.avgGDP.toFixed(2)}%; the deficit-to-GDP path is the main vulnerability.`,
+    };
+  }
+  if (regime.includes("MONETARY HAWK")) {
+    return {
+      headline: "Hawkish stance: disinflation at the cost of near-term growth.",
+      body: `Federal funds at ${L.fedFunds.toFixed(2)}% drags average growth to ${result.avgGDP.toFixed(2)}%. Deficit interest costs rise; Gini drift is small (${result.finalGini.toFixed(3)}). Stress-test against an output-gap widening scenario.`,
+    };
+  }
+  return {
+    headline: "Centrist policy mix: near-potential growth, disparity stable.",
+    body: `Levers sit close to the calibrated U.S. neutral baseline. Projected average GDP growth of ${result.avgGDP.toFixed(2)}% and a final Gini of ${result.finalGini.toFixed(3)} indicate marginal deviation from current policy. Use this configuration as a control case before stress-testing more aggressive supply-side or redistributive scenarios.`,
+  };
+}
+
 export default function EconLever() {
   const [L, setL] = useState<Levers>({ ...PRESETS[0].levers });
+  const [exporting, setExporting] = useState(false);
+  const briefRef = useRef<HTMLDivElement>(null);
 
   const result = useMemo(() => projectScenario(L), [L]);
   const reset = () => setL({ ...PRESETS[0].levers });
+
+  const briefConfig: BriefRow[] = [
+    { label: "Top marginal income tax", setting: `${L.topMarginal.toFixed(1)}%`, baseline: `${BASELINE.topMarginal}%` },
+    { label: "Corporate income tax", setting: `${L.corporateTax.toFixed(1)}%`, baseline: `${BASELINE.corporateTax}%` },
+    { label: "Social welfare spending (% GDP)", setting: `${L.welfarePctGDP.toFixed(1)}%`, baseline: `${BASELINE.welfarePctGDP}%` },
+    { label: "Federal funds rate", setting: `${L.fedFunds.toFixed(2)}%`, baseline: `${BASELINE.fedFunds}%` },
+  ];
+
+  const briefKPIs: BriefKPI[] = [
+    {
+      label: "Avg. real GDP growth",
+      value: `${result.avgGDP.toFixed(2)}%`,
+      tone: result.avgGDP >= BASELINE.gdpGrowth - 0.05 ? "good" : "bad",
+      delta: `Δ ${(result.avgGDP - BASELINE.gdpGrowth).toFixed(2)}pp vs. baseline`,
+    },
+    {
+      label: "Final-year deficit",
+      value: `$${result.finalDeficit.toFixed(2)}T`,
+      tone: result.finalDeficit <= BASELINE.deficitTrillions + 0.05 ? "good" : "bad",
+      delta: `Δ ${(result.finalDeficit - BASELINE.deficitTrillions >= 0 ? "+" : "")}${(result.finalDeficit - BASELINE.deficitTrillions).toFixed(2)}T vs. baseline`,
+    },
+    {
+      label: "Final Gini coefficient",
+      value: result.finalGini.toFixed(3),
+      tone: result.finalGini <= BASELINE.gini + 0.001 ? "good" : "bad",
+      delta: `Δ ${(result.finalGini - BASELINE.gini >= 0 ? "+" : "")}${(result.finalGini - BASELINE.gini).toFixed(3)} vs. baseline`,
+    },
+  ];
+
+  const analysis = analysisFor(L, result);
+  const regime = classifyRegime(L);
+
+  const handleExport = async () => {
+    if (!briefRef.current) return;
+    setExporting(true);
+    try {
+      // Allow the off-screen brief to lay out before capture.
+      await new Promise((r) => setTimeout(r, 50));
+      await exportBriefFromElement(
+        briefRef.current,
+        "EconLever-Policy-Brief.pdf"
+      );
+    } finally {
+      setExporting(false);
+    }
+  };
 
   return (
     <PageShell>
@@ -149,7 +250,42 @@ export default function EconLever() {
       />
       <ToolPageHeader tool={COMP} />
 
+      {/* Off-screen printable brief */}
+      <HiddenBriefSlot>
+        <PolicyBrief
+          ref={briefRef}
+          toolName="EconLever"
+          regimeBadge={regime}
+          subtitle="10-Year Projection · 2026–2036"
+          configRows={briefConfig}
+          kpis={briefKPIs}
+          analysisHeadline={analysis.headline}
+          analysisBody={analysis.body}
+        />
+      </HiddenBriefSlot>
+
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
+        {/* Export bar */}
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card/50 px-5 py-4">
+          <div>
+            <div className="font-mono text-[0.62rem] uppercase tracking-[0.22em] text-primary">
+              {regime}
+            </div>
+            <div className="prose-serif mt-1 text-[0.92rem] text-foreground/80">
+              Found a scenario worth defending? Export it as a one-page policy brief.
+            </div>
+          </div>
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            data-testid="button-export-brief"
+            className="group inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Download size={14} />
+            {exporting ? "Building PDF…" : "Export Policy Brief (PDF)"}
+          </button>
+        </div>
+
         {/* TOP STAT BAR — current scenario */}
         <div className="mb-10 grid gap-px overflow-hidden rounded-xl border border-border bg-border md:grid-cols-3">
           <ScenarioStat
