@@ -57,8 +57,11 @@ export default function Home() {
                 data-testid={`card-tool-${tool.slug}`}
                 className="card-lift group relative flex h-full flex-col bg-card p-7 cursor-pointer"
               >
+                {tool.flagship && (
+                  <div className="foil-ribbon holo">Flagship</div>
+                )}
                 <div className="flex items-start justify-between">
-                  <span className="font-mono text-[0.72rem] uppercase tracking-widest text-muted-foreground">
+                  <span className={`font-mono text-[0.72rem] uppercase tracking-widest text-muted-foreground ${tool.flagship ? "pl-20" : ""}`}>
                     Nº {tool.number}
                   </span>
                   <StatusPill status={tool.status} />
@@ -78,11 +81,6 @@ export default function Home() {
                     className="text-muted-foreground transition-all group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
                   />
                 </div>
-                {tool.flagship && (
-                  <div className="absolute top-7 right-16 hidden items-center gap-1 font-mono text-[0.6rem] uppercase tracking-widest text-primary md:flex">
-                    <Sparkles size={10} /> Flagship
-                  </div>
-                )}
               </a>
             </Link>
           ))}

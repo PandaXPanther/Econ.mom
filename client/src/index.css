@@ -4,73 +4,75 @@
 
 /*
   THE MOTHER OF ECON — econ.mom
-  Design language: Editorial cathedral × Bloomberg Terminal
-  Display: Fraunces (variable serif) — gravitas, not generic
-  Body: Inter Tight — neutral, dense
-  Mono: JetBrains Mono — data, numbers, citations
+  Design language: Editorial cathedral × Bloomberg Terminal × Holographic foil
+  Primary: Royal Violet (deep plum) — gravitas with electricity
+  Accent: Magenta strobe — for flagship marks and live ribbons
+  Display: Fraunces (variable serif)
+  Body: Inter Tight
+  Mono: JetBrains Mono
 */
 
-/* LIGHT MODE — Parchment */
+/* LIGHT MODE — Vellum (cool parchment, lavender tint) */
 :root {
-  --button-outline: rgba(33, 24, 16, 0.12);
-  --badge-outline: rgba(33, 24, 16, 0.08);
+  --button-outline: rgba(40, 18, 60, 0.12);
+  --badge-outline: rgba(40, 18, 60, 0.08);
   --opaque-button-border-intensity: -10;
-  --elevate-1: rgba(33, 24, 16, 0.04);
-  --elevate-2: rgba(33, 24, 16, 0.10);
+  --elevate-1: rgba(40, 18, 60, 0.04);
+  --elevate-2: rgba(40, 18, 60, 0.10);
 
-  /* Warm ivory base, deep ink foreground */
-  --background: 38 30% 96%;          /* ivory parchment */
-  --foreground: 24 14% 12%;          /* near-black ink */
-  --border: 30 12% 84%;
-  --card: 38 32% 98%;
-  --card-foreground: 24 14% 12%;
-  --card-border: 30 14% 86%;
-  --sidebar: 36 22% 92%;
-  --sidebar-foreground: 24 14% 12%;
-  --sidebar-border: 30 14% 84%;
-  --sidebar-primary: 4 56% 32%;
-  --sidebar-primary-foreground: 38 30% 96%;
-  --sidebar-accent: 30 16% 86%;
-  --sidebar-accent-foreground: 24 14% 12%;
-  --sidebar-ring: 4 56% 32%;
-  --popover: 38 32% 97%;
-  --popover-foreground: 24 14% 12%;
-  --popover-border: 30 14% 86%;
+  /* Cool ivory base, deep plum-ink foreground */
+  --background: 280 32% 97%;          /* lavender vellum */
+  --foreground: 268 24% 12%;          /* near-black plum-ink */
+  --border: 270 14% 86%;
+  --card: 285 36% 98%;
+  --card-foreground: 268 24% 12%;
+  --card-border: 270 16% 88%;
+  --sidebar: 282 24% 93%;
+  --sidebar-foreground: 268 24% 12%;
+  --sidebar-border: 270 16% 86%;
+  --sidebar-primary: 268 62% 38%;
+  --sidebar-primary-foreground: 280 32% 97%;
+  --sidebar-accent: 280 18% 88%;
+  --sidebar-accent-foreground: 268 24% 12%;
+  --sidebar-ring: 268 62% 38%;
+  --popover: 285 36% 97%;
+  --popover-foreground: 268 24% 12%;
+  --popover-border: 270 16% 88%;
 
-  /* Oxblood — primary accent */
-  --primary: 4 56% 32%;
-  --primary-foreground: 38 30% 96%;
-  --secondary: 30 18% 88%;
-  --secondary-foreground: 24 14% 12%;
-  --muted: 30 14% 90%;
-  --muted-foreground: 25 10% 38%;
-  --accent: 38 60% 50%;              /* amber accent for highlights */
-  --accent-foreground: 24 14% 12%;
+  /* Royal Violet — primary accent */
+  --primary: 268 62% 38%;
+  --primary-foreground: 280 32% 97%;
+  --secondary: 280 22% 90%;
+  --secondary-foreground: 268 24% 12%;
+  --muted: 280 16% 92%;
+  --muted-foreground: 270 12% 38%;
+  --accent: 320 78% 58%;              /* magenta strobe for flagship marks */
+  --accent-foreground: 280 32% 97%;
   --destructive: 0 65% 38%;
-  --destructive-foreground: 38 30% 96%;
-  --input: 30 12% 78%;
-  --ring: 4 56% 32%;
+  --destructive-foreground: 280 32% 97%;
+  --input: 270 14% 80%;
+  --ring: 268 62% 38%;
 
-  /* Chart palette — editorial-data */
-  --chart-1: 4 56% 32%;     /* oxblood */
-  --chart-2: 38 60% 45%;    /* amber */
-  --chart-3: 158 38% 28%;   /* forest */
-  --chart-4: 215 40% 32%;   /* navy */
-  --chart-5: 24 14% 18%;    /* ink */
+  /* Chart palette — editorial-data, purple-led */
+  --chart-1: 268 62% 38%;     /* royal violet */
+  --chart-2: 320 78% 58%;     /* magenta */
+  --chart-3: 158 38% 28%;     /* forest (independent series) */
+  --chart-4: 215 50% 38%;     /* sapphire */
+  --chart-5: 38 70% 50%;      /* amber */
 
   --font-sans: 'Inter Tight', 'Inter', system-ui, sans-serif;
   --font-serif: 'Fraunces', 'Source Serif 4', Georgia, serif;
   --font-mono: 'JetBrains Mono', 'IBM Plex Mono', Menlo, monospace;
   --font-display: 'Fraunces', 'Source Serif 4', Georgia, serif;
   --radius: 0.5rem;
-  --shadow-2xs: 0px 1px 0px 0px hsl(24 14% 12% / 0.04);
-  --shadow-xs: 0px 1px 2px 0px hsl(24 14% 12% / 0.06);
-  --shadow-sm: 0px 1px 0px 0px hsl(24 14% 12% / 0.04), 0px 1px 2px -1px hsl(24 14% 12% / 0.06);
-  --shadow: 0px 2px 0px 0px hsl(24 14% 12% / 0.04), 0px 1px 3px -1px hsl(24 14% 12% / 0.08);
-  --shadow-md: 0px 2px 0px 0px hsl(24 14% 12% / 0.04), 0px 4px 8px -2px hsl(24 14% 12% / 0.10);
-  --shadow-lg: 0px 4px 0px 0px hsl(24 14% 12% / 0.04), 0px 12px 24px -6px hsl(24 14% 12% / 0.14);
-  --shadow-xl: 0px 8px 32px -8px hsl(24 14% 12% / 0.18);
-  --shadow-2xl: 0px 16px 48px -12px hsl(24 14% 12% / 0.24);
+  --shadow-2xs: 0px 1px 0px 0px hsl(268 24% 12% / 0.04);
+  --shadow-xs: 0px 1px 2px 0px hsl(268 24% 12% / 0.06);
+  --shadow-sm: 0px 1px 0px 0px hsl(268 24% 12% / 0.04), 0px 1px 2px -1px hsl(268 24% 12% / 0.06);
+  --shadow: 0px 2px 0px 0px hsl(268 24% 12% / 0.04), 0px 1px 3px -1px hsl(268 24% 12% / 0.08);
+  --shadow-md: 0px 2px 0px 0px hsl(268 24% 12% / 0.04), 0px 4px 8px -2px hsl(268 24% 12% / 0.10);
+  --shadow-lg: 0px 4px 0px 0px hsl(268 24% 12% / 0.04), 0px 12px 24px -6px hsl(268 24% 12% / 0.16);
+  --shadow-xl: 0px 8px 32px -8px hsl(268 60% 30% / 0.22);
+  --shadow-2xl: 0px 16px 48px -12px hsl(268 60% 30% / 0.28);
   --tracking-normal: -0.005em;
   --spacing: 0.25rem;
 
@@ -90,59 +92,55 @@
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
-/* DARK MODE — Library at Night */
+/* DARK MODE — Library at Night (deep plum) */
 .dark {
-  --button-outline: rgba(255, 248, 230, 0.10);
-  --badge-outline: rgba(255, 248, 230, 0.06);
+  --button-outline: rgba(240, 230, 255, 0.10);
+  --badge-outline: rgba(240, 230, 255, 0.06);
   --opaque-button-border-intensity: 8;
-  --elevate-1: rgba(255, 248, 230, 0.04);
-  --elevate-2: rgba(255, 248, 230, 0.08);
+  --elevate-1: rgba(240, 230, 255, 0.04);
+  --elevate-2: rgba(240, 230, 255, 0.08);
 
-  --background: 24 18% 7%;
-  --foreground: 38 28% 92%;
-  --border: 24 12% 18%;
-  --card: 24 16% 9%;
-  --card-foreground: 38 28% 92%;
-  --card-border: 24 12% 16%;
-  --sidebar: 24 18% 6%;
-  --sidebar-foreground: 38 28% 92%;
-  --sidebar-border: 24 12% 14%;
-  --sidebar-primary: 8 64% 52%;
-  --sidebar-primary-foreground: 24 18% 7%;
-  --sidebar-accent: 24 14% 14%;
-  --sidebar-accent-foreground: 38 28% 92%;
-  --sidebar-ring: 8 64% 52%;
-  --popover: 24 16% 10%;
-  --popover-foreground: 38 28% 92%;
-  --popover-border: 24 12% 18%;
+  --background: 270 30% 6%;
+  --foreground: 285 30% 94%;
+  --border: 270 18% 18%;
+  --card: 270 26% 9%;
+  --card-foreground: 285 30% 94%;
+  --card-border: 270 18% 16%;
+  --sidebar: 270 30% 5%;
+  --sidebar-foreground: 285 30% 94%;
+  --sidebar-border: 270 18% 14%;
+  --sidebar-primary: 275 80% 68%;
+  --sidebar-primary-foreground: 270 30% 6%;
+  --sidebar-accent: 270 18% 14%;
+  --sidebar-accent-foreground: 285 30% 94%;
+  --sidebar-ring: 275 80% 68%;
+  --popover: 270 26% 10%;
+  --popover-foreground: 285 30% 94%;
+  --popover-border: 270 18% 18%;
 
-  --primary: 8 64% 52%;            /* oxblood, brighter for dark */
-  --primary-foreground: 24 18% 7%;
-  --secondary: 24 14% 14%;
-  --secondary-foreground: 38 28% 92%;
-  --muted: 24 12% 12%;
-  --muted-foreground: 30 14% 62%;
-  --accent: 38 70% 60%;            /* amber */
-  --accent-foreground: 24 18% 7%;
-  --destructive: 0 70% 52%;
-  --destructive-foreground: 38 28% 92%;
-  --input: 24 12% 22%;
-  --ring: 8 64% 52%;
+  --primary: 275 80% 68%;            /* electric violet on dark */
+  --primary-foreground: 270 30% 6%;
+  --secondary: 270 18% 14%;
+  --secondary-foreground: 285 30% 94%;
+  --muted: 270 18% 12%;
+  --muted-foreground: 280 16% 64%;
+  --accent: 320 90% 70%;             /* hot magenta */
+  --accent-foreground: 270 30% 6%;
+  --destructive: 0 70% 60%;
+  --destructive-foreground: 285 30% 94%;
+  --input: 270 18% 22%;
+  --ring: 275 80% 68%;
 
-  --chart-1: 8 64% 56%;
-  --chart-2: 38 70% 60%;
-  --chart-3: 158 42% 48%;
-  --chart-4: 215 50% 56%;
-  --chart-5: 38 28% 86%;
+  --chart-1: 275 80% 68%;
+  --chart-2: 320 90% 70%;
+  --chart-3: 158 45% 56%;
+  --chart-4: 215 70% 66%;
+  --chart-5: 38 80% 64%;
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-  html {
-    font-feature-settings: "ss01", "ss02", "cv11";
-  }
+  * { @apply border-border; }
+  html { font-feature-settings: "ss01", "ss02", "cv11"; }
   body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans);
@@ -153,16 +151,10 @@
     font-family: var(--font-display);
     font-feature-settings: "ss01";
   }
-  .font-display {
-    font-family: var(--font-display);
-  }
-  .font-serif {
-    font-family: var(--font-serif);
-  }
-  .font-mono {
-    font-family: var(--font-mono);
-  }
-  /* Editorial small caps for labels */
+  .font-display { font-family: var(--font-display); }
+  .font-serif { font-family: var(--font-serif); }
+  .font-mono { font-family: var(--font-mono); }
+
   .label-cap {
     font-family: var(--font-sans);
     font-size: 0.6875rem;
@@ -171,20 +163,17 @@
     text-transform: uppercase;
     color: hsl(var(--muted-foreground));
   }
-  /* Pull-quote serif for hero text */
   .text-editorial {
     font-family: var(--font-display);
     font-feature-settings: "ss01", "ss02";
     letter-spacing: -0.02em;
     line-height: 1.05;
   }
-  /* Drop shadow for hero numbers */
   .num-display {
     font-family: var(--font-display);
     font-variant-numeric: lining-nums tabular-nums;
     font-feature-settings: "ss01";
   }
-  /* Body emphasis serif */
   .prose-serif {
     font-family: var(--font-serif);
     font-size: 1.0625rem;
@@ -192,40 +181,52 @@
     letter-spacing: -0.005em;
   }
 
-  /* Hairline separator */
-  .rule {
-    height: 1px;
-    background: hsl(var(--border));
-  }
-  .rule-double {
-    border-top: 1px solid hsl(var(--border));
-    border-bottom: 1px solid hsl(var(--border));
-    height: 4px;
-  }
+  .rule { height: 1px; background: hsl(var(--border)); }
+  .rule-double { border-top: 1px solid hsl(var(--border)); border-bottom: 1px solid hsl(var(--border)); height: 4px; }
 
   /* Grain texture overlay on hero areas */
-  .grain {
-    position: relative;
-  }
+  .grain { position: relative; }
   .grain::before {
     content: "";
     position: absolute;
     inset: 0;
     pointer-events: none;
     opacity: 0.08;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.09 0 0 0 0 0.06 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.05 0 0 0 0 0.18 0 0 0 0.6 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
     mix-blend-mode: multiply;
   }
-  .dark .grain::before {
-    mix-blend-mode: screen;
-    opacity: 0.06;
+  .dark .grain::before { mix-blend-mode: screen; opacity: 0.08; }
+
+  /* Holographic foil — for flagship marks & rare accents */
+  .holo {
+    background-image: linear-gradient(
+      115deg,
+      hsl(268 70% 60%) 0%,
+      hsl(290 80% 65%) 22%,
+      hsl(320 85% 65%) 42%,
+      hsl(195 80% 60%) 62%,
+      hsl(268 70% 55%) 82%,
+      hsl(290 78% 60%) 100%
+    );
+    background-size: 220% 220%;
+    animation: holoShift 9s ease-in-out infinite;
+  }
+  @keyframes holoShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .holo-text {
+    background-image: linear-gradient(115deg, hsl(268 70% 50%), hsl(295 78% 56%), hsl(320 80% 58%), hsl(268 70% 50%));
+    background-size: 220% 220%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: holoShift 8s ease-in-out infinite;
   }
 
   /* Animated underline for editorial links */
-  .editorial-link {
-    position: relative;
-    display: inline-block;
-  }
+  .editorial-link { position: relative; display: inline-block; }
   .editorial-link::after {
     content: "";
     position: absolute;
@@ -248,14 +249,13 @@
     100% { transform-origin: left; transform: scaleX(1); }
   }
 
-  /* Card hover lift */
   .card-lift {
     transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1), border-color 280ms ease;
   }
   .card-lift:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
-    border-color: hsl(var(--primary) / 0.25);
+    border-color: hsl(var(--primary) / 0.30);
   }
 
   /* Marquee — dual direction */
@@ -267,31 +267,32 @@
     0% { transform: translateX(-50%); }
     100% { transform: translateX(0); }
   }
-  .marquee {
-    display: flex;
-    width: max-content;
-    animation: marquee 60s linear infinite;
-  }
-  .marquee-reverse {
-    display: flex;
-    width: max-content;
-    animation: marquee-reverse 80s linear infinite;
-  }
+  .marquee { display: flex; width: max-content; animation: marquee 60s linear infinite; }
+  .marquee-reverse { display: flex; width: max-content; animation: marquee-reverse 80s linear infinite; }
 
-  /* Glow halo for primary chips */
   .halo-primary {
-    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.25), 0 8px 32px -8px hsl(var(--primary) / 0.40);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.30), 0 8px 32px -8px hsl(var(--primary) / 0.50);
   }
 
-  /* Scroll bar refinement */
+  /* Foil-ribbon flagship pin (replaces overlapping "FLAGSHIP" mark) */
+  .foil-ribbon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 4px 10px 4px 8px;
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: hsl(var(--primary-foreground));
+    clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%);
+  }
+
   ::-webkit-scrollbar { width: 10px; height: 10px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground) / 0.4); }
 
-  /* Selection */
-  ::selection {
-    background: hsl(var(--primary) / 0.18);
-    color: hsl(var(--foreground));
-  }
+  ::selection { background: hsl(var(--primary) / 0.22); color: hsl(var(--foreground)); }
 }

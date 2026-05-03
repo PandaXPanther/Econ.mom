@@ -6,13 +6,6 @@ import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Sliders, ArrowUpRight, RotateCcw, Download } from "lucide-react";
 import {
-  PolicyBrief,
-  HiddenBriefSlot,
-  type BriefRow,
-  type BriefKPI,
-} from "@/components/brand/PolicyBrief";
-import { exportBriefFromElement } from "@/lib/export-brief";
-import {
   ResponsiveContainer,
   ComposedChart,
   Line,
@@ -26,220 +19,54 @@ import {
   ReferenceLine,
 } from "recharts";
 
+// 1:1 engine + brief from upstream econlever.org repo
+import {
+  simulate,
+  PRESETS as ENGINE_PRESETS,
+  BASELINE as ENGINE_BASELINE,
+  type PolicyLevers,
+} from "@/lib/econlever/engine";
+import { PolicyBriefDocument } from "@/components/econlever/PolicyBriefDocument";
+import { exportPolicyBriefAsPdf } from "@/lib/econlever/exportPdf";
+
 const COMP = TOOL_BY_SLUG["econlever"];
 
-// 2025 US baseline — calibrated to current CBO baseline + Fed funds + IRS top
-// brackets + OECD social spending share + World Bank Gini.
-const BASELINE = {
-  topMarginal: 37.0,        // %
-  corporateTax: 21.0,       // %
-  welfarePctGDP: 11.4,      // % of GDP — OECD social-spending share
-  fedFunds: 3.25,           // % — current Fed funds (May 2026)
-  gdpGrowth: 2.10,          // % real GDP growth
-  deficitTrillions: 1.83,   // trillion USD
-  gini: 0.415,              // Gini coefficient
+// Display baseline (the upstream engine uses calibrated reference values; the
+// page top-bar still cites the published 2025 anchor figures users see in news).
+const DISPLAY_BASELINE = {
+  topMarginal: ENGINE_BASELINE.neutral.topMarginalTax,    // 37
+  corporateTax: ENGINE_BASELINE.neutral.corporateTax,     // 21
+  welfarePctGDP: ENGINE_BASELINE.neutral.welfareSpending, // 14
+  fedFunds: ENGINE_BASELINE.neutral.fedFundsRate,         // 4.5
+  gdpGrowth: ENGINE_BASELINE.potentialGdpGrowth,          // 2.0
+  deficitPctGDP: ENGINE_BASELINE.deficit,                 // 6.0
+  gini: ENGINE_BASELINE.gini,                             // 0.415
 };
-
-// Calibrated coefficients — illustrative simulation, calibrated to mainstream
-// macroeconomic literature (Romer & Romer 2010, Auerbach & Gorodnichenko 2012,
-// Piketty-Saez-Zucman 2018, Taylor 1993, FAIT-modified). Not a substitute for
-// DSGE/VAR analysis.
-//
-//   gdpGrowth(t) = b_gdp
-//                  + α_top  · (top - 37)
-//                  + α_corp · (corp - 21)
-//                  + α_welf · (welf - 11.4)
-//                  + α_ff   · (ff  - 3.25)
-//
-// Same form for deficit and Gini with their own coefficients.
-const COEFF = {
-  gdp: {
-    top:  -0.014,  // each +1pp top marginal → -0.014pp growth (Romer-Romer)
-    corp: -0.025,  // each +1pp corp tax → -0.025pp growth
-    welf:  0.020,  // each +1pp welfare → +0.020pp short-run (A-G recession multiplier blended)
-    ff:   -0.085,  // each +1pp fed funds → -0.085pp growth (FRB/US standard)
-  },
-  deficit: {
-    top:  -0.030,  // each +1pp top → -$30B/yr deficit reduction (CBO)
-    corp: -0.040,  // each +1pp corp → -$40B/yr deficit reduction
-    welf:  0.180,  // each +1pp welfare → +$180B/yr deficit
-    ff:    0.110,  // each +1pp fed funds → +$110B/yr interest cost on debt
-  },
-  gini: {
-    top:  -0.0011, // each +1pp top → -0.0011 Gini (Piketty-Saez-Zucman)
-    corp: -0.0006, // each +1pp corp → -0.0006 Gini
-    welf: -0.0014, // each +1pp welfare → -0.0014 Gini
-    ff:    0.0004, // each +1pp fed funds → +0.0004 Gini (rentier channel)
-  },
-};
-
-interface Levers {
-  topMarginal: number;
-  corporateTax: number;
-  welfarePctGDP: number;
-  fedFunds: number;
-}
-
-function projectScenario(L: Levers) {
-  const dT = L.topMarginal - BASELINE.topMarginal;
-  const dC = L.corporateTax - BASELINE.corporateTax;
-  const dW = L.welfarePctGDP - BASELINE.welfarePctGDP;
-  const dF = L.fedFunds - BASELINE.fedFunds;
-
-  const gdpDelta =
-    COEFF.gdp.top * dT + COEFF.gdp.corp * dC + COEFF.gdp.welf * dW + COEFF.gdp.ff * dF;
-  const deficitDelta =
-    COEFF.deficit.top * dT + COEFF.deficit.corp * dC + COEFF.deficit.welf * dW + COEFF.deficit.ff * dF;
-  const giniDelta =
-    COEFF.gini.top * dT + COEFF.gini.corp * dC + COEFF.gini.welf * dW + COEFF.gini.ff * dF;
-
-  // 10-year projection — convergence path: shocks decay slightly, baseline reasserts.
-  const years = [];
-  for (let i = 0; i < 11; i++) {
-    const t = i;
-    const decay = Math.exp(-t * 0.06); // 6% annual decay back toward baseline
-    years.push({
-      year: 2026 + t,
-      gdp: +(BASELINE.gdpGrowth + gdpDelta * decay).toFixed(2),
-      deficitPctGDP: +((BASELINE.deficitTrillions + deficitDelta * decay) / 28.5 * 100).toFixed(2),
-      deficit: +(BASELINE.deficitTrillions + deficitDelta * decay).toFixed(2),
-      gini: +(BASELINE.gini + giniDelta * (1 - decay * 0.4)).toFixed(4),
-    });
-  }
-  return {
-    avgGDP: +(years.reduce((s, y) => s + y.gdp, 0) / years.length).toFixed(2),
-    finalGini: years[years.length - 1].gini,
-    finalDeficit: years[years.length - 1].deficit,
-    years,
-  };
-}
-
-const PRESETS: { name: string; tag: string; levers: Levers; description: string }[] = [
-  {
-    name: "Centrist",
-    tag: "Neutral",
-    description: "Levers near calibrated US baseline. Use as a control case.",
-    levers: { topMarginal: 37, corporateTax: 21, welfarePctGDP: 11.4, fedFunds: 3.25 },
-  },
-  {
-    name: "Supply-side",
-    tag: "Cuts",
-    description: "Reagan-Trump style: top marginal & corporate cuts, lean welfare, hold rates.",
-    levers: { topMarginal: 28, corporateTax: 15, welfarePctGDP: 9.5, fedFunds: 3.0 },
-  },
-  {
-    name: "Redistributive",
-    tag: "Expands",
-    description: "Sanders-Warren style: high top marginal, expanded welfare, accommodative Fed.",
-    levers: { topMarginal: 45, corporateTax: 28, welfarePctGDP: 16, fedFunds: 2.5 },
-  },
-  {
-    name: "Volcker shock",
-    tag: "Disinflate",
-    description: "Aggressive monetary tightening; baseline fiscal posture.",
-    levers: { topMarginal: 37, corporateTax: 21, welfarePctGDP: 11.4, fedFunds: 6.5 },
-  },
-];
-
-function classifyRegime(L: Levers): string {
-  const supplySide =
-    L.topMarginal < BASELINE.topMarginal - 4 &&
-    L.corporateTax < BASELINE.corporateTax - 3;
-  const redistributive =
-    L.topMarginal > BASELINE.topMarginal + 4 &&
-    L.welfarePctGDP > BASELINE.welfarePctGDP + 2;
-  const hawkish = L.fedFunds > BASELINE.fedFunds + 2;
-  if (supplySide) return "REGIME · SUPPLY-SIDE";
-  if (redistributive) return "REGIME · REDISTRIBUTIVE";
-  if (hawkish) return "REGIME · MONETARY HAWK";
-  return "REGIME · MIXED / CENTRIST";
-}
-
-function analysisFor(
-  L: Levers,
-  result: ReturnType<typeof projectScenario>
-): { headline: string; body: string } {
-  const regime = classifyRegime(L);
-  const dGdp = result.avgGDP - BASELINE.gdpGrowth;
-  const dGini = result.finalGini - BASELINE.gini;
-
-  if (regime.includes("SUPPLY-SIDE")) {
-    return {
-      headline: "Supply-side mix: faster nominal growth, widening disparity.",
-      body: `Cuts to top marginal (${L.topMarginal.toFixed(1)}%) and corporate (${L.corporateTax.toFixed(1)}%) lift average growth by ${dGdp.toFixed(2)} percentage points but shift the final-year Gini to ${result.finalGini.toFixed(3)} (Δ ${dGini >= 0 ? "+" : ""}${dGini.toFixed(3)}). Watch the deficit channel: lower revenue compounds at scale.`,
-    };
-  }
-  if (regime.includes("REDISTRIBUTIVE")) {
-    return {
-      headline: "Redistributive mix: tighter income spread, deficit pressure.",
-      body: `Higher top marginal (${L.topMarginal.toFixed(1)}%) and welfare expansion (${L.welfarePctGDP.toFixed(1)}% GDP) compress the final Gini to ${result.finalGini.toFixed(3)} (Δ ${dGini >= 0 ? "+" : ""}${dGini.toFixed(3)}). GDP growth averages ${result.avgGDP.toFixed(2)}%; the deficit-to-GDP path is the main vulnerability.`,
-    };
-  }
-  if (regime.includes("MONETARY HAWK")) {
-    return {
-      headline: "Hawkish stance: disinflation at the cost of near-term growth.",
-      body: `Federal funds at ${L.fedFunds.toFixed(2)}% drags average growth to ${result.avgGDP.toFixed(2)}%. Deficit interest costs rise; Gini drift is small (${result.finalGini.toFixed(3)}). Stress-test against an output-gap widening scenario.`,
-    };
-  }
-  return {
-    headline: "Centrist policy mix: near-potential growth, disparity stable.",
-    body: `Levers sit close to the calibrated U.S. neutral baseline. Projected average GDP growth of ${result.avgGDP.toFixed(2)}% and a final Gini of ${result.finalGini.toFixed(3)} indicate marginal deviation from current policy. Use this configuration as a control case before stress-testing more aggressive supply-side or redistributive scenarios.`,
-  };
-}
 
 export default function EconLever() {
-  const [L, setL] = useState<Levers>({ ...PRESETS[0].levers });
+  const [L, setL] = useState<PolicyLevers>({ ...ENGINE_PRESETS[0].levers });
   const [exporting, setExporting] = useState(false);
   const briefRef = useRef<HTMLDivElement>(null);
 
-  const result = useMemo(() => projectScenario(L), [L]);
-  const reset = () => setL({ ...PRESETS[0].levers });
-
-  const briefConfig: BriefRow[] = [
-    { label: "Top marginal income tax", setting: `${L.topMarginal.toFixed(1)}%`, baseline: `${BASELINE.topMarginal}%` },
-    { label: "Corporate income tax", setting: `${L.corporateTax.toFixed(1)}%`, baseline: `${BASELINE.corporateTax}%` },
-    { label: "Social welfare spending (% GDP)", setting: `${L.welfarePctGDP.toFixed(1)}%`, baseline: `${BASELINE.welfarePctGDP}%` },
-    { label: "Federal funds rate", setting: `${L.fedFunds.toFixed(2)}%`, baseline: `${BASELINE.fedFunds}%` },
-  ];
-
-  const briefKPIs: BriefKPI[] = [
-    {
-      label: "Avg. real GDP growth",
-      value: `${result.avgGDP.toFixed(2)}%`,
-      tone: result.avgGDP >= BASELINE.gdpGrowth - 0.05 ? "good" : "bad",
-      delta: `Δ ${(result.avgGDP - BASELINE.gdpGrowth).toFixed(2)}pp vs. baseline`,
-    },
-    {
-      label: "Final-year deficit",
-      value: `$${result.finalDeficit.toFixed(2)}T`,
-      tone: result.finalDeficit <= BASELINE.deficitTrillions + 0.05 ? "good" : "bad",
-      delta: `Δ ${(result.finalDeficit - BASELINE.deficitTrillions >= 0 ? "+" : "")}${(result.finalDeficit - BASELINE.deficitTrillions).toFixed(2)}T vs. baseline`,
-    },
-    {
-      label: "Final Gini coefficient",
-      value: result.finalGini.toFixed(3),
-      tone: result.finalGini <= BASELINE.gini + 0.001 ? "good" : "bad",
-      delta: `Δ ${(result.finalGini - BASELINE.gini >= 0 ? "+" : "")}${(result.finalGini - BASELINE.gini).toFixed(3)} vs. baseline`,
-    },
-  ];
-
-  const analysis = analysisFor(L, result);
-  const regime = classifyRegime(L);
+  const result = useMemo(() => simulate(L), [L]);
+  const reset = () => setL({ ...ENGINE_PRESETS[0].levers });
 
   const handleExport = async () => {
     if (!briefRef.current) return;
     setExporting(true);
     try {
       // Allow the off-screen brief to lay out before capture.
-      await new Promise((r) => setTimeout(r, 50));
-      await exportBriefFromElement(
-        briefRef.current,
-        "EconLever-Policy-Brief.pdf"
-      );
+      await new Promise((r) => setTimeout(r, 60));
+      await exportPolicyBriefAsPdf(briefRef.current, "EconLever-Policy-Brief.pdf");
     } finally {
       setExporting(false);
     }
   };
+
+  // Top-bar derived metrics
+  const finalYear = result.series[result.series.length - 1];
+  const avgGdp = result.avgGdpGrowth;
+  const finalDeficitPctGDP = finalYear.deficit;
 
   return (
     <PageShell>
@@ -250,26 +77,15 @@ export default function EconLever() {
       />
       <ToolPageHeader tool={COMP} />
 
-      {/* Off-screen printable brief */}
-      <HiddenBriefSlot>
-        <PolicyBrief
-          ref={briefRef}
-          toolName="EconLever"
-          regimeBadge={regime}
-          subtitle="10-Year Projection · 2026–2036"
-          configRows={briefConfig}
-          kpis={briefKPIs}
-          analysisHeadline={analysis.headline}
-          analysisBody={analysis.body}
-        />
-      </HiddenBriefSlot>
+      {/* Off-screen, byte-for-byte upstream Policy Brief */}
+      <PolicyBriefDocument ref={briefRef} levers={L} result={result} />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
         {/* Export bar */}
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card/50 px-5 py-4">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card/60 px-5 py-4">
           <div>
             <div className="font-mono text-[0.62rem] uppercase tracking-[0.22em] text-primary">
-              {regime}
+              Regime · {result.regime}
             </div>
             <div className="prose-serif mt-1 text-[0.92rem] text-foreground/80">
               Found a scenario worth defending? Export it as a one-page policy brief.
@@ -286,35 +102,35 @@ export default function EconLever() {
           </button>
         </div>
 
-        {/* TOP STAT BAR — current scenario */}
+        {/* TOP STAT BAR */}
         <div className="mb-10 grid gap-px overflow-hidden rounded-xl border border-border bg-border md:grid-cols-3">
           <ScenarioStat
             label="Avg real GDP growth, 10-yr"
-            value={`${result.avgGDP.toFixed(2)}%`}
-            sub={`vs baseline ${BASELINE.gdpGrowth}%`}
-            delta={result.avgGDP - BASELINE.gdpGrowth}
+            value={`${avgGdp.toFixed(2)}%`}
+            sub={`vs potential ${DISPLAY_BASELINE.gdpGrowth.toFixed(1)}%`}
+            delta={avgGdp - DISPLAY_BASELINE.gdpGrowth}
             unit="pp"
           />
           <ScenarioStat
             label="Final-year deficit"
-            value={`$${result.finalDeficit.toFixed(2)}T`}
-            sub={`vs baseline $${BASELINE.deficitTrillions}T`}
-            delta={result.finalDeficit - BASELINE.deficitTrillions}
-            unit="T"
+            value={`${finalDeficitPctGDP.toFixed(2)}% GDP`}
+            sub={`vs baseline ${DISPLAY_BASELINE.deficitPctGDP.toFixed(1)}%`}
+            delta={finalDeficitPctGDP - DISPLAY_BASELINE.deficitPctGDP}
+            unit="pp"
             invert
           />
           <ScenarioStat
             label="Final-year Gini"
             value={result.finalGini.toFixed(3)}
-            sub={`vs baseline ${BASELINE.gini}`}
-            delta={result.finalGini - BASELINE.gini}
+            sub={`vs baseline ${DISPLAY_BASELINE.gini}`}
+            delta={result.giniDelta}
             unit=""
             invert
           />
         </div>
 
         <div className="grid gap-8 lg:grid-cols-12">
-          {/* LEVERS COLUMN */}
+          {/* LEVERS */}
           <div className="lg:col-span-4">
             <div className="rounded-xl border border-border bg-card p-6">
               <div className="mb-5 flex items-center justify-between">
@@ -332,13 +148,13 @@ export default function EconLever() {
 
               <Lever
                 label="Top marginal income tax"
-                value={L.topMarginal}
+                value={L.topMarginalTax}
                 min={20}
                 max={70}
                 step={0.5}
                 unit="%"
-                baseline={BASELINE.topMarginal}
-                onChange={(v) => setL((s) => ({ ...s, topMarginal: v }))}
+                baseline={DISPLAY_BASELINE.topMarginal}
+                onChange={(v) => setL((s) => ({ ...s, topMarginalTax: v }))}
                 testid="lever-top"
               />
               <Lever
@@ -348,30 +164,30 @@ export default function EconLever() {
                 max={45}
                 step={0.5}
                 unit="%"
-                baseline={BASELINE.corporateTax}
+                baseline={DISPLAY_BASELINE.corporateTax}
                 onChange={(v) => setL((s) => ({ ...s, corporateTax: v }))}
                 testid="lever-corp"
               />
               <Lever
                 label="Social welfare spending"
-                value={L.welfarePctGDP}
-                min={6}
-                max={22}
-                step={0.1}
+                value={L.welfareSpending}
+                min={5}
+                max={30}
+                step={0.5}
                 unit="% GDP"
-                baseline={BASELINE.welfarePctGDP}
-                onChange={(v) => setL((s) => ({ ...s, welfarePctGDP: v }))}
+                baseline={DISPLAY_BASELINE.welfarePctGDP}
+                onChange={(v) => setL((s) => ({ ...s, welfareSpending: v }))}
                 testid="lever-welfare"
               />
               <Lever
                 label="Federal funds rate"
-                value={L.fedFunds}
+                value={L.fedFundsRate}
                 min={0}
                 max={10}
                 step={0.25}
                 unit="%"
-                baseline={BASELINE.fedFunds}
-                onChange={(v) => setL((s) => ({ ...s, fedFunds: v }))}
+                baseline={DISPLAY_BASELINE.fedFunds}
+                onChange={(v) => setL((s) => ({ ...s, fedFundsRate: v }))}
                 testid="lever-ff"
               />
             </div>
@@ -379,16 +195,17 @@ export default function EconLever() {
             <div className="mt-4 rounded-xl border border-border bg-card p-5">
               <div className="label-cap mb-3 text-[0.6rem]">Try a preset</div>
               <div className="grid grid-cols-2 gap-2">
-                {PRESETS.map((p) => (
+                {ENGINE_PRESETS.map((p) => (
                   <button
-                    key={p.name}
-                    data-testid={`preset-${p.name.toLowerCase().replace(/\s/g, "-")}`}
+                    key={p.id}
+                    data-testid={`preset-${p.id}`}
                     onClick={() => setL({ ...p.levers })}
+                    title={p.description}
                     className="group rounded-lg border border-border bg-background px-3 py-2.5 text-left transition-all hover:border-primary hover:bg-primary/5"
                   >
-                    <div className="font-display text-[0.95rem] font-medium leading-tight">{p.name}</div>
-                    <div className="mt-1 font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground group-hover:text-primary">
-                      {p.tag}
+                    <div className="font-display text-[0.95rem] font-medium leading-tight">{p.label}</div>
+                    <div className="mt-1 font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground group-hover:text-primary line-clamp-1">
+                      {p.description}
                     </div>
                   </button>
                 ))}
@@ -396,13 +213,13 @@ export default function EconLever() {
             </div>
           </div>
 
-          {/* CHARTS COLUMN */}
+          {/* CHARTS */}
           <div className="space-y-6 lg:col-span-8">
             <ChartFrame
               title="GDP growth vs. federal deficit, 2026–2036"
               source="CBO baseline · Romer-Romer multipliers"
             >
-              <ComposedChart data={result.years}>
+              <ComposedChart data={result.series}>
                 <defs>
                   <linearGradient id="deficitG" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="hsl(var(--chart-2))" stopOpacity={0.6} />
@@ -415,9 +232,9 @@ export default function EconLever() {
                 <YAxis yAxisId="R" orientation="right" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} stroke="hsl(var(--border))" label={{ value: "Deficit % GDP", angle: 90, position: "insideRight", style: { fontSize: 10, fill: "hsl(var(--muted-foreground))" } }} />
                 <RTooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", fontFamily: "var(--font-mono)", fontSize: 12 }} />
                 <Legend wrapperStyle={{ fontSize: 11, paddingTop: 8 }} />
-                <Bar yAxisId="R" dataKey="deficitPctGDP" name="Deficit (% GDP)" fill="url(#deficitG)" stroke="hsl(var(--chart-2))" />
-                <Line yAxisId="L" type="monotone" dataKey="gdp" name="Real GDP growth" stroke="hsl(var(--primary))" strokeWidth={2.5} strokeDasharray="6 3" dot={{ r: 3, fill: "hsl(var(--primary))" }} />
-                <ReferenceLine yAxisId="L" y={BASELINE.gdpGrowth} stroke="hsl(var(--muted-foreground))" strokeDasharray="2 4" label={{ value: "Baseline 2.10%", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+                <Bar yAxisId="R" dataKey="deficit" name="Deficit (% GDP)" fill="url(#deficitG)" stroke="hsl(var(--chart-2))" />
+                <Line yAxisId="L" type="monotone" dataKey="gdpGrowth" name="Real GDP growth" stroke="hsl(var(--primary))" strokeWidth={2.5} strokeDasharray="6 3" dot={{ r: 3, fill: "hsl(var(--primary))" }} />
+                <ReferenceLine yAxisId="L" y={DISPLAY_BASELINE.gdpGrowth} stroke="hsl(var(--muted-foreground))" strokeDasharray="2 4" label={{ value: `Potential ${DISPLAY_BASELINE.gdpGrowth.toFixed(1)}%`, fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
               </ComposedChart>
             </ChartFrame>
 
@@ -426,12 +243,12 @@ export default function EconLever() {
               source="Piketty-Saez-Zucman elasticities"
               hint="Higher = more income inequality"
             >
-              <LineChart data={result.years}>
+              <LineChart data={result.series}>
                 <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
                 <XAxis dataKey="year" tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} stroke="hsl(var(--border))" />
-                <YAxis domain={[0.36, 0.46]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} stroke="hsl(var(--border))" />
+                <YAxis domain={[0.34, 0.52]} tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} stroke="hsl(var(--border))" />
                 <RTooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", fontFamily: "var(--font-mono)", fontSize: 12 }} />
-                <ReferenceLine y={BASELINE.gini} stroke="hsl(var(--muted-foreground))" strokeDasharray="2 4" label={{ value: "Baseline 0.415", fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
+                <ReferenceLine y={DISPLAY_BASELINE.gini} stroke="hsl(var(--muted-foreground))" strokeDasharray="2 4" label={{ value: `Baseline ${DISPLAY_BASELINE.gini}`, fontSize: 10, fill: "hsl(var(--muted-foreground))" }} />
                 <Line type="monotone" dataKey="gini" stroke="hsl(var(--primary))" strokeWidth={2.5} dot={{ r: 3, fill: "hsl(var(--primary))" }} />
               </LineChart>
             </ChartFrame>
@@ -445,16 +262,16 @@ export default function EconLever() {
             >
               <div className="label-cap mb-2 text-primary">Scenario brief</div>
               <p className="prose-serif text-[0.97rem] text-foreground/85">
-                Top marginal of <strong>{L.topMarginal.toFixed(1)}%</strong>, corporate{" "}
+                Top marginal of <strong>{L.topMarginalTax.toFixed(1)}%</strong>, corporate{" "}
                 <strong>{L.corporateTax.toFixed(1)}%</strong>, welfare{" "}
-                <strong>{L.welfarePctGDP.toFixed(1)}% GDP</strong>, fed funds{" "}
-                <strong>{L.fedFunds.toFixed(2)}%</strong> implies an average real GDP growth path of{" "}
-                <strong className="text-primary">{result.avgGDP.toFixed(2)}%</strong> over 2026–2036, a final-year deficit of{" "}
-                <strong>${result.finalDeficit.toFixed(2)}T</strong>, and a final-year Gini of{" "}
+                <strong>{L.welfareSpending.toFixed(1)}% GDP</strong>, fed funds{" "}
+                <strong>{L.fedFundsRate.toFixed(2)}%</strong> implies an average real GDP growth path of{" "}
+                <strong className="text-primary">{avgGdp.toFixed(2)}%</strong> over 2026–2036, a final-year deficit of{" "}
+                <strong>{finalDeficitPctGDP.toFixed(2)}% GDP</strong>, and a final-year Gini of{" "}
                 <strong>{result.finalGini.toFixed(3)}</strong>.
-                {result.avgGDP > BASELINE.gdpGrowth + 0.15
+                {avgGdp > DISPLAY_BASELINE.gdpGrowth + 0.15
                   ? " Trajectory runs above potential — watch for inflationary overheating."
-                  : result.avgGDP < BASELINE.gdpGrowth - 0.15
+                  : avgGdp < DISPLAY_BASELINE.gdpGrowth - 0.15
                   ? " Trajectory runs below potential — output gap widens, unemployment likely rises."
                   : " Trajectory tracks the calibrated baseline within noise."}
               </p>
@@ -469,7 +286,7 @@ export default function EconLever() {
                 <div>
                   <div className="font-display text-[1rem] font-medium">Original site</div>
                   <p className="prose-serif mt-1 text-[0.9rem] text-muted-foreground">
-                    EconLever began as a standalone project at econlever.org. This page mirrors and extends the simulator with 2024–2026 data baselines.
+                    EconLever began as a standalone project at econlever.org. This page mirrors its engine, presets, and PDF brief 1:1.
                   </p>
                 </div>
                 <a
@@ -581,7 +398,6 @@ function Lever({
             borderRadius: 2,
           }}
         />
-        {/* baseline tick */}
         <div
           aria-hidden
           className="pointer-events-none absolute -top-1 h-3 w-px bg-foreground/40"

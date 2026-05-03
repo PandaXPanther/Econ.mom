@@ -45,19 +45,6 @@ export function SiteHeader() {
               </Link>
             );
           })}
-          <Link href="/econlever" data-testid="link-nav-econlever">
-            <a
-              className={`relative cursor-pointer text-[0.85rem] font-medium tracking-wide transition-colors hover:text-foreground ${
-                location.startsWith("/econlever") ? "text-foreground" : "text-muted-foreground"
-              }`}
-              title="EconLever — four-lever policy dashboard"
-            >
-              EconLever
-              {location.startsWith("/econlever") && (
-                <span className="absolute -bottom-1 left-0 right-0 h-px bg-primary" />
-              )}
-            </a>
-          </Link>
           <ThemeToggle />
         </nav>
 
@@ -84,14 +71,6 @@ export function SiteHeader() {
                 </a>
               </Link>
             ))}
-            <Link href="/econlever" data-testid="link-mobile-econlever">
-              <a
-                onClick={() => setOpen(false)}
-                className="cursor-pointer text-base font-medium text-foreground"
-              >
-                EconLever
-              </a>
-            </Link>
             <div className="pt-2">
               <ThemeToggle />
             </div>
