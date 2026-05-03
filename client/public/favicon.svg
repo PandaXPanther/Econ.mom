@@ -1,5 +1,41 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="8" fill="#3b1612"/>
-  <text x="32" y="46" font-family="Georgia, serif" font-size="40" font-weight="700" fill="#f5ecd7" text-anchor="middle" font-style="italic">M</text>
-  <circle cx="50" cy="18" r="3" fill="#e0a93a"/>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="econ.mom">
+  <defs>
+    <linearGradient id="seal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2A0E47"/>
+      <stop offset="55%" stop-color="#7A2EAF"/>
+      <stop offset="100%" stop-color="#E13DA8"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.3" cy="0.25" r="0.85">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Foil outer ring (slight offset for editorial feel) -->
+  <rect x="1.25" y="1.25" width="61.5" height="61.5" rx="14" fill="none" stroke="#E13DA8" stroke-width="0.9" opacity="0.55"/>
+
+  <!-- Main seal -->
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="url(#seal)"/>
+  <rect x="4" y="4" width="56" height="56" rx="12" fill="url(#glow)"/>
+
+  <!-- Inner foil hairline -->
+  <rect x="6.5" y="6.5" width="51" height="51" rx="9.5" fill="none" stroke="#FAF6FF" stroke-width="0.55" opacity="0.22"/>
+
+  <!-- Italic serif M monogram (Fraunces-style via system fallback) -->
+  <text x="32" y="46.5"
+        font-family="Fraunces, 'Playfair Display', Georgia, 'Times New Roman', serif"
+        font-size="44"
+        font-weight="700"
+        font-style="italic"
+        text-anchor="middle"
+        fill="#FAF6FF"
+        letter-spacing="-1.2">M</text>
+
+  <!-- Equilibrium dot: tiny pink mark at the M apex (econ-coded accent) -->
+  <circle cx="32" cy="22.5" r="2.4" fill="#FFC2E5"/>
+  <circle cx="32" cy="22.5" r="1.1" fill="#E13DA8"/>
+
+  <!-- The "." of econ.mom — bottom-right accent dot -->
+  <circle cx="50" cy="50" r="2.6" fill="#FFC2E5"/>
 </svg>

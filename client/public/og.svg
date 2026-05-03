@@ -1,44 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f6efe2"/>
-      <stop offset="100%" stop-color="#ecdfc4"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a0828"/>
+      <stop offset="55%" stop-color="#3D1660"/>
+      <stop offset="100%" stop-color="#5A1A85"/>
     </linearGradient>
-    <linearGradient id="ink" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#3b1612"/>
-      <stop offset="100%" stop-color="#5a2018"/>
+    <linearGradient id="seal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2A0E47"/>
+      <stop offset="55%" stop-color="#7A2EAF"/>
+      <stop offset="100%" stop-color="#E13DA8"/>
     </linearGradient>
+    <radialGradient id="glow" cx="0.3" cy="0.25" r="0.85">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="halo" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#E13DA8" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#E13DA8" stop-opacity="0"/>
+    </radialGradient>
     <filter id="noise">
       <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
-      <feColorMatrix values="0 0 0 0 0.13 0 0 0 0 0.09 0 0 0 0 0.06 0 0 0 0.5 0"/>
+      <feColorMatrix values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.04 0"/>
     </filter>
   </defs>
 
   <rect width="1200" height="630" fill="url(#bg)"/>
-  <rect width="1200" height="630" fill="black" opacity="0.04" filter="url(#noise)"/>
+  <rect width="1200" height="630" fill="white" opacity="0.5" filter="url(#noise)"/>
+
+  <!-- Halo behind seal -->
+  <circle cx="980" cy="315" r="280" fill="url(#halo)"/>
 
   <!-- Top rule + masthead -->
-  <line x1="80" y1="80" x2="1120" y2="80" stroke="#3b1612" stroke-width="2"/>
-  <line x1="80" y1="86" x2="1120" y2="86" stroke="#3b1612" stroke-width="0.8"/>
+  <line x1="80" y1="80" x2="1120" y2="80" stroke="#FAF6FF" stroke-width="2" opacity="0.55"/>
+  <line x1="80" y1="86" x2="1120" y2="86" stroke="#FAF6FF" stroke-width="0.8" opacity="0.4"/>
 
-  <text x="80" y="118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" letter-spacing="2.5" fill="#3b1612" opacity="0.7">ISSUE Nº 1 · VOL. I · ECON.MOM · MMXXVI</text>
+  <text x="80" y="118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" letter-spacing="2.5" fill="#F0DEFF" opacity="0.75">ISSUE Nº 1 · VOL. I · ECON.MOM · MMXXVI</text>
 
   <!-- Title -->
-  <text x="80" y="285" font-family="Georgia, 'Source Serif 4', serif" font-size="140" font-weight="300" fill="#1a1310" letter-spacing="-3">The <tspan font-weight="400" font-style="italic" fill="#3b1612">Mother</tspan></text>
-  <text x="80" y="425" font-family="Georgia, 'Source Serif 4', serif" font-size="140" font-weight="300" fill="#1a1310" letter-spacing="-3">of Econ.</text>
+  <text x="80" y="285" font-family="Fraunces, 'Playfair Display', Georgia, serif" font-size="140" font-weight="300" fill="#FAF6FF" letter-spacing="-3">The <tspan font-weight="500" font-style="italic" fill="#FFC2E5">Mother</tspan></text>
+  <text x="80" y="425" font-family="Fraunces, 'Playfair Display', Georgia, serif" font-size="140" font-weight="300" fill="#FAF6FF" letter-spacing="-3">of <tspan font-style="italic">Econ</tspan>.</text>
 
   <!-- Subtitle -->
-  <text x="80" y="500" font-family="Georgia, 'Source Serif 4', serif" font-size="28" font-style="italic" fill="#1a1310" opacity="0.85">Eight free, citation-rigorous tools for the students,</text>
-  <text x="80" y="538" font-family="Georgia, 'Source Serif 4', serif" font-size="28" font-style="italic" fill="#1a1310" opacity="0.85">debaters, and policy nerds the textbooks forgot.</text>
+  <text x="80" y="490" font-family="Georgia, serif" font-size="26" fill="#F0DEFF" opacity="0.85">Twelve free, rigorously sourced tools for AP and policy economics.</text>
 
-  <!-- Sigil — italic M + amber dot -->
-  <g transform="translate(960, 200)">
-    <circle cx="100" cy="100" r="105" fill="none" stroke="#3b1612" stroke-width="2.5"/>
-    <text x="100" y="148" text-anchor="middle" font-family="Georgia, serif" font-size="170" font-style="italic" font-weight="500" fill="#3b1612">M</text>
-    <circle cx="160" cy="48" r="10" fill="#cc8a23"/>
+  <!-- Byline -->
+  <text x="80" y="538" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" letter-spacing="2" fill="#FFC2E5" opacity="0.85">BY SARAS TOTEY · FAIRVIEW HIGH SCHOOL · BOULDER, CO</text>
+
+  <!-- Bottom rule -->
+  <line x1="80" y1="582" x2="1120" y2="582" stroke="#FAF6FF" stroke-width="0.8" opacity="0.4"/>
+  <text x="80" y="610" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" letter-spacing="2" fill="#FAF6FF" opacity="0.6">ECON.MOM</text>
+  <text x="1120" y="610" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12" letter-spacing="2" fill="#FAF6FF" opacity="0.6">A PASSION PROJECT</text>
+
+  <!-- Seal monogram on the right -->
+  <g transform="translate(820, 155)">
+    <rect x="-3" y="-3" width="326" height="326" rx="58" fill="none" stroke="#E13DA8" stroke-width="2.5" opacity="0.55"/>
+    <rect x="10" y="10" width="300" height="300" rx="50" fill="url(#seal)"/>
+    <rect x="10" y="10" width="300" height="300" rx="50" fill="url(#glow)"/>
+    <rect x="24" y="24" width="272" height="272" rx="40" fill="none" stroke="#FAF6FF" stroke-width="1.5" opacity="0.22"/>
+    <text x="160" y="232" font-family="Fraunces, 'Playfair Display', Georgia, serif" font-size="240" font-weight="700" font-style="italic" text-anchor="middle" fill="#FAF6FF" letter-spacing="-6">M</text>
+    <circle cx="160" cy="100" r="11" fill="#FFC2E5"/>
+    <circle cx="160" cy="100" r="5" fill="#E13DA8"/>
+    <circle cx="252" cy="252" r="13" fill="#FFC2E5"/>
   </g>
-
-  <!-- Bottom strip -->
-  <line x1="80" y1="565" x2="1120" y2="565" stroke="#3b1612" stroke-width="0.8"/>
-  <text x="80" y="595" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" letter-spacing="2.5" fill="#3b1612" opacity="0.7">FRQ GRADER · TARIFFLAB · SHADOW FED · TEXTBOOK ATLAS · SHOCK SIM · PAPER DECODER · EXTEMP · CO DASH</text>
 </svg>
