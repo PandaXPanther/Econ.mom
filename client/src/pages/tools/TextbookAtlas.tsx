@@ -977,7 +977,7 @@ export default function TextbookAtlas() {
   const [activeId, setActiveId] = useState(CONCEPTS[0].id);
 
   const filtered = useMemo(() => {
-    return CONCEPTS.filter((c) => {
+    const matched = CONCEPTS.filter((c) => {
       if (filterCourse !== "All" && c.course !== filterCourse) return false;
       if (!query) return true;
       const q = query.toLowerCase();
@@ -988,6 +988,18 @@ export default function TextbookAtlas() {
         c.unit.toLowerCase().includes(q) ||
         c.apCED.some((id) => id.toLowerCase().includes(q))
       );
+    });
+    // Sort: Macro before Micro, then by Unit number ascending, then by name.
+    return matched.sort((a, b) => {
+      if (a.course !== b.course) return a.course === "Macro" ? -1 : 1;
+      const unitNum = (s: string) => {
+        const m = s.match(/Unit\s+(\d+)/i);
+        return m ? parseInt(m[1], 10) : 99;
+      };
+      const ua = unitNum(a.unit);
+      const ub = unitNum(b.unit);
+      if (ua !== ub) return ua - ub;
+      return a.name.localeCompare(b.name);
     });
   }, [query, filterCourse]);
 
