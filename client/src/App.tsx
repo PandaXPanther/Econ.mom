@@ -18,9 +18,9 @@ import TextbookAtlas from "@/pages/tools/TextbookAtlas";
 import ShockSim from "@/pages/tools/ShockSim";
 import ShadowFed from "@/pages/tools/ShadowFed";
 import PaperDecoder from "@/pages/tools/PaperDecoder";
-import ExtempEngine from "@/pages/tools/ExtempEngine";
-import ColoradoEcon from "@/pages/tools/ColoradoEcon";
-import EconLeverRedirect from "@/pages/EconLeverRedirect";
+import NewsTranslator from "@/pages/tools/NewsTranslator";
+import USEcon from "@/pages/tools/USEcon";
+import EconLever from "@/pages/tools/EconLever";
 
 import { useLocation } from "wouter";
 
@@ -59,13 +59,15 @@ function AppRouter() {
         <Route path="/shock-sim" component={ShockSim} />
         <Route path="/shadow-fed" component={ShadowFed} />
         <Route path="/paper-decoder" component={PaperDecoder} />
-        <Route path="/extemp-engine" component={ExtempEngine} />
-        <Route path="/colorado-econ" component={ColoradoEcon} />
+        <Route path="/news-translator" component={NewsTranslator} />
+        <Route path="/us-econ" component={USEcon} />
+        <Route path="/econlever" component={EconLever} />
 
-        {/* EconLever redirects — multiple aliases bounce to econlever.org */}
-        <Route path="/econlever" component={EconLeverRedirect} />
-        <Route path="/lever" component={EconLeverRedirect} />
-        <Route path="/el" component={EconLeverRedirect} />
+        {/* Legacy redirects — old routes now point to their replacements */}
+        <Route path="/extemp-engine" component={NewsTranslator} />
+        <Route path="/colorado-econ" component={USEcon} />
+        <Route path="/lever" component={EconLever} />
+        <Route path="/el" component={EconLever} />
 
         <Route component={NotFound} />
       </Switch>

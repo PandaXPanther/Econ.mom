@@ -147,7 +147,7 @@ export default function Founder() {
             >
               EconLever
             </a>
-            : eight purpose-built tools for AP and policy economics, each
+            : nine purpose-built tools for AP and policy economics, each
             answering a question that, until now, had no public answer — or
             whose answer was paywalled, stale, or wrong.
           </p>
@@ -171,7 +171,7 @@ export default function Founder() {
               data-testid="link-see-tools"
               className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 font-medium text-background transition-transform hover:-translate-y-0.5"
             >
-              See the eight
+              See the nine
               <ArrowUpRight
                 size={16}
                 className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"

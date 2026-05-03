@@ -45,16 +45,19 @@ export function SiteHeader() {
               </Link>
             );
           })}
-          <a
-            href="https://econlever.org"
-            target="_blank"
-            rel="noreferrer"
-            data-testid="link-nav-econlever"
-            className="text-[0.85rem] font-medium tracking-wide text-muted-foreground transition-colors hover:text-foreground"
-            title="EconLever — sister site"
-          >
-            EconLever <span aria-hidden="true">↗</span>
-          </a>
+          <Link href="/econlever" data-testid="link-nav-econlever">
+            <a
+              className={`relative cursor-pointer text-[0.85rem] font-medium tracking-wide transition-colors hover:text-foreground ${
+                location.startsWith("/econlever") ? "text-foreground" : "text-muted-foreground"
+              }`}
+              title="EconLever — four-lever policy dashboard"
+            >
+              EconLever
+              {location.startsWith("/econlever") && (
+                <span className="absolute -bottom-1 left-0 right-0 h-px bg-primary" />
+              )}
+            </a>
+          </Link>
           <ThemeToggle />
         </nav>
 
@@ -81,16 +84,14 @@ export function SiteHeader() {
                 </a>
               </Link>
             ))}
-            <a
-              href="https://econlever.org"
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => setOpen(false)}
-              data-testid="link-mobile-econlever"
-              className="text-base font-medium text-foreground"
-            >
-              EconLever ↗
-            </a>
+            <Link href="/econlever" data-testid="link-mobile-econlever">
+              <a
+                onClick={() => setOpen(false)}
+                className="cursor-pointer text-base font-medium text-foreground"
+              >
+                EconLever
+              </a>
+            </Link>
             <div className="pt-2">
               <ThemeToggle />
             </div>

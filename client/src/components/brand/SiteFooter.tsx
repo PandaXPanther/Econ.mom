@@ -10,7 +10,7 @@ export function SiteFooter() {
           <div className="md:col-span-4">
             <Logo size={36} withWordmark />
             <p className="prose-serif mt-6 max-w-xs text-[0.95rem] text-muted-foreground">
-              Eight free, citation-rigorous economics tools for the students,
+              Nine free, citation-rigorous economics tools for the students,
               debaters, and policymakers the textbooks forgot.
             </p>
             <p className="mt-6 font-mono text-[0.7rem] text-muted-foreground">
@@ -19,7 +19,7 @@ export function SiteFooter() {
           </div>
 
           <div className="md:col-span-3">
-            <div className="label-cap mb-4">The Eight</div>
+            <div className="label-cap mb-4">The Nine</div>
             <ul className="space-y-2.5">
               {TOOLS.map((t) => (
                 <li key={t.slug}>
@@ -54,14 +54,11 @@ export function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <a
-                  href="https://econlever.org"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  EconLever ↗
-                </a>
+                <Link href="/econlever">
+                  <a className="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground">
+                    EconLever
+                  </a>
+                </Link>
               </li>
             </ul>
           </div>
