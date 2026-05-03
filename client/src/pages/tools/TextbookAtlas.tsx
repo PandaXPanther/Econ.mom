@@ -1,5 +1,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { BlockMath } from "react-katex";
+import "katex/dist/katex.min.css";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
@@ -113,9 +115,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "When labor markets tighten, firms must raise wages to attract workers, and they pass those costs into prices. The trade-off only holds in the short run: in the long run, workers update their inflation expectations, and the curve shifts vertically at the NAIRU. The 2022 supply shock visibly pushed inflation above the curve at any given unemployment rate.",
     equations: [
-      { tex: "π_t = π^e_t − β·(u_t − u*)  +  ε_t", caption: "Expectations-augmented Phillips curve. β > 0; u* is NAIRU." },
-      { tex: "π^e_t = π_{t−1}  (adaptive)   or   π^e_t = π*  (rational)", caption: "Two competing expectations rules drive 1970s vs. modern macro debate." },
-      { tex: "Long-run:  u_t = u*  ⇒  vertical Phillips curve at NAIRU", caption: "No permanent unemployment-inflation trade-off." },
+      { tex: "\\pi_t = \\pi^e_t - \\beta\\,(u_t - u^*) + \\varepsilon_t", caption: "Expectations-augmented Phillips curve. β > 0; u* is NAIRU." },
+      { tex: "\\pi^e_t = \\pi_{t-1} \\quad \\text{(adaptive)} \\qquad \\text{or} \\qquad \\pi^e_t = \\pi^* \\quad \\text{(rational)}", caption: "Two competing expectations rules drive 1970s vs. modern macro debate." },
+      { tex: "\\text{Long run: } u_t = u^* \\;\\Longrightarrow\\; \\text{vertical Phillips curve at NAIRU}", caption: "No permanent unemployment-inflation trade-off." },
     ],
     keyAssumptions: [
       "Sticky nominal wages or prices in the short run.",
@@ -152,9 +154,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "When the Fed wants to slow the economy, it raises the FFR target — borrowing costs ripple through Treasuries, mortgages, and corporate debt. Tightening cycles compress aggregate demand by raising the user cost of capital. The 2022–2024 cycle (0% → 5.33%) was the steepest since Volcker.",
     equations: [
-      { tex: "i = i* + (i_{IORB} − i_{ON-RRP})  ⇒  Fed steers EFFR via administered rates", caption: "Modern floor system: IORB sets the ceiling, ON-RRP sets the floor." },
-      { tex: "Taylor rule:  i_t = r* + π_t + 0.5·(π_t − π*) + 0.5·(y_t − y*)", caption: "Standard policy benchmark; coefficients can be re-estimated empirically." },
-      { tex: "Real rate:  r_t = i_t − π^e_t", caption: "What ultimately matters for investment decisions." },
+      { tex: "i_{\\text{ON-RRP}} \\;\\le\\; \\text{EFFR} \\;\\le\\; i_{\\text{IORB}}", caption: "Modern floor system: IORB caps the rate, ON-RRP supports the floor." },
+      { tex: "i_t = r^* + \\pi_t + 0.5\\,(\\pi_t - \\pi^*) + 0.5\\,(y_t - y^*)", caption: "Taylor rule — the standard policy benchmark." },
+      { tex: "r_t = i_t - \\pi^e_t", caption: "Real interest rate — what ultimately matters for investment decisions." },
     ],
     keyAssumptions: [
       "The Fed has credible inflation-targeting commitment (post-1994).",
@@ -190,9 +192,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "If a basket cost $100 in 1983 and costs $321.50 today, the price level has risen 221%. Annual inflation is the year-over-year percent change. Core CPI strips volatile food and energy to reveal the persistent trend the Fed cares about.",
     equations: [
-      { tex: "CPI_t = 100 · (Σ p_{i,t} · q_{i,0}) / (Σ p_{i,0} · q_{i,0})", caption: "Laspeyres formula: fixed base-period quantities q_{i,0}." },
-      { tex: "π_t = (CPI_t − CPI_{t−12}) / CPI_{t−12} · 100", caption: "Year-over-year inflation rate." },
-      { tex: "Real wage_t = Nominal wage_t / (CPI_t / 100)", caption: "Deflating nominal series — the most-used CPI application." },
+      { tex: "\\text{CPI}_t = 100 \\cdot \\frac{\\sum_i p_{i,t}\\,q_{i,0}}{\\sum_i p_{i,0}\\,q_{i,0}}", caption: "Laspeyres formula: fixed base-period quantities q_{i,0}." },
+      { tex: "\\pi_t = \\frac{\\text{CPI}_t - \\text{CPI}_{t-12}}{\\text{CPI}_{t-12}} \\times 100", caption: "Year-over-year inflation rate." },
+      { tex: "w^{\\text{real}}_t = \\frac{w^{\\text{nom}}_t}{\\text{CPI}_t / 100}", caption: "Deflating a nominal wage — the most-used CPI application." },
     ],
     keyAssumptions: [
       "Basket weights updated biennially (BLS now uses a chained methodology for C-CPI-U).",
@@ -228,9 +230,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "U-3 tells you who is actively seeking work and not finding it. It misses discouraged workers (U-4), marginally attached (U-5), and part-time-for-economic-reasons workers (U-6). The 2020 spike to 14.7% (April) was the highest since the BLS series began in 1948.",
     equations: [
-      { tex: "u = U / (E + U)  =  unemployed / labor force", caption: "Headline U-3 definition." },
-      { tex: "LFPR = (E + U) / population (16+)", caption: "Labor force participation — captures who is in the count at all." },
-      { tex: "Okun's law:  Δu ≈ −0.5 · (g_y − g_y*)", caption: "Each percentage point above potential GDP growth lowers u by ~0.5pp." },
+      { tex: "u = \\frac{U}{E + U} = \\frac{\\text{unemployed}}{\\text{labor force}}", caption: "Headline U-3 definition." },
+      { tex: "\\text{LFPR} = \\frac{E + U}{\\text{Population}_{16+}}", caption: "Labor force participation — captures who is in the count at all." },
+      { tex: "\\Delta u \\;\\approx\\; -0.5\\,(g_y - g_y^*)", caption: "Okun's law: each pp above potential GDP growth lowers u by ~0.5pp." },
     ],
     keyAssumptions: [
       "'Active search' is defined by BLS: must have searched in the past 4 weeks.",
@@ -266,9 +268,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "If you double the money stock and velocity doesn't change, nominal GDP must double — and if real output is fixed, all the change is in prices. The 2020–2022 episode was a stress test: M2 surged ~40%, velocity collapsed, then both partially reversed as inflation worked through.",
     equations: [
-      { tex: "M · V = P · Y", caption: "Fisher's equation of exchange — definitional." },
-      { tex: "Δlog M + Δlog V = Δlog P + Δlog Y", caption: "Take logs and differentiate: growth-rate form." },
-      { tex: "If ΔV ≈ 0 and ΔY ≈ ΔY*  ⇒  π ≈ ΔM − ΔY*", caption: "Friedman's monetarist conclusion." },
+      { tex: "M \\cdot V = P \\cdot Y", caption: "Fisher's equation of exchange — definitional." },
+      { tex: "\\Delta \\ln M + \\Delta \\ln V = \\Delta \\ln P + \\Delta \\ln Y", caption: "Take logs and differentiate: growth-rate form." },
+      { tex: "\\text{If } \\Delta V \\approx 0,\\ \\Delta Y \\approx \\Delta Y^* \\;\\Longrightarrow\\; \\pi \\approx \\Delta M - \\Delta Y^*", caption: "Friedman's monetarist conclusion." },
     ],
     keyAssumptions: [
       "Velocity V is stable, or at least predictable.",
@@ -304,9 +306,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Demand shocks (fiscal, monetary, confidence) move AD. Supply shocks (oil, pandemic, productivity) move SRAS. In the long run, the economy returns to Y* via wage and price adjustment — only the price level changes. The 2021–2022 inflation was a textbook case of AD shifting right faster than SRAS could accommodate.",
     equations: [
-      { tex: "AD:  Y = C(Y−T) + I(r) + G + NX(e)", caption: "Components of aggregate demand; r and e are policy-sensitive." },
-      { tex: "SRAS:  P = P^e · (Y/Y*)^α  ⇒  upward sloping when P > P^e", caption: "Lucas/Phelps imperfect-information form." },
-      { tex: "LRAS:  Y = Y*  (vertical)", caption: "Potential output is determined by capital, labor, and technology." },
+      { tex: "\\text{AD:}\\quad Y = C(Y - T) + I(r) + G + NX(e)", caption: "Components of aggregate demand; r and e are policy-sensitive." },
+      { tex: "\\text{SRAS:}\\quad P = P^e \\left(\\frac{Y}{Y^*}\\right)^{\\alpha}", caption: "Lucas/Phelps imperfect-information form — upward sloping when P > Pᵉ." },
+      { tex: "\\text{LRAS:}\\quad Y = Y^* \\quad (\\text{vertical})", caption: "Potential output is determined by capital, labor, and technology." },
     ],
     keyAssumptions: [
       "Price stickiness in the short run (menu costs, wage contracts).",
@@ -341,9 +343,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Fiscal expansion shifts IS right — output and interest rates rise. Monetary expansion shifts LM right — output rises and rates fall. The model explains why monetary policy is impotent in a liquidity trap (flat LM at the zero lower bound), motivating fiscal-policy advocacy.",
     equations: [
-      { tex: "IS:  Y = C(Y−T) + I(r) + G  ⇒  Y and r negatively related", caption: "Lower r raises I, raising equilibrium Y." },
-      { tex: "LM:  M/P = L(r, Y)  ⇒  Y and r positively related", caption: "Higher Y raises money demand; r must rise to clear money market." },
-      { tex: "Liquidity trap:  ∂L/∂r → ∞  ⇒  LM horizontal", caption: "Monetary expansion has no effect on r or Y at the ZLB." },
+      { tex: "\\text{IS:}\\quad Y = C(Y - T) + I(r) + G", caption: "Goods-market equilibrium — lower r raises I, raising equilibrium Y." },
+      { tex: "\\text{LM:}\\quad \\frac{M}{P} = L(r,\\,Y)", caption: "Money-market equilibrium — higher Y raises money demand, requiring higher r." },
+      { tex: "\\text{Liquidity trap:}\\quad \\frac{\\partial L}{\\partial r} \\to \\infty \\;\\Longrightarrow\\; \\text{LM horizontal}", caption: "Monetary expansion has no effect on r or Y at the zero lower bound." },
     ],
     keyAssumptions: [
       "Closed economy or fixed exchange rate (Mundell–Fleming extends to open economy).",
@@ -378,9 +380,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Imagine a market where savers lend and borrowers borrow. The 'price' is r. When the government runs a deficit, it competes for the same pool of funds — pushing r up and squeezing private investment. This is crowding out.",
     equations: [
-      { tex: "S_{private} + S_{public} = I  ⇒  (Y − T − C) + (T − G) = I", caption: "National saving identity in equilibrium." },
-      { tex: "S = S(r, Y),  ∂S/∂r > 0  (upward-sloping supply)", caption: "Higher r incentivizes saving." },
-      { tex: "I = I(r),  ∂I/∂r < 0  (downward-sloping demand)", caption: "Higher r raises the user cost of capital." },
+      { tex: "\\underbrace{(Y - T - C)}_{S_{\\text{private}}} + \\underbrace{(T - G)}_{S_{\\text{public}}} = I", caption: "National saving identity in equilibrium." },
+      { tex: "S = S(r,\\,Y),\\quad \\frac{\\partial S}{\\partial r} > 0", caption: "Upward-sloping supply: higher r incentivizes saving." },
+      { tex: "I = I(r),\\quad \\frac{\\partial I}{\\partial r} < 0", caption: "Downward-sloping demand: higher r raises the user cost of capital." },
     ],
     keyAssumptions: [
       "Closed economy (open economy adds international capital flows).",
@@ -415,9 +417,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Bank A lends out (1−rr) of a new deposit. The borrower spends it; the recipient deposits at Bank B, which keeps rr and lends out (1−rr) again. The geometric series sums to 1/rr. In practice, post-2008 abundant reserves break the textbook multiplier — banks aren't constrained by reserves.",
     equations: [
-      { tex: "Simple multiplier:  m = 1 / rr", caption: "Closed system, no currency leakage." },
-      { tex: "Full multiplier:  m = (1 + cr) / (rr + cr)", caption: "cr = currency/deposit ratio (cash leakage shrinks m)." },
-      { tex: "Money supply:  M = m · MB,  MB = monetary base", caption: "M expands proportionally to base × multiplier." },
+      { tex: "m = \\frac{1}{rr}", caption: "Simple multiplier: closed system, no currency leakage." },
+      { tex: "m = \\frac{1 + cr}{rr + cr}", caption: "Full multiplier with cr = currency/deposit ratio (cash leakage shrinks m)." },
+      { tex: "M = m \\cdot \\text{MB}", caption: "Money supply expands proportionally to monetary base × multiplier." },
     ],
     keyAssumptions: [
       "Banks lend out all excess reserves (broken in modern floor system).",
@@ -451,9 +453,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "A long yield is the expected average of future short rates plus a term premium. When markets expect aggressive future rate cuts (often because they see a recession), the long rate falls below the short rate. Estrella & Mishkin (1996) showed this is one of the most reliable recession indicators in macro.",
     equations: [
-      { tex: "y_{10y} = (1/40) · Σ E[r_{t+k}] + TP", caption: "Expectations hypothesis with term premium TP." },
-      { tex: "Spread = y_{10y} − y_{3m}", caption: "Most-cited inversion measure (NY Fed model)." },
-      { tex: "P(recession in 12m) = Φ(α + β · Spread)", caption: "Probit model from Estrella–Mishkin (1996)." },
+      { tex: "y_{10y} = \\frac{1}{40}\\sum_{k=0}^{39} \\mathbb{E}[r_{t+k}] + \\text{TP}", caption: "Expectations hypothesis with term premium TP." },
+      { tex: "\\text{Spread} = y_{10y} - y_{3m}", caption: "Most-cited inversion measure (NY Fed model)." },
+      { tex: "\\Pr(\\text{recession in 12m}) = \\Phi(\\alpha + \\beta \\cdot \\text{Spread})", caption: "Probit model from Estrella & Mishkin (1996)." },
     ],
     keyAssumptions: [
       "Treasuries are risk-free (so spread reflects expectations + term premium).",
@@ -489,9 +491,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Potential is what the economy could produce at full employment with stable inflation. Real output rarely sits exactly there — recessions push it down (negative gap), booms push it up. The 2020 gap fell to −3.8% in Q2; by 2022 it had swung positive as stimulus and reopening combined.",
     equations: [
-      { tex: "Gap_t = (Y_t − Y_t*) / Y_t* · 100", caption: "Standard CBO measure." },
-      { tex: "Okun's law:  Gap_t ≈ −2 · (u_t − u*)", caption: "Each pp above NAIRU = ~2pp negative output gap." },
-      { tex: "Y_t* = A_t · K_t^α · L_t^{1-α}", caption: "Production function decomposition: TFP, capital, labor." },
+      { tex: "\\text{Gap}_t = \\frac{Y_t - Y_t^*}{Y_t^*} \\times 100", caption: "Standard CBO measure." },
+      { tex: "\\text{Gap}_t \\approx -2\\,(u_t - u^*)", caption: "Okun's law: each pp above NAIRU ≈ 2pp negative output gap." },
+      { tex: "Y_t^* = A_t \\cdot K_t^{\\alpha} \\cdot L_t^{1-\\alpha}", caption: "Production-function decomposition: TFP, capital, labor." },
     ],
     keyAssumptions: [
       "Y* is unobserved; CBO and IMF estimates differ materially.",
@@ -527,9 +529,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "If prices and quantities both double, nominal GDP quadruples but real GDP only doubles. Real growth is what affects living standards. The deflator differs from CPI because it covers all goods produced (not just consumer basket) and uses current quantity weights.",
     equations: [
-      { tex: "Nominal GDP_t = Σ_i p_{i,t} · q_{i,t}", caption: "Current-dollar measure." },
-      { tex: "Real GDP_t = Σ_i p_{i,base} · q_{i,t}", caption: "Quantities at base-year prices." },
-      { tex: "Deflator_t = (Nominal_t / Real_t) · 100", caption: "Paasche-type implicit price index." },
+      { tex: "\\text{Nominal GDP}_t = \\sum_i p_{i,t}\\,q_{i,t}", caption: "Current-dollar measure." },
+      { tex: "\\text{Real GDP}_t = \\sum_i p_{i,\\text{base}}\\,q_{i,t}", caption: "Quantities valued at base-year prices." },
+      { tex: "\\text{Deflator}_t = \\frac{\\text{Nominal}_t}{\\text{Real}_t} \\times 100", caption: "Paasche-type implicit price index." },
     ],
     keyAssumptions: [
       "Base year choice matters less under chained methodology.",
@@ -565,9 +567,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "If MPC = 0.8 and the government spends $100, recipients spend $80, those recipients spend $64, and so on — totaling $500. The multiplier is amplified by the strength of the consumption response and dampened by taxes, imports, and crowding out.",
     equations: [
-      { tex: "MPC = ΔC / ΔY_d,   MPS = 1 − MPC", caption: "Income split between consumption and saving." },
-      { tex: "Simple multiplier:  k = 1 / (1 − MPC)", caption: "Closed economy, no taxes." },
-      { tex: "With taxes:  k = 1 / (1 − MPC·(1−t) + m)", caption: "t = marginal tax rate, m = marginal propensity to import." },
+      { tex: "\\text{MPC} = \\frac{\\Delta C}{\\Delta Y_d}, \\qquad \\text{MPS} = 1 - \\text{MPC}", caption: "Income split between consumption and saving." },
+      { tex: "k = \\frac{1}{1 - \\text{MPC}}", caption: "Simple multiplier: closed economy, no taxes." },
+      { tex: "k = \\frac{1}{1 - \\text{MPC}(1 - t) + m}", caption: "With taxes (t) and marginal propensity to import (m)." },
     ],
     keyAssumptions: [
       "MPC is stable over the relevant horizon.",
@@ -602,9 +604,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Sort everyone from poorest to richest. The Lorenz curve plots cumulative income share against cumulative population share. A 45° line means perfect equality. The further the curve sags below it, the greater the inequality. US Gini (~0.49) is among the highest in the OECD.",
     equations: [
-      { tex: "G = (Σ_i Σ_j |y_i − y_j|) / (2 · n^2 · ȳ)", caption: "Mean absolute difference form." },
-      { tex: "G = 1 − 2 · ∫_0^1 L(p) dp", caption: "Lorenz-curve integral form. L(p) is cumulative income share at population fraction p." },
-      { tex: "Atkinson:  A_ε = 1 − ((1/n) Σ (y_i/ȳ)^{1-ε})^{1/(1-ε)}", caption: "Inequality-aversion alternative; ε = 0 gives no aversion, ε → ∞ gives Rawlsian." },
+      { tex: "G = \\frac{\\sum_i \\sum_j |y_i - y_j|}{2\\,n^2\\,\\bar{y}}", caption: "Mean absolute difference form." },
+      { tex: "G = 1 - 2 \\int_0^1 L(p)\\,dp", caption: "Lorenz-curve integral form. L(p) is cumulative income share at population fraction p." },
+      { tex: "A_{\\varepsilon} = 1 - \\left( \\frac{1}{n} \\sum_i \\left(\\frac{y_i}{\\bar{y}}\\right)^{1-\\varepsilon} \\right)^{1/(1-\\varepsilon)}", caption: "Atkinson index: ε = 0 means no aversion, ε → ∞ is Rawlsian." },
     ],
     keyAssumptions: [
       "Pre-tax vs. post-tax-and-transfer Gini differ materially (US: 0.49 vs. ~0.39).",
@@ -640,9 +642,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "If you split GDP between workers and owners of capital, the workers' slice has been shrinking for two decades. Hypothesized causes: globalization, automation, market concentration, decline of unions, intangible-capital mismeasurement.",
     equations: [
-      { tex: "α_L = (W · L) / (P · Y)", caption: "Labor share = wage bill as share of nominal output." },
-      { tex: "Cobb–Douglas:  Y = A · K^α · L^{1-α}  ⇒  α_L = 1 − α", caption: "Under perfect competition, labor share equals output elasticity wrt labor." },
-      { tex: "Markup μ:  α_L^{observed} = α_L^{competitive} / μ", caption: "Rising markups mechanically reduce observed labor share." },
+      { tex: "\\alpha_L = \\frac{W \\cdot L}{P \\cdot Y}", caption: "Labor share = wage bill as share of nominal output." },
+      { tex: "Y = A\\,K^{\\alpha}\\,L^{1-\\alpha} \\;\\Longrightarrow\\; \\alpha_L = 1 - \\alpha", caption: "Cobb–Douglas: under perfect competition, labor share equals labor's output elasticity." },
+      { tex: "\\alpha_L^{\\text{obs}} = \\frac{\\alpha_L^{\\text{comp}}}{\\mu}", caption: "Rising markups μ mechanically reduce observed labor share." },
     ],
     keyAssumptions: [
       "Cobb–Douglas implies a constant labor share — empirically violated.",
@@ -678,9 +680,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "A country can outgrow its debt (g > r) or be crushed by it (r > g). The post-2020 jump to 134% reflected COVID emergency spending; the slow drift since reflects the hard arithmetic of the equation. If r rises above g for sustained periods, primary surpluses become necessary to stabilize.",
     equations: [
-      { tex: "d_t = d_{t−1} · (1+r)/(1+g) − pb_t", caption: "Debt-dynamics equation; pb = primary balance / GDP." },
-      { tex: "Stabilizing surplus:  pb* = (r − g) · d", caption: "Required primary surplus to hold d constant." },
-      { tex: "Snowball effect:  Δd ≈ (r − g) · d  when pb = 0", caption: "Debt grows or shrinks via the rate-vs-growth differential." },
+      { tex: "d_t = d_{t-1} \\cdot \\frac{1 + r}{1 + g} - pb_t", caption: "Debt-dynamics equation; pb = primary balance / GDP." },
+      { tex: "pb^* = (r - g) \\cdot d", caption: "Stabilizing primary surplus required to hold d constant." },
+      { tex: "\\Delta d \\;\\approx\\; (r - g)\\,d \\quad \\text{when } pb = 0", caption: "Snowball effect: debt grows or shrinks via the rate-vs-growth differential." },
     ],
     keyAssumptions: [
       "Debt is denominated in the country's own currency (US dollar privilege).",
@@ -718,9 +720,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Gasoline is famously inelastic in the short run (~0.3): if prices rise 10%, consumption falls only 3%. Restaurant meals are highly elastic — a 10% price hike sends diners elsewhere. Total revenue and elasticity move in opposite directions: cutting prices raises revenue when demand is elastic.",
     equations: [
-      { tex: "ε_d = (ΔQ/Q) / (ΔP/P)  =  (ΔQ/ΔP) · (P/Q)", caption: "Point elasticity." },
-      { tex: "ε_d^{midpoint} = ((Q₂−Q₁)/((Q₁+Q₂)/2)) / ((P₂−P₁)/((P₁+P₂)/2))", caption: "Midpoint formula avoids reference-point ambiguity." },
-      { tex: "TR = P · Q  ⇒  dTR/dP > 0 iff |ε_d| < 1", caption: "Inelastic ⇒ raise price to raise revenue." },
+      { tex: "\\varepsilon_d = \\frac{\\Delta Q / Q}{\\Delta P / P} = \\frac{\\Delta Q}{\\Delta P} \\cdot \\frac{P}{Q}", caption: "Point elasticity." },
+      { tex: "\\varepsilon_d^{\\text{mid}} = \\frac{(Q_2 - Q_1)/\\tfrac{Q_1 + Q_2}{2}}{(P_2 - P_1)/\\tfrac{P_1 + P_2}{2}}", caption: "Midpoint formula — avoids reference-point ambiguity." },
+      { tex: "\\text{TR} = P \\cdot Q \\;\\Longrightarrow\\; \\frac{d\\,\\text{TR}}{dP} > 0 \\iff |\\varepsilon_d| < 1", caption: "Inelastic demand: raise price to raise revenue." },
     ],
     keyAssumptions: [
       "Other determinants (income, prices of substitutes) held constant.",
@@ -755,9 +757,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "If you'd pay $50 for a concert ticket but it costs $30, your CS is $20 — the value beyond what you paid. Similarly, sellers receive PS = price minus marginal cost. A binding price ceiling reduces total surplus by creating a deadweight loss triangle.",
     equations: [
-      { tex: "CS = ∫_0^{Q*} (D(q) − P*) dq", caption: "Area below demand, above price." },
-      { tex: "PS = ∫_0^{Q*} (P* − S(q)) dq", caption: "Area above supply, below price." },
-      { tex: "DWL = ½ · |ΔQ| · |ΔP|  (linear approximation)", caption: "Triangular welfare loss from a wedge." },
+      { tex: "\\text{CS} = \\int_0^{Q^*} \\bigl(D(q) - P^*\\bigr)\\,dq", caption: "Consumer surplus: area below demand, above price." },
+      { tex: "\\text{PS} = \\int_0^{Q^*} \\bigl(P^* - S(q)\\bigr)\\,dq", caption: "Producer surplus: area above supply, below price." },
+      { tex: "\\text{DWL} = \\tfrac{1}{2} \\,|\\Delta Q|\\,|\\Delta P|", caption: "Triangular welfare loss from a market wedge (linear approximation)." },
     ],
     keyAssumptions: [
       "No externalities (otherwise market surplus ≠ social welfare).",
@@ -792,9 +794,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "A surgeon may type faster than her assistant — but her opportunity cost of typing (forgone surgery) is enormous, so she should still hire the assistant. Comparative (not absolute) advantage governs efficient specialization.",
     equations: [
-      { tex: "OC_A(X) = ΔY_A / ΔX_A", caption: "Country A's opportunity cost of one unit of X (in units of Y forgone)." },
-      { tex: "Country A has comparative advantage in X iff OC_A(X) < OC_B(X)", caption: "Specialization rule." },
-      { tex: "Mutually beneficial trade ratio:  OC_A(X) < P_X/P_Y < OC_B(X)", caption: "Terms of trade must lie between the two opportunity costs." },
+      { tex: "\\text{OC}_A(X) = \\frac{\\Delta Y_A}{\\Delta X_A}", caption: "Country A's opportunity cost of one unit of X (units of Y forgone)." },
+      { tex: "\\text{A has CA in } X \\iff \\text{OC}_A(X) < \\text{OC}_B(X)", caption: "Specialization rule." },
+      { tex: "\\text{OC}_A(X) \\;<\\; \\frac{P_X}{P_Y} \\;<\\; \\text{OC}_B(X)", caption: "Mutually beneficial terms of trade lie between the two opportunity costs." },
     ],
     keyAssumptions: [
       "Constant opportunity costs (linear PPF) for the simplest case.",
@@ -829,9 +831,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "A bowed-out PPF reflects increasing opportunity cost — resources aren't equally suited to both goods. A linear PPF reflects constant opportunity cost. Inside the PPF = inefficient (unemployment); on it = efficient; beyond = infeasible without growth or trade.",
     equations: [
-      { tex: "Slope of PPF at point Q:  −dY/dX = MRT_{X→Y}", caption: "Marginal rate of transformation = opportunity cost." },
-      { tex: "Linear PPF:  Y = a − b·X  ⇒  constant OC = b", caption: "Constant opportunity cost case." },
-      { tex: "Bowed PPF (Cobb–Douglas-like):  Y = (R − X^k)^{1/m}", caption: "Increasing opportunity cost — typical realistic case." },
+      { tex: "-\\frac{dY}{dX} = \\text{MRT}_{X \\to Y}", caption: "Slope of the PPF — marginal rate of transformation = opportunity cost." },
+      { tex: "Y = a - b\\,X \\quad \\Longrightarrow \\quad \\text{constant OC} = b", caption: "Linear PPF — constant opportunity cost." },
+      { tex: "Y = \\bigl(R - X^k\\bigr)^{1/m}", caption: "Bowed PPF — increasing opportunity cost (realistic case)." },
     ],
     keyAssumptions: [
       "Resources and technology are fixed.",
@@ -866,9 +868,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "A competitive market produces where P = MC — every unit whose value to consumers exceeds its cost gets made. A monopolist withholds these socially valuable units to sustain a higher price. The forgone trades are pure waste, not transfers.",
     equations: [
-      { tex: "MR = P · (1 + 1/ε_d)", caption: "Inverse-elasticity rule. MR < P when |ε_d| < ∞." },
-      { tex: "Optimum:  MR = MC  ⇒  P/MC = ε_d / (ε_d + 1)  =  Lerner markup", caption: "Optimal markup is inversely related to elasticity." },
-      { tex: "DWL = ½ · (Q_c − Q_m) · (P_m − MC)", caption: "Welfare-loss triangle (linear approximation)." },
+      { tex: "\\text{MR} = P \\left(1 + \\frac{1}{\\varepsilon_d}\\right)", caption: "Inverse-elasticity rule — MR < P whenever demand is finitely elastic." },
+      { tex: "\\text{MR} = \\text{MC} \\;\\Longrightarrow\\; \\frac{P - \\text{MC}}{P} = -\\frac{1}{\\varepsilon_d}", caption: "Lerner index — optimal markup is inversely related to elasticity." },
+      { tex: "\\text{DWL} = \\tfrac{1}{2}\\,(Q_c - Q_m)(P_m - \\text{MC})", caption: "Welfare-loss triangle (linear approximation)." },
     ],
     keyAssumptions: [
       "Single price (no perfect price discrimination — which would eliminate DWL but transfer all CS to firm).",
@@ -904,9 +906,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "A power plant that emits CO₂ doesn't pay for the climate damage — so it produces too much electricity. A tax equal to the marginal climate damage forces the plant to internalize the cost, cutting output to the socially optimal level. Coase (1960) showed bargaining can also work when property rights are well-defined.",
     equations: [
-      { tex: "Negative ext.:  MSC = MPC + MEC,  MEC > 0", caption: "Marginal external cost added to private cost." },
-      { tex: "Social optimum:  MSC = MSB  (vs. market: MPC = MPB)", caption: "Efficiency requires equating social — not private — margins." },
-      { tex: "Pigouvian tax:  τ* = MEC at Q*", caption: "Tax level that achieves the social optimum." },
+      { tex: "\\text{MSC} = \\text{MPC} + \\text{MEC}, \\quad \\text{MEC} > 0", caption: "Negative externality: marginal external cost added to private cost." },
+      { tex: "\\text{MSC} = \\text{MSB} \\quad \\text{(social optimum)}", caption: "Efficiency requires equating social — not private — margins." },
+      { tex: "\\tau^* = \\text{MEC} \\big|_{Q = Q^*}", caption: "Pigouvian tax level that achieves the social optimum." },
     ],
     keyAssumptions: [
       "Externality is measurable (rarely true precisely).",
@@ -941,9 +943,9 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Two suspects can each cooperate (stay silent) or defect (confess). Both defecting is the unique Nash equilibrium even though both cooperating yields higher joint payoff. The lesson: rational individual choice can be collectively self-destructive, motivating institutions and contracts.",
     equations: [
-      { tex: "Nash:  ∀i,  s_i* ∈ argmax_{s_i} u_i(s_i, s_{-i}*)", caption: "Mutual best-response definition." },
-      { tex: "Mixed strategy:  σ_i*  s.t.  u_i(s_i, σ_{-i}*) is constant over support", caption: "Indifference condition for mixed Nash." },
-      { tex: "Cournot duopoly:  q_i* = (a − c) / (3b)  per firm", caption: "Symmetric Nash output for two firms with linear demand P=a−bQ." },
+      { tex: "\\forall i:\\quad s_i^* \\in \\arg\\max_{s_i} u_i\\bigl(s_i,\\,s_{-i}^*\\bigr)", caption: "Nash equilibrium — mutual best response." },
+      { tex: "u_i(s_i,\\,\\sigma_{-i}^*) = \\text{const}\\quad \\forall\\,s_i \\in \\text{supp}(\\sigma_i^*)", caption: "Indifference condition for mixed-strategy Nash." },
+      { tex: "q_i^* = \\frac{a - c}{3b} \\quad \\text{(symmetric Cournot duopoly)}", caption: "Nash output per firm with linear demand P = a - bQ." },
     ],
     keyAssumptions: [
       "Players are rational (utility-maximizing).",
@@ -1100,12 +1102,12 @@ export default function TextbookAtlas() {
                 {active.equations.map((eq, i) => (
                   <div
                     key={i}
-                    className="rounded-md border border-border bg-card/60 p-4"
+                    className="rounded-md border border-border bg-card/60 p-5"
                   >
-                    <div className="font-mono text-[0.95rem] text-foreground overflow-x-auto whitespace-pre-wrap">
-                      {eq.tex}
+                    <div className="katex-block text-foreground overflow-x-auto">
+                      <BlockMath math={eq.tex} />
                     </div>
-                    <div className="mt-2 font-serif text-[0.85rem] italic text-muted-foreground">
+                    <div className="mt-3 font-serif text-[0.88rem] italic text-muted-foreground">
                       {eq.caption}
                     </div>
                   </div>
