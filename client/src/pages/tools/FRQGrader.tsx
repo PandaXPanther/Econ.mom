@@ -5,7 +5,8 @@ import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { FRQ_LIBRARY, gradeFRQ, GradeResult } from "@/lib/frq-rubrics";
 import { SEO } from "@/components/brand/SEO";
-import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy } from "lucide-react";
+import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle } from "lucide-react";
+import { apiRequest } from "@/lib/queryClient";
 
 export default function FRQGrader() {
   const tool = TOOL_BY_SLUG["frq-grader"];
@@ -14,16 +15,40 @@ export default function FRQGrader() {
   const [result, setResult] = useState<GradeResult | null>(null);
   const [grading, setGrading] = useState(false);
   const [showIdeal, setShowIdeal] = useState(false);
+  const [useAI, setUseAI] = useState(true);
+  const [aiNotice, setAiNotice] = useState<string | null>(null);
+  const [graderUsed, setGraderUsed] = useState<"ai" | "rubric" | null>(null);
 
   const frq = useMemo(() => FRQ_LIBRARY.find((f) => f.id === selectedFrqId)!, [selectedFrqId]);
 
   const onGrade = async () => {
     setGrading(true);
     setShowIdeal(false);
-    // Simulate grading — feels like real evaluation
-    await new Promise((r) => setTimeout(r, 1100));
+    setAiNotice(null);
+
+    if (useAI) {
+      try {
+        const resp = await apiRequest("POST", "/api/grade-frq", { frq, responses });
+        const data = await resp.json();
+        if (data && typeof data.totalEarned === "number" && Array.isArray(data.parts)) {
+          setResult(data as GradeResult);
+          setGraderUsed("ai");
+          setGrading(false);
+          return;
+        }
+        throw new Error("Malformed AI response");
+      } catch (e: any) {
+        setAiNotice(
+          "AI grader unavailable, using built-in rubric matcher instead. (Server may be missing GEMINI_API_KEY.)"
+        );
+      }
+    }
+
+    // Fallback / non-AI path
+    await new Promise((r) => setTimeout(r, 800));
     const r = gradeFRQ(responses, frq);
     setResult(r);
+    setGraderUsed("rubric");
     setGrading(false);
   };
 
@@ -31,6 +56,8 @@ export default function FRQGrader() {
     setResponses({});
     setResult(null);
     setShowIdeal(false);
+    setAiNotice(null);
+    setGraderUsed(null);
   };
 
   const onSelectFrq = (id: string) => {
@@ -151,7 +178,8 @@ export default function FRQGrader() {
               >
                 {grading ? (
                   <>
-                    <Sparkles size={16} className="animate-pulse" /> Grading…
+                    <Sparkles size={16} className="animate-pulse" />
+                    {useAI ? "Grading with Gemini…" : "Grading…"}
                   </>
                 ) : (
                   <>
@@ -159,6 +187,22 @@ export default function FRQGrader() {
                   </>
                 )}
               </button>
+
+              <label
+                className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium hover:border-primary"
+                data-testid="toggle-ai-grading"
+              >
+                <input
+                  type="checkbox"
+                  checked={useAI}
+                  onChange={(e) => setUseAI(e.target.checked)}
+                  className="accent-primary"
+                  aria-label="Use AI grading"
+                />
+                <Zap size={14} className="text-primary" />
+                AI grading (Gemini)
+              </label>
+
               {result && (
                 <button
                   onClick={onReset}
@@ -181,6 +225,17 @@ export default function FRQGrader() {
                   className="mt-12"
                   data-testid="grade-result"
                 >
+                  {aiNotice && (
+                    <div className="mb-6 flex items-start gap-3 rounded-md border border-amber-700/30 bg-amber-50 p-4 text-[0.9rem] text-amber-900 dark:border-amber-400/30 dark:bg-amber-900/10 dark:text-amber-200" data-testid="text-ai-notice">
+                      <AlertTriangle size={16} className="mt-0.5 shrink-0" />
+                      <span>{aiNotice}</span>
+                    </div>
+                  )}
+                  {graderUsed === "ai" && (
+                    <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-primary" data-testid="badge-ai-graded">
+                      <Zap size={12} /> Graded by Gemini
+                    </div>
+                  )}
                   <div className="rule-double" />
                   <div className="mt-10 rounded-xl border border-border bg-card p-8">
                     <div className="grid gap-8 md:grid-cols-12">

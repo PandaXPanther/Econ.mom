@@ -224,11 +224,14 @@ function HeroCathedral() {
             >
               <div className="relative rounded-xl border border-border bg-card/70 p-6 shadow-md backdrop-blur-sm">
                 <div className="absolute -top-3 left-6 bg-card px-2 font-mono text-[0.6rem] uppercase tracking-[0.2em] text-primary">
-                  Editor's Note
+                  Author's Note
                 </div>
                 <p className="prose-serif mt-2 text-[0.98rem] text-foreground/85">
                   Nine instruments. Built for the reader who refuses to memorize what they could simply <span className="italic">model</span>. Every formula shown, every source cited, every paywall absent.
                 </p>
+                <div className="mt-4 flex items-center justify-end font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground" data-testid="text-author-byline">
+                  <span className="mr-2 text-primary">/</span> Saras Totey, Founder
+                </div>
                 <div className="mt-6 grid grid-cols-3 gap-4 border-t border-border pt-4">
                   <CountStat to={9} label="Tools" />
                   <Stat n="∞" label="Free" />
@@ -317,16 +320,28 @@ const SOURCES = [
   "Source: Peterson Institute", "Source: CBO", "Source: U.S. Treasury",
 ];
 
-/* Live UTC clock — reinforces the ‘terminal’ feel without extra deps. */
+/* Live local clock — auto-detects user's timezone via Intl. */
 function LiveClock() {
   const [now, setNow] = useState<string>("");
   useEffect(() => {
+    const tzFormatter = new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+      timeZoneName: "short",
+    });
     const tick = () => {
       const d = new Date();
-      const hh = String(d.getUTCHours()).padStart(2, "0");
-      const mm = String(d.getUTCMinutes()).padStart(2, "0");
-      const ss = String(d.getUTCSeconds()).padStart(2, "0");
-      setNow(`${hh}:${mm}:${ss} UTC`);
+      // Build HH:MM:SS from local time so we keep the editorial fixed-width feel
+      const hh = String(d.getHours()).padStart(2, "0");
+      const mm = String(d.getMinutes()).padStart(2, "0");
+      const ss = String(d.getSeconds()).padStart(2, "0");
+      // Pull the short timezone name (e.g. MDT, EST, PST, BST) from Intl
+      const parts = tzFormatter.formatToParts(d);
+      const tzPart = parts.find((p) => p.type === "timeZoneName");
+      const tz = tzPart ? tzPart.value : Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setNow(`${hh}:${mm}:${ss} ${tz}`);
     };
     tick();
     const id = window.setInterval(tick, 1000);
