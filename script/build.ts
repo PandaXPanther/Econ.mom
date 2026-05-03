@@ -1,6 +1,7 @@
 import { build as esbuild } from "esbuild";
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "node:fs/promises";
+import { spawnSync } from "node:child_process";
 
 // server deps to bundle to reduce openat(2) syscalls
 // which helps cold start times
@@ -57,6 +58,10 @@ async function buildAll() {
     external: externals,
     logLevel: "info",
   });
+
+  console.log("prerendering SEO pages...");
+  const r = spawnSync("node", ["scripts/prerender-seo.mjs"], { stdio: "inherit" });
+  if (r.status !== 0) throw new Error("prerender-seo failed");
 }
 
 buildAll().catch((err) => {

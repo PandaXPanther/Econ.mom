@@ -1,4 +1,43 @@
 User-agent: *
 Allow: /
+Crawl-delay: 0
+
+# Major search and answer engines (explicit allow, in case anyone runs aggressive blockers later)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+# AI crawlers (allow them to discover and cite the tools)
+User-agent: GPTBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
 
 Sitemap: https://econ.mom/sitemap.xml
