@@ -263,51 +263,123 @@ function Stat({ label, value, sign, mono }: { label: string; value: string; sign
 }
 
 function SDDiagram({ type }: { type: ShockType }) {
-  const supplyShift = type.startsWith("supply") ? (type.endsWith("decrease") ? 38 : -38) : 0;
-  const demandShift = type.startsWith("demand") ? (type.endsWith("decrease") ? -38 : 38) : 0;
+  /*
+   * Sign convention (both axes use SVG coordinates where y increases downward):
+   *   supplyShift > 0  = supply curve shifts RIGHT  (supply increase: lower P, higher Q)
+   *   supplyShift < 0  = supply curve shifts LEFT   (supply decrease: higher P, lower Q)
+   *   demandShift > 0  = demand curve shifts RIGHT  (demand increase: higher P, higher Q)
+   *   demandShift < 0  = demand curve shifts LEFT   (demand decrease: lower P, lower Q)
+   *
+   * Original curves (SVG viewBox 320x220, axes at x=30/y=200):
+   *   D: (50,30) -> (290,190)   slope = +160/240  (downward in economics sense)
+   *   S: (50,190) -> (290,30)   slope = -160/240  (upward in economics sense)
+   *   Baseline equilibrium E1: algebraic intersection at cx=170, cy=110.
+   *
+   * After shifting S by sh and D by dh (both horizontal in SVG pixels), the new
+   * intersection is derived exactly by solving the two parametric equations:
+   *   E2.cx = 170 + (sh + dh) / 2
+   *   E2.cy = 110 + (sh - dh) / 3
+   *
+   * Verification:
+   *   supply_decrease (sh=-38, dh=0): cx=151 (Q down), cy=97 (P up)  [correct]
+   *   supply_increase (sh=+38, dh=0): cx=189 (Q up),  cy=123 (P down)[correct]
+   *   demand_increase (sh=0,  dh=+38): cx=189 (Q up), cy=97 (P up)   [correct]
+   *   demand_decrease (sh=0,  dh=-38): cx=151 (Q down),cy=123 (P down)[correct]
+   */
+  const supplyShift = type.startsWith("supply") ? (type.endsWith("increase") ? 38 : -38) : 0;
+  const demandShift = type.startsWith("demand") ? (type.endsWith("increase") ? 38 : -38) : 0;
+
+  const e2cx = 170 + (supplyShift + demandShift) / 2;
+  const e2cy = 110 + (supplyShift - demandShift) / 3;
+
+  // E2 label: position it so it never overlaps E1
+  const labelOffsetX = e2cx > 170 ? 6 : -16;
+  const labelOffsetY = e2cy < 110 ? -4 : 14;
 
   return (
     <svg viewBox="0 0 320 220" className="w-full h-auto">
+      {/* Axes */}
       <line x1={30} y1={10} x2={30} y2={200} stroke="hsl(var(--border))" />
       <line x1={30} y1={200} x2={310} y2={200} stroke="hsl(var(--border))" />
       <text x={20} y={14} fontSize={9} fill="hsl(var(--muted-foreground))" textAnchor="end" fontFamily="JetBrains Mono">P</text>
       <text x={310} y={214} fontSize={9} fill="hsl(var(--muted-foreground))" textAnchor="end" fontFamily="JetBrains Mono">Q</text>
 
-      <line x1={50} y1={30} x2={290} y2={190} stroke="hsl(var(--chart-1))" strokeWidth={2} opacity={demandShift !== 0 ? 0.35 : 1} />
+      {/* Demand curve */}
+      <line x1={50} y1={30} x2={290} y2={190} stroke="hsl(var(--chart-1))" strokeWidth={2} opacity={demandShift !== 0 ? 0.3 : 1} />
       <text x={285} y={200} fontSize={10} fill="hsl(var(--chart-1))" fontFamily="JetBrains Mono">D</text>
 
       {demandShift !== 0 && (
-        <motion.line
-          initial={{ x1: 50, y1: 30, x2: 290, y2: 190 }}
-          animate={{ x1: 50 + demandShift, y1: 30, x2: 290 + demandShift, y2: 190 }}
-          transition={{ duration: 0.7 }}
-          stroke="hsl(var(--chart-1))"
-          strokeWidth={2}
-        />
+        <>
+          <motion.line
+            initial={{ x1: 50, y1: 30, x2: 290, y2: 190 }}
+            animate={{ x1: 50 + demandShift, y1: 30, x2: 290 + demandShift, y2: 190 }}
+            transition={{ duration: 0.7 }}
+            stroke="hsl(var(--chart-1))"
+            strokeWidth={2}
+          />
+          <motion.text
+            initial={{ x: 285, y: 200 }}
+            animate={{ x: 285 + demandShift, y: 200 }}
+            transition={{ duration: 0.7 }}
+            fontSize={10} fill="hsl(var(--chart-1))" fontFamily="JetBrains Mono"
+          >D'</motion.text>
+        </>
       )}
 
-      <line x1={50} y1={190} x2={290} y2={30} stroke="hsl(var(--chart-3))" strokeWidth={2} opacity={supplyShift !== 0 ? 0.35 : 1} />
+      {/* Supply curve */}
+      <line x1={50} y1={190} x2={290} y2={30} stroke="hsl(var(--chart-3))" strokeWidth={2} opacity={supplyShift !== 0 ? 0.3 : 1} />
       <text x={285} y={28} fontSize={10} fill="hsl(var(--chart-3))" fontFamily="JetBrains Mono">S</text>
 
       {supplyShift !== 0 && (
-        <motion.line
-          initial={{ x1: 50, y1: 190, x2: 290, y2: 30 }}
-          animate={{ x1: 50 + supplyShift, y1: 190, x2: 290 + supplyShift, y2: 30 }}
-          transition={{ duration: 0.7 }}
-          stroke="hsl(var(--chart-3))"
-          strokeWidth={2}
-        />
+        <>
+          <motion.line
+            initial={{ x1: 50, y1: 190, x2: 290, y2: 30 }}
+            animate={{ x1: 50 + supplyShift, y1: 190, x2: 290 + supplyShift, y2: 30 }}
+            transition={{ duration: 0.7 }}
+            stroke="hsl(var(--chart-3))"
+            strokeWidth={2}
+          />
+          <motion.text
+            initial={{ x: 285, y: 28 }}
+            animate={{ x: 285 + supplyShift, y: 28 }}
+            transition={{ duration: 0.7 }}
+            fontSize={10} fill="hsl(var(--chart-3))" fontFamily="JetBrains Mono"
+          >S'</motion.text>
+        </>
       )}
 
+      {/* E1 — original equilibrium */}
       <circle cx={170} cy={110} r={3.5} fill="hsl(var(--foreground))" />
       <text x={176} y={106} fontSize={10} fontFamily="JetBrains Mono" fill="hsl(var(--foreground))">E₁</text>
 
+      {/* Dashed path from E1 to E2 */}
+      {(supplyShift !== 0 || demandShift !== 0) && (
+        <motion.line
+          initial={{ x1: 170, y1: 110, x2: 170, y2: 110 }}
+          animate={{ x1: 170, y1: 110, x2: e2cx, y2: e2cy }}
+          transition={{ duration: 0.5, delay: 0.5 }}
+          stroke="hsl(var(--primary))"
+          strokeWidth={1}
+          strokeDasharray="4 3"
+          opacity={0.5}
+        />
+      )}
+
+      {/* E2 — new equilibrium (algebraically correct position) */}
       <motion.circle
         initial={{ cx: 170, cy: 110, r: 0 }}
-        animate={{ cx: 170 + (supplyShift + demandShift) * 0.5, cy: 110 + (supplyShift > 0 || demandShift < 0 ? -22 : (supplyShift < 0 || demandShift > 0 ? 22 : 0)), r: 4 }}
-        transition={{ duration: 0.7, delay: 0.2 }}
+        animate={{ cx: e2cx, cy: e2cy, r: 4 }}
+        transition={{ duration: 0.6, delay: 0.3 }}
         fill="hsl(var(--primary))"
       />
+      {(supplyShift !== 0 || demandShift !== 0) && (
+        <motion.text
+          initial={{ x: 170, y: 110, opacity: 0 }}
+          animate={{ x: e2cx + labelOffsetX, y: e2cy + labelOffsetY, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.5 }}
+          fontSize={10} fontFamily="JetBrains Mono" fill="hsl(var(--primary))"
+        >E₂</motion.text>
+      )}
     </svg>
   );
 }
