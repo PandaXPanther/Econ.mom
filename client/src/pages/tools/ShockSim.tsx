@@ -4,7 +4,7 @@ import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
-import { Newspaper, Sparkles, AlertTriangle } from "lucide-react";
+import { Newspaper, Sparkles, AlertTriangle, ExternalLink } from "lucide-react";
 
 type ShockType = "demand_increase" | "demand_decrease" | "supply_increase" | "supply_decrease";
 
@@ -19,7 +19,14 @@ interface GeminiShockResp {
   shiftPct: number;
   reasoning: string;
   historicalAnalogs: { event: string; year: number; outcome: string }[];
-  watchVariables: string[];
+  watchVariables: WatchVariable[];
+}
+
+interface WatchVariable {
+  label: string;
+  fredSeries: string | null;
+  source: string;
+  sourceUrl: string;
 }
 
 const HEADLINES = [
@@ -160,10 +167,33 @@ export default function ShockSim() {
                       <div>
                         <div className="label-cap mb-1">Watch</div>
                         <div className="flex flex-wrap gap-1.5">
-                          {result.watchVariables.map((v, i) => (
-                            <span key={i} className="font-mono text-[0.7rem] uppercase tracking-wider rounded bg-muted px-2 py-0.5">{v}</span>
-                          ))}
+                          {result.watchVariables.map((v, i) => {
+                            const wv = normalizeWatch(v);
+                            const tagClass = "inline-flex items-center gap-1 font-mono text-[0.7rem] uppercase tracking-wider rounded bg-muted px-2 py-0.5";
+                            if (wv.sourceUrl) {
+                              return (
+                                <a
+                                  key={i}
+                                  href={wv.sourceUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  data-testid={`link-watch-${i}`}
+                                  className={`${tagClass} hover:bg-primary/10 hover:text-primary transition-colors`}
+                                  title={wv.fredSeries ? `FRED · ${wv.fredSeries}` : wv.source || "Official source"}
+                                >
+                                  <span>{wv.label}</span>
+                                  <ExternalLink size={9} className="opacity-50" />
+                                </a>
+                              );
+                            }
+                            return (
+                              <span key={i} className={tagClass}>{wv.label}</span>
+                            );
+                          })}
                         </div>
+                        <p className="mt-2 text-[0.7rem] text-muted-foreground/80">
+                          Each link opens the official series page (FRED, BLS, EIA, BEA, USDA, Census, or the Federal Reserve). Links are server-validated against an allowlist; non-matching URLs are stripped.
+                        </p>
                       </div>
                     )}
                   </div>
@@ -188,6 +218,17 @@ export default function ShockSim() {
       </section>
     </PageShell>
   );
+}
+
+// Tolerate both the new {label, sourceUrl, ...} shape and the legacy string form.
+function normalizeWatch(v: WatchVariable | string): WatchVariable {
+  if (typeof v === "string") return { label: v, fredSeries: null, source: "", sourceUrl: "" };
+  return {
+    label: v?.label || "",
+    fredSeries: v?.fredSeries ?? null,
+    source: v?.source || "",
+    sourceUrl: v?.sourceUrl || "",
+  };
 }
 
 function shockTitle(t: ShockType) {
