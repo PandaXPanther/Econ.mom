@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
@@ -6,9 +6,19 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { NATURAL_EXPERIMENTS, ID_METHOD_INFO, type IdMethod, type NaturalExperiment } from "@/lib/natexp/database";
-import { Download } from "lucide-react";
+import { Download, ExternalLink, Rss, Loader2 } from "lucide-react";
 import { BriefDocument } from "@/components/brief/BriefDocument";
 import { exportBriefAsPdf } from "@/lib/brief/exportBrief";
+import { apiRequest } from "@/lib/queryClient";
+
+interface NberItem {
+  title: string;
+  link: string;
+  description: string;
+  pubDate: string;
+  causalRelevance: number;
+  identificationMethods: string[];
+}
 
 const SLUG = "natural-experiments";
 const ALL_METHODS: IdMethod[] = ["DiD", "RDD", "IV", "RCT", "Synthetic", "EventStudy", "Bunching", "Shift-Share", "Lottery"];
@@ -21,6 +31,33 @@ export default function NaturalExperiments() {
   const [fields, setFields] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<NaturalExperiment | null>(NATURAL_EXPERIMENTS[0]);
   const briefRef = useRef<HTMLDivElement>(null);
+
+  // Live NBER working-paper feed
+  const [nber, setNber] = useState<NberItem[]>([]);
+  const [nberLoading, setNberLoading] = useState(false);
+  const [nberFetchedAt, setNberFetchedAt] = useState<string | null>(null);
+  const [nberOpen, setNberOpen] = useState(false);
+
+  async function loadNber() {
+    setNberLoading(true);
+    try {
+      const r = await apiRequest("GET", "/api/nber-feed");
+      const data = await r.json();
+      if (Array.isArray(data?.causal)) {
+        setNber(data.causal.slice(0, 20));
+        setNberFetchedAt(data.fetchedAt || null);
+      }
+    } catch {
+      // silent fail; offline catalog still works
+    } finally {
+      setNberLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (nberOpen && nber.length === 0 && !nberLoading) loadNber();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nberOpen]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -71,10 +108,56 @@ export default function NaturalExperiments() {
             <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-1">Library</div>
             <div className="text-base">{NATURAL_EXPERIMENTS.length} curated identification strategies · {filtered.length} match filters</div>
           </div>
-          <Button onClick={onExport} disabled={!selected} data-testid="button-export-brief">
-            <Download className="h-4 w-4 mr-2" /> Export Strategy Brief (PDF)
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={() => setNberOpen((v) => !v)} data-testid="button-toggle-nber">
+              <Rss className="h-4 w-4 mr-2" /> {nberOpen ? "Hide" : "Latest"} NBER causal papers
+            </Button>
+            <Button onClick={onExport} disabled={!selected} data-testid="button-export-brief">
+              <Download className="h-4 w-4 mr-2" /> Export Strategy Brief (PDF)
+            </Button>
+          </div>
         </div>
+
+        {nberOpen && (
+          <Card className="p-5 mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <div className="text-[10px] uppercase tracking-[0.18em] text-primary">Live · NBER Working Papers</div>
+                <div className="text-sm text-muted-foreground">
+                  Auto-filtered for causal-identification keywords. {nberFetchedAt && <>Fetched {new Date(nberFetchedAt).toLocaleString()}.</>}
+                </div>
+              </div>
+              <Button size="sm" variant="ghost" onClick={loadNber} disabled={nberLoading} data-testid="button-refresh-nber">
+                {nberLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Rss className="h-3 w-3" />}
+                <span className="ml-1.5 text-xs">Refresh</span>
+              </Button>
+            </div>
+            {nberLoading && nber.length === 0 && (
+              <div className="text-sm text-muted-foreground py-4">Pulling latest from NBER\u2026</div>
+            )}
+            {!nberLoading && nber.length === 0 && (
+              <div className="text-sm text-muted-foreground py-4">No causal papers found in latest feed. Try refresh, or check back later.</div>
+            )}
+            <ul className="divide-y divide-border">
+              {nber.map((p, i) => (
+                <li key={i} className="py-3">
+                  <a href={p.link} target="_blank" rel="noopener noreferrer" className="group flex items-start gap-3">
+                    <ExternalLink className="h-3.5 w-3.5 mt-1 text-muted-foreground group-hover:text-primary" />
+                    <div className="flex-1">
+                      <div className="font-medium group-hover:text-primary transition">{p.title}</div>
+                      {p.description && <div className="text-xs text-muted-foreground mt-1 line-clamp-2">{p.description}</div>}
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {p.identificationMethods.slice(0, 4).map((m) => (
+                          <span key={m} className="rounded-full bg-primary/10 text-primary text-[9px] uppercase tracking-wider px-2 py-0.5">{m}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </Card>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Left: filters + list */}

@@ -3,13 +3,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
-import { FRQ_LIBRARY, gradeFRQ, GradeResult } from "@/lib/frq-rubrics";
+import { FRQ_LIBRARY, gradeFRQ, GradeResult, type FRQ } from "@/lib/frq-rubrics";
 import { SEO } from "@/components/brand/SEO";
-import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle } from "lucide-react";
+import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle, Wand2, Loader2 } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function FRQGrader() {
   const tool = TOOL_BY_SLUG["frq-grader"];
+  const [generatedFrqs, setGeneratedFrqs] = useState<FRQ[]>([]);
+  const allFrqs = useMemo<FRQ[]>(() => [...generatedFrqs, ...FRQ_LIBRARY], [generatedFrqs]);
   const [selectedFrqId, setSelectedFrqId] = useState(FRQ_LIBRARY[0].id);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [result, setResult] = useState<GradeResult | null>(null);
@@ -19,14 +21,54 @@ export default function FRQGrader() {
   const [aiNotice, setAiNotice] = useState<string | null>(null);
   const [graderUsed, setGraderUsed] = useState<"ai" | "rubric" | null>(null);
 
-  const frq = useMemo(() => FRQ_LIBRARY.find((f) => f.id === selectedFrqId)!, [selectedFrqId]);
+  // FRQ generator state
+  const [genTopic, setGenTopic] = useState("");
+  const [genExam, setGenExam] = useState<"macro" | "micro">("macro");
+  const [genStyle, setGenStyle] = useState<"short" | "long">("short");
+  const [genDifficulty, setGenDifficulty] = useState<"easy" | "standard" | "hard">("standard");
+  const [generating, setGenerating] = useState(false);
+  const [genErr, setGenErr] = useState<string | null>(null);
+  const [showGenerator, setShowGenerator] = useState(false);
+
+  const frq = useMemo(() => allFrqs.find((f) => f.id === selectedFrqId)!, [allFrqs, selectedFrqId]);
+
+  async function onGenerate() {
+    if (!genTopic.trim()) {
+      setGenErr("Enter a topic first.");
+      return;
+    }
+    setGenerating(true);
+    setGenErr(null);
+    try {
+      const resp = await apiRequest("POST", "/api/generate-frq", {
+        topic: genTopic.trim(),
+        exam: genExam,
+        style: genStyle,
+        difficulty: genDifficulty,
+      });
+      const data = await resp.json();
+      if (data?.error) throw new Error(data.error);
+      // The generated FRQ uses keywords (no checkType) so force AI grading.
+      const newFrq: FRQ = data as FRQ;
+      setGeneratedFrqs((prev) => [newFrq, ...prev]);
+      setSelectedFrqId(newFrq.id);
+      setResponses({});
+      setResult(null);
+      setUseAI(true);
+    } catch (e: any) {
+      setGenErr(e?.message || "Generation failed");
+    } finally {
+      setGenerating(false);
+    }
+  }
 
   const onGrade = async () => {
     setGrading(true);
     setShowIdeal(false);
     setAiNotice(null);
 
-    if (useAI) {
+    const isGenerated = (frq as any).generated === true;
+    if (useAI || isGenerated) {
       try {
         const resp = await apiRequest("POST", "/api/grade-frq", { frq, responses });
         const data = await resp.json();
@@ -38,13 +80,20 @@ export default function FRQGrader() {
         }
         throw new Error("Malformed AI response");
       } catch (e: any) {
+        if (isGenerated) {
+          setAiNotice(
+            "AI grader unavailable for this generated FRQ. Set GEMINI_API_KEY in Netlify to enable scoring."
+          );
+          setGrading(false);
+          return;
+        }
         setAiNotice(
           "AI grader unavailable, using built-in rubric matcher instead. (Server may be missing GEMINI_API_KEY.)"
         );
       }
     }
 
-    // Fallback / non-AI path
+    // Fallback / non-AI path (only for built-in FRQs with checkType rubrics)
     await new Promise((r) => setTimeout(r, 800));
     const r = gradeFRQ(responses, frq);
     setResult(r);
@@ -86,30 +135,99 @@ export default function FRQGrader() {
           {/* FRQ selector + meta */}
           <aside className="lg:col-span-4">
             <div className="sticky top-24">
+              {/* FRQ Generator (Gemini) */}
+              <div className="mb-6 rounded-lg border border-primary/30 bg-primary/5 p-4">
+                <button
+                  onClick={() => setShowGenerator((v) => !v)}
+                  className="flex w-full items-center justify-between text-left"
+                  data-testid="button-toggle-generator"
+                >
+                  <span className="label-cap flex items-center gap-2 text-primary">
+                    <Wand2 size={12} /> Generate a custom FRQ
+                  </span>
+                  <span className="text-[10px] text-muted-foreground">{showGenerator ? "hide" : "open"}</span>
+                </button>
+                {showGenerator && (
+                  <div className="mt-4 space-y-3">
+                    <input
+                      type="text"
+                      value={genTopic}
+                      onChange={(e) => setGenTopic(e.target.value)}
+                      placeholder="e.g. monetary policy and exchange rates"
+                      className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                      data-testid="input-frq-topic"
+                    />
+                    <div className="grid grid-cols-3 gap-2">
+                      <select value={genExam} onChange={(e) => setGenExam(e.target.value as any)}
+                        className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                        data-testid="select-frq-exam">
+                        <option value="macro">Macro</option>
+                        <option value="micro">Micro</option>
+                      </select>
+                      <select value={genStyle} onChange={(e) => setGenStyle(e.target.value as any)}
+                        className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                        data-testid="select-frq-style">
+                        <option value="short">Short</option>
+                        <option value="long">Long</option>
+                      </select>
+                      <select value={genDifficulty} onChange={(e) => setGenDifficulty(e.target.value as any)}
+                        className="rounded-md border border-border bg-background px-2 py-1.5 text-xs"
+                        data-testid="select-frq-difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="standard">Standard</option>
+                        <option value="hard">Hard</option>
+                      </select>
+                    </div>
+                    <button
+                      onClick={onGenerate}
+                      disabled={generating || !genTopic.trim()}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
+                      data-testid="button-generate-frq"
+                    >
+                      {generating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                      {generating ? "Writing FRQ\u2026" : "Generate FRQ"}
+                    </button>
+                    {genErr && <div className="text-[10px] text-destructive">{genErr}</div>}
+                    <div className="text-[10px] text-muted-foreground">
+                      Powered by Gemini. Generated FRQs are AI-graded against an AI-written rubric, so they cannot fall back to the offline matcher.
+                    </div>
+                  </div>
+                )}
+              </div>
               <div className="label-cap mb-4">Select an FRQ</div>
               <div className="space-y-3">
-                {FRQ_LIBRARY.map((f) => (
-                  <button
-                    key={f.id}
-                    onClick={() => onSelectFrq(f.id)}
-                    data-testid={`button-select-frq-${f.id}`}
-                    className={`w-full rounded-lg border p-4 text-left transition-all ${
-                      selectedFrqId === f.id
-                        ? "border-primary bg-primary/5"
-                        : "border-border bg-card hover:border-foreground/30"
-                    }`}
-                  >
-                    <div className="font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground">
-                      {f.exam.toUpperCase()} · {f.year}
-                    </div>
-                    <div className="mt-2 font-display text-[1.05rem] font-medium">
-                      {f.title}
-                    </div>
-                    <div className="prose-serif mt-1 text-[0.85rem] text-muted-foreground">
-                      {f.topic}
-                    </div>
-                  </button>
-                ))}
+                {allFrqs.map((f) => {
+                  const isGen = (f as any).generated === true;
+                  return (
+                    <button
+                      key={f.id}
+                      onClick={() => onSelectFrq(f.id)}
+                      data-testid={`button-select-frq-${f.id}`}
+                      className={`w-full rounded-lg border p-4 text-left transition-all ${
+                        selectedFrqId === f.id
+                          ? "border-primary bg-primary/5"
+                          : "border-border bg-card hover:border-foreground/30"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground">
+                          {f.exam.toUpperCase()} · {f.year}
+                        </span>
+                        {isGen && (
+                          <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-medium uppercase tracking-widest text-primary">
+                            <Wand2 size={9} /> Generated
+                          </span>
+                        )}
+                      </div>
+                      <div className="mt-2 font-display text-[1.05rem] font-medium">
+                        {f.title}
+                      </div>
+                      <div className="prose-serif mt-1 text-[0.85rem] text-muted-foreground">
+                        {(f as any).topic || (f.topics && (f.topics as string[]).join(" \u00b7 ")) || "Custom FRQ"}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
 
               <div className="rule mt-8" />

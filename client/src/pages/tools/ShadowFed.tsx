@@ -4,7 +4,8 @@ import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from "recharts";
 import { SEO } from "@/components/brand/SEO";
-import { Landmark, Target } from "lucide-react";
+import { Landmark, Target, RefreshCw, Loader2 } from "lucide-react";
+import { fredLatest } from "@/lib/fred";
 
 // Shadow Fed historical + live track record.
 // Each row: a specific Monday, the shadow recommendation, and — if the FOMC met — what they did.
@@ -59,6 +60,24 @@ export default function ShadowFed() {
   const [inflation, setInflation] = useState(2.6);
   const [unemployment, setUnemployment] = useState(4.1);
   const [variant, setVariant] = useState<"classic" | "inertial" | "balanced">("classic");
+  const [liveAsOf, setLiveAsOf] = useState<string | null>(null);
+  const [liveLoading, setLiveLoading] = useState(false);
+
+  async function loadLive() {
+    setLiveLoading(true);
+    try {
+      const [cpi, unr] = await Promise.all([
+        fredLatest("CPIAUCSL", "pc1"),
+        fredLatest("UNRATE"),
+      ]);
+      let asOf = "";
+      if (cpi) { setInflation(Number(cpi.value.toFixed(1))); asOf = cpi.date; }
+      if (unr) { setUnemployment(Number(unr.value.toFixed(1))); if (unr.date > asOf) asOf = unr.date; }
+      if (asOf) setLiveAsOf(asOf);
+    } finally {
+      setLiveLoading(false);
+    }
+  }
   const [targetInflation] = useState(2.0);
   const [nairu] = useState(4.0);
   const [neutral] = useState(0.5);
@@ -143,6 +162,15 @@ export default function ShadowFed() {
 
           <aside className="lg:col-span-4">
             <div className="sticky top-24 rounded-xl border border-border bg-card p-6">
+              <button
+                onClick={loadLive}
+                disabled={liveLoading}
+                className="mb-5 inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition disabled:opacity-60"
+                data-testid="button-shadowfed-live"
+              >
+                {liveLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+                {liveLoading ? "Loading FRED\u2026" : liveAsOf ? `Live data · ${liveAsOf}` : "Pull live FRED data"}
+              </button>
               <div className="label-cap mb-4">Rule variant</div>
               <div className="grid grid-cols-3 gap-1">
                 {(["classic", "inertial", "balanced"] as const).map((v) => (

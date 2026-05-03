@@ -5,9 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { decomposeInflation, DECOMPOSE_PRESETS, type DecomposeInput } from "@/lib/inflation/decompose";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, ReferenceLine } from "recharts";
-import { Download } from "lucide-react";
+import { Download, RefreshCw, Loader2 } from "lucide-react";
 import { BriefDocument } from "@/components/brief/BriefDocument";
 import { exportBriefAsPdf } from "@/lib/brief/exportBrief";
+import { fetchInflationSnapshot } from "@/lib/fred";
 
 const SLUG = "inflation-decomposer";
 
@@ -40,7 +41,33 @@ function NumInput({
 export default function InflationDecomposer() {
   const tool = TOOL_BY_SLUG[SLUG];
   const [input, setInput] = useState<DecomposeInput>(DECOMPOSE_PRESETS[0].input);
+  const [liveAsOf, setLiveAsOf] = useState<string | null>(null);
+  const [loadingLive, setLoadingLive] = useState(false);
+  const [liveErr, setLiveErr] = useState<string | null>(null);
   const briefRef = useRef<HTMLDivElement>(null);
+
+  async function loadLive() {
+    setLoadingLive(true);
+    setLiveErr(null);
+    try {
+      const snap = await fetchInflationSnapshot();
+      setInput((p) => ({
+        headlineCpi: snap.headlineCpi ?? p.headlineCpi,
+        energyYoY: snap.energyYoY ?? p.energyYoY,
+        foodYoY: snap.foodYoY ?? p.foodYoY,
+        vacancyToUnemployment: snap.vacancyToUnemployment ?? p.vacancyToUnemployment,
+        breakeven5y: snap.breakeven5y ?? p.breakeven5y,
+        surveyExpect5y: p.surveyExpect5y, // not on FRED
+        fedFundsRate: snap.fedFundsRate ?? p.fedFundsRate,
+        outputGap: snap.outputGap ?? p.outputGap,
+      }));
+      setLiveAsOf(snap.asOf);
+    } catch (e: any) {
+      setLiveErr(e?.message || "FRED unavailable");
+    } finally {
+      setLoadingLive(false);
+    }
+  }
 
   const result = useMemo(() => decomposeInflation(input), [input]);
   const chartData = result.components.map((c) => ({ name: c.label, value: c.value, color: c.color }));
@@ -78,12 +105,32 @@ export default function InflationDecomposer() {
           </Button>
         </div>
 
-        {/* Presets */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        {/* Presets + Live FRED */}
+        <div className="flex flex-wrap items-center gap-2 mb-6">
+          <button
+            onClick={loadLive}
+            disabled={loadingLive}
+            className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary hover:bg-primary/20 transition disabled:opacity-60"
+            data-testid="button-load-live"
+          >
+            {loadingLive ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+            {loadingLive ? "Loading FRED\u2026" : "Pull live FRED data"}
+          </button>
+          {liveAsOf && (
+            <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
+              Live as of {liveAsOf}
+            </span>
+          )}
+          {liveErr && (
+            <span className="text-[10px] uppercase tracking-[0.18em] text-destructive">
+              {liveErr}
+            </span>
+          )}
+          <span className="mx-1 h-4 w-px bg-border" />
           {DECOMPOSE_PRESETS.map((p) => (
             <button
               key={p.name}
-              onClick={() => setInput(p.input)}
+              onClick={() => { setInput(p.input); setLiveAsOf(null); }}
               className="rounded-full border border-border px-3 py-1.5 text-xs hover:border-primary hover:text-primary transition"
               data-testid={`preset-${p.name.replace(/\s+/g, "-").toLowerCase()}`}
             >

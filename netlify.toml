@@ -16,6 +16,27 @@
   status = 200
   force  = true
 
+# FRED proxy (hides FRED_API_KEY).
+[[redirects]]
+  from = "/api/fred"
+  to   = "/.netlify/functions/fred"
+  status = 200
+  force  = true
+
+# Gemini FRQ generator.
+[[redirects]]
+  from = "/api/generate-frq"
+  to   = "/.netlify/functions/generate-frq"
+  status = 200
+  force  = true
+
+# NBER working-paper feed for Natural Experiments tool.
+[[redirects]]
+  from = "/api/nber-feed"
+  to   = "/.netlify/functions/nber-feed"
+  status = 200
+  force  = true
+
 # SPA fallback for hash-routed React app.
 [[redirects]]
   from = "/*"
