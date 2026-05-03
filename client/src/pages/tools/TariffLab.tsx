@@ -3,17 +3,83 @@ import { motion } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
-import { SECTORS, SECTOR_BY_ID, computeTariffImpact, TariffResult } from "@/lib/tariff-sectors";
+import { SECTORS, computeTariffImpact, Sector, TariffResult } from "@/lib/tariff-sectors";
 import { SEO } from "@/components/brand/SEO";
-import { TrendingDown, TrendingUp, Banknote, Users, AlertTriangle } from "lucide-react";
+import { TrendingDown, TrendingUp, Banknote, Users, AlertTriangle, Sparkles, Loader2 } from "lucide-react";
+
+interface LiveSector extends Sector {
+  sources?: string[];
+  priceSeries?: { month: string; index: number }[];
+  tariffHistory?: string;
+  retaliationRisk?: string;
+  generated?: boolean;
+  fetchedAt?: string;
+}
 
 export default function TariffLab() {
   const tool = TOOL_BY_SLUG["tarifflab"];
+  const [customSectors, setCustomSectors] = useState<LiveSector[]>([]);
   const [sectorId, setSectorId] = useState(SECTORS[0].id);
   const [tariff, setTariff] = useState(25);
-  const sector = SECTOR_BY_ID[sectorId];
+  const [sectorQuery, setSectorQuery] = useState("");
+  const [fetchState, setFetchState] = useState<"idle" | "loading" | "error">("idle");
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  const allSectors = useMemo(() => [...SECTORS, ...customSectors], [customSectors]);
+  const sectorMap = useMemo(
+    () => Object.fromEntries(allSectors.map((s) => [s.id, s])),
+    [allSectors],
+  );
+  const sector = sectorMap[sectorId] || SECTORS[0];
+  const liveSector = sector as LiveSector;
 
   const result = useMemo(() => computeTariffImpact(sector, tariff), [sector, tariff]);
+
+  async function handleFetchLiveSector() {
+    const q = sectorQuery.trim();
+    if (!q) return;
+    setFetchState("loading");
+    setFetchError(null);
+    try {
+      const r = await fetch("/api/tariff-sector-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sector: q }),
+      });
+      const data = await r.json();
+      if (!r.ok) {
+        throw new Error(data.error || `HTTP ${r.status}`);
+      }
+      const newSector: LiveSector = {
+        id: data.id,
+        label: data.label,
+        hsPrefix: data.hsPrefix,
+        importDemandElasticity: data.importDemandElasticity,
+        exportSupplyElasticity: data.exportSupplyElasticity,
+        laborIntensity: data.laborIntensity,
+        baselineImports: data.baselineImports,
+        baselineDomesticOutput: data.baselineDomesticOutput,
+        baselineWorldPrice: 100,
+        description: data.description,
+        sources: data.sources,
+        priceSeries: data.priceSeries,
+        tariffHistory: data.tariffHistory,
+        retaliationRisk: data.retaliationRisk,
+        generated: true,
+        fetchedAt: data.fetchedAt,
+      };
+      setCustomSectors((prev) => {
+        const without = prev.filter((s) => s.id !== newSector.id);
+        return [...without, newSector];
+      });
+      setSectorId(newSector.id);
+      setFetchState("idle");
+      setSectorQuery("");
+    } catch (err: any) {
+      setFetchState("error");
+      setFetchError(err?.message || "Fetch failed");
+    }
+  }
 
   return (
     <PageShell>
@@ -36,15 +102,72 @@ export default function TariffLab() {
                 data-testid="select-sector"
                 className="w-full rounded-md border border-border bg-background px-3 py-2.5 font-medium focus:border-primary focus:outline-none"
               >
-                {SECTORS.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.label} · {s.hsPrefix}
-                  </option>
-                ))}
+                <optgroup label="Curated sectors">
+                  {SECTORS.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.label} · {s.hsPrefix}
+                    </option>
+                  ))}
+                </optgroup>
+                {customSectors.length > 0 && (
+                  <optgroup label="Live (Gemini)">
+                    {customSectors.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.label} · {s.hsPrefix}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
               </select>
               <p className="prose-serif mt-3 text-[0.85rem] text-muted-foreground">
                 {sector.description}
               </p>
+
+              {liveSector.generated && (
+                <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-widest text-primary">
+                  <Sparkles size={10} /> Live · Gemini-fetched
+                </div>
+              )}
+
+              <div className="rule mt-6" />
+
+              <div className="mt-6">
+                <div className="label-cap mb-2 flex items-center gap-1.5">
+                  <Sparkles size={11} /> Fetch any sector (live)
+                </div>
+                <p className="text-[0.78rem] text-muted-foreground mb-3">
+                  Type any HS-coded import (e.g. "lithium batteries", "wine", "rare earths") and Gemini will return calibrated elasticities, baselines, and a 24-month world-price series.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={sectorQuery}
+                    onChange={(e) => setSectorQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleFetchLiveSector()}
+                    placeholder="lithium batteries"
+                    data-testid="input-sector-query"
+                    className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
+                  />
+                  <button
+                    onClick={handleFetchLiveSector}
+                    disabled={fetchState === "loading" || !sectorQuery.trim()}
+                    data-testid="button-fetch-sector"
+                    className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {fetchState === "loading" ? (
+                      <Loader2 size={14} className="animate-spin" />
+                    ) : (
+                      <Sparkles size={14} />
+                    )}
+                    Fetch
+                  </button>
+                </div>
+                {fetchError && (
+                  <div className="mt-2 rounded-md border border-destructive/40 bg-destructive/5 p-2 text-[0.75rem] text-destructive">
+                    {fetchError}
+                  </div>
+                )}
+              </div>
 
               <div className="rule mt-6" />
 
@@ -114,6 +237,47 @@ export default function TariffLab() {
 
               <SDGraph result={result} />
             </div>
+
+            {/* Live price series — only when Gemini-generated sector */}
+            {liveSector.priceSeries && liveSector.priceSeries.length > 0 && (
+              <div className="mt-8 rounded-xl border border-primary/30 bg-card p-6 lg:p-8">
+                <div className="flex items-baseline justify-between mb-4">
+                  <div>
+                    <div className="label-cap mb-2 flex items-center gap-1.5">
+                      <Sparkles size={11} /> 24-month world-price index
+                    </div>
+                    <h3 className="font-display text-[1.35rem] font-medium">{liveSector.label}</h3>
+                  </div>
+                  {liveSector.fetchedAt && (
+                    <div className="font-mono text-[0.65rem] text-muted-foreground">
+                      Fetched {new Date(liveSector.fetchedAt).toLocaleDateString()}
+                    </div>
+                  )}
+                </div>
+                <PriceSeriesChart series={liveSector.priceSeries} />
+                {(liveSector.tariffHistory || liveSector.retaliationRisk) && (
+                  <div className="mt-6 grid gap-4 md:grid-cols-2">
+                    {liveSector.tariffHistory && (
+                      <div className="rounded-md border border-border p-4">
+                        <div className="label-cap mb-2">Recent tariff history</div>
+                        <p className="prose-serif text-[0.9rem] text-foreground/85">{liveSector.tariffHistory}</p>
+                      </div>
+                    )}
+                    {liveSector.retaliationRisk && (
+                      <div className="rounded-md border border-destructive/30 bg-destructive/5 p-4">
+                        <div className="label-cap mb-2 text-destructive">Retaliation risk</div>
+                        <p className="prose-serif text-[0.9rem] text-foreground/85">{liveSector.retaliationRisk}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {liveSector.sources && liveSector.sources.length > 0 && (
+                  <div className="mt-4 font-mono text-[0.7rem] text-muted-foreground">
+                    Sources: {liveSector.sources.join(" · ")}
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Welfare breakdown */}
             <div className="mt-8 grid gap-6 md:grid-cols-3">
@@ -397,4 +561,134 @@ function solveSupply(p: number, fn: (q: number) => number, qMax: number): number
     else hi = mid;
   }
   return (lo + hi) / 2;
+}
+
+function PriceSeriesChart({ series }: { series: { month: string; index: number }[] }) {
+  if (!series || series.length === 0) return null;
+  const W = 720;
+  const H = 260;
+  const pad = { l: 50, r: 30, t: 20, b: 40 };
+  const innerW = W - pad.l - pad.r;
+  const innerH = H - pad.t - pad.b;
+
+  const values = series.map((s) => s.index);
+  const minV = Math.min(...values, 80);
+  const maxV = Math.max(...values, 120);
+  const range = Math.max(1, maxV - minV);
+  const padded = range * 0.1;
+  const lo = minV - padded;
+  const hi = maxV + padded;
+
+  const x = (i: number) => pad.l + (i / Math.max(1, series.length - 1)) * innerW;
+  const y = (v: number) => pad.t + innerH - ((v - lo) / (hi - lo)) * innerH;
+
+  const linePoints = series.map((s, i) => `${x(i)},${y(s.index)}`).join(" ");
+  const areaPath =
+    `M ${x(0)},${y(lo)} ` +
+    series.map((s, i) => `L ${x(i)},${y(s.index)}`).join(" ") +
+    ` L ${x(series.length - 1)},${y(lo)} Z`;
+
+  // y-axis ticks
+  const yTicks = 4;
+  const yTickValues = Array.from({ length: yTicks + 1 }, (_, i) => lo + ((hi - lo) * i) / yTicks);
+
+  // x-axis: show every ~6th month
+  const xLabelEvery = Math.max(1, Math.floor(series.length / 6));
+
+  const last = series[series.length - 1];
+  const first = series[0];
+  const totalChange = ((last.index - first.index) / first.index) * 100;
+
+  return (
+    <div>
+      <div className="mb-3 flex items-baseline gap-4">
+        <div className="num-display text-[1.75rem] text-foreground">{last.index.toFixed(1)}</div>
+        <div
+          className={`font-mono text-[0.85rem] ${
+            totalChange >= 0 ? "text-emerald-700 dark:text-emerald-400" : "text-destructive"
+          }`}
+        >
+          {totalChange >= 0 ? "+" : ""}
+          {totalChange.toFixed(1)}% over 24 months
+        </div>
+      </div>
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img" aria-label="World price index time series">
+        {/* gridlines */}
+        {yTickValues.map((v, i) => (
+          <g key={i}>
+            <line
+              x1={pad.l}
+              y1={y(v)}
+              x2={W - pad.r}
+              y2={y(v)}
+              stroke="hsl(var(--border))"
+              strokeDasharray="2 4"
+              opacity={0.4}
+            />
+            <text
+              x={pad.l - 6}
+              y={y(v) + 3}
+              textAnchor="end"
+              fontSize="10"
+              fontFamily="JetBrains Mono"
+              fill="hsl(var(--muted-foreground))"
+            >
+              {v.toFixed(0)}
+            </text>
+          </g>
+        ))}
+
+        {/* axes */}
+        <line x1={pad.l} y1={pad.t} x2={pad.l} y2={H - pad.b} stroke="hsl(var(--border))" />
+        <line x1={pad.l} y1={H - pad.b} x2={W - pad.r} y2={H - pad.b} stroke="hsl(var(--border))" />
+
+        {/* area under curve */}
+        <motion.path
+          d={areaPath}
+          fill="hsl(var(--primary) / 0.12)"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+        />
+
+        {/* line */}
+        <motion.polyline
+          points={linePoints}
+          fill="none"
+          stroke="hsl(var(--primary))"
+          strokeWidth={2.25}
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.2, ease: "easeOut" }}
+        />
+
+        {/* x labels */}
+        {series.map((s, i) =>
+          i % xLabelEvery === 0 || i === series.length - 1 ? (
+            <text
+              key={i}
+              x={x(i)}
+              y={H - pad.b + 16}
+              textAnchor="middle"
+              fontSize="9"
+              fontFamily="JetBrains Mono"
+              fill="hsl(var(--muted-foreground))"
+            >
+              {s.month}
+            </text>
+          ) : null,
+        )}
+
+        {/* last point marker */}
+        <circle
+          cx={x(series.length - 1)}
+          cy={y(last.index)}
+          r={4}
+          fill="hsl(var(--primary))"
+          stroke="hsl(var(--background))"
+          strokeWidth={2}
+        />
+      </svg>
+    </div>
+  );
 }

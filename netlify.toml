@@ -37,6 +37,13 @@
   status = 200
   force  = true
 
+# Gemini-powered TariffLab sector data fetcher.
+[[redirects]]
+  from = "/api/tariff-sector-data"
+  to   = "/.netlify/functions/tariff-sector-data"
+  status = 200
+  force  = true
+
 # SPA fallback for hash-routed React app.
 [[redirects]]
   from = "/*"

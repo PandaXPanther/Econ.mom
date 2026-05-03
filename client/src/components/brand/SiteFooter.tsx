@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Logo } from "./Logo";
 import { TOOLS } from "@/lib/tools";
+import { Linkedin, Instagram, Github } from "lucide-react";
 
 export function SiteFooter() {
   return (
@@ -73,13 +74,61 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-border pt-8 text-[0.75rem] text-muted-foreground sm:flex-row sm:items-center">
-          <div className="font-mono">
-            © MMXXVI The Mother of Econ · econ.mom
+        <div className="mt-16 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 text-[0.75rem] text-muted-foreground sm:flex-row sm:items-center">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+            <div className="font-mono">
+              © MMXXVI The Mother of Econ · econ.mom
+            </div>
+            <span className="hidden sm:inline text-muted-foreground/40">·</span>
+            <div className="font-mono">
+              Created by{" "}
+              <a
+                href="https://www.linkedin.com/in/saras-totey-64a777334/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-foreground underline-offset-2 hover:text-primary hover:underline"
+                data-testid="link-creator-linkedin"
+              >
+                Saras Totey
+              </a>
+            </div>
           </div>
-          <div className="font-mono">
-            "Economia, Mater Omnium." — Editorial Note, Issue Nº 1
+          <div className="flex items-center gap-3">
+            <a
+              href="https://www.linkedin.com/in/saras-totey-64a777334/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Saras Totey on LinkedIn"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              data-testid="link-social-linkedin"
+            >
+              <Linkedin size={14} />
+            </a>
+            <a
+              href="https://www.instagram.com/sarastotey_/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Saras Totey on Instagram"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              data-testid="link-social-instagram"
+            >
+              <Instagram size={14} />
+            </a>
+            <a
+              href="https://github.com/PandaXPanther"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Saras Totey on GitHub"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              data-testid="link-social-github"
+            >
+              <Github size={14} />
+            </a>
           </div>
+        </div>
+
+        <div className="mt-6 text-center font-mono text-[0.7rem] text-muted-foreground/70 italic">
+          "Economia, Mater Omnium." — Editorial Note, Issue Nº 1
         </div>
       </div>
     </footer>
