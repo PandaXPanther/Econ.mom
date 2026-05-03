@@ -21,6 +21,9 @@ import PaperDecoder from "@/pages/tools/PaperDecoder";
 import NewsTranslator from "@/pages/tools/NewsTranslator";
 import USEcon from "@/pages/tools/USEcon";
 import EconLever from "@/pages/tools/EconLever";
+import InflationDecomposer from "@/pages/tools/InflationDecomposer";
+import NaturalExperiments from "@/pages/tools/NaturalExperiments";
+import CounterfactualEngine from "@/pages/tools/CounterfactualEngine";
 
 import { useLocation } from "wouter";
 
@@ -62,6 +65,9 @@ function AppRouter() {
         <Route path="/news-translator" component={NewsTranslator} />
         <Route path="/us-econ" component={USEcon} />
         <Route path="/econlever" component={EconLever} />
+        <Route path="/inflation-decomposer" component={InflationDecomposer} />
+        <Route path="/natural-experiments" component={NaturalExperiments} />
+        <Route path="/counterfactual-engine" component={CounterfactualEngine} />
 
         {/* Legacy redirects — old routes now point to their replacements */}
         <Route path="/extemp-engine" component={NewsTranslator} />

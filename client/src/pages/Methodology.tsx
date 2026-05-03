@@ -12,7 +12,7 @@ export default function Methodology() {
     <PageShell>
       <SEO
         title="Methodology & Citations — every formula, every primary source | The Mother Of Econ"
-        description="Full methodology and primary sources behind each of The Mother Of Econ's nine tools — College Board rubrics, USITC elasticities, FRED series, Taylor rule variants, NBER papers, and Colorado state data."
+        description="Full methodology and primary sources behind each of The Mother Of Econ's twelve tools — College Board rubrics, USITC elasticities, FRED series, Taylor rule variants, NBER papers, and Colorado state data."
         path="/methodology"
       />
       <section className="border-b border-border">
@@ -34,7 +34,7 @@ export default function Methodology() {
         <div className="grid gap-10 lg:grid-cols-12">
           {/* Tab rail */}
           <aside className="lg:col-span-3">
-            <div className="label-cap mb-4">The Nine</div>
+            <div className="label-cap mb-4">The Twelve</div>
             <nav className="flex flex-col" aria-label="Methodology tool tabs">
               {TOOLS.map((t) => (
                 <button

@@ -18,10 +18,11 @@ const fadeUp = {
 const HOME_JSONLD = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "The Nine — Mother Of Econ tools",
+  name: "The Twelve — Mother Of Econ tools",
   itemListElement: [
     "AP FRQ Grader", "TariffLab", "Textbook Atlas", "Shock Simulator",
     "Shadow Fed", "Econ Paper Decoder", "Econ News Translator", "US Econ Dashboard", "EconLever",
+    "Inflation Decomposer", "Natural Experiment Finder", "Counterfactual Engine",
   ].map((name, i) => ({ "@type": "ListItem", position: i + 1, name })),
 };
 
@@ -29,18 +30,18 @@ export default function Home() {
   return (
     <PageShell>
       <SEO
-        title="The Mother Of Econ — nine free, citation-rigorous economics tools · econ.mom"
-        description="Nine free economics tools for AP students, debaters, and policy nerds. AP FRQ grading, live tariff modeling, a Shadow Fed with a public track record, an all-50-states dashboard, and EconLever — every formula shown, every dataset cited."
+        title="Saras Totey · The Mother Of Econ — twelve free, citation-rigorous economics tools · econ.mom"
+        description="Saras Totey (Boulder, Colorado · Fairview High School) built econ.mom: twelve free, citation-rigorous economics tools. AP FRQ grading, live tariff modeling, a Shadow Fed, an Inflation Decomposer, a Natural Experiment Finder, a Counterfactual Engine, and more — every formula shown, every dataset cited."
         path="/"
         jsonLd={HOME_JSONLD}
       />
       <HeroCathedral />
 
-      {/* THE NINE — Tool index, editorial layout */}
+      {/* THE TWELVE — Tool index, editorial layout */}
       <section className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
         <div className="mb-16 grid items-end gap-8 md:grid-cols-12">
           <div className="md:col-span-7">
-            <div className="label-cap mb-4">The Nine</div>
+            <div className="label-cap mb-4">The Twelve</div>
             <h2 className="text-editorial text-[2.25rem] sm:text-[3rem] lg:text-[3.5rem]">
               Tools the textbooks forgot.
             </h2>
@@ -206,7 +207,7 @@ function HeroCathedral() {
               transition={{ duration: 0.7, delay: 0.45 }}
               className="prose-serif lg:col-span-7 text-[1.18rem] leading-[1.6] text-foreground/80"
             >
-              Nine free, citation-rigorous tools for the students, debaters, and
+              Twelve free, citation-rigorous tools for the students, debaters, and
               policy desks the textbooks forgot. From{" "}
               <span className="italic text-foreground">AP free-response grading</span> to{" "}
               <span className="italic text-foreground">live tariff modeling</span> to a{" "}
@@ -225,13 +226,13 @@ function HeroCathedral() {
                   Author's Note
                 </div>
                 <p className="prose-serif mt-2 text-[0.98rem] text-foreground/85">
-                  Nine instruments. Built for the reader who refuses to memorize what they could simply <span className="italic">model</span>. Every formula shown, every source cited, every paywall absent.
+                  Twelve instruments. Built for the reader who refuses to memorize what they could simply <span className="italic">model</span>. Every formula shown, every source cited, every paywall absent.
                 </p>
                 <div className="mt-4 flex items-center justify-end font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground" data-testid="text-author-byline">
                   <span className="mr-2 text-primary">/</span> Saras Totey, Founder
                 </div>
                 <div className="mt-6 grid grid-cols-3 gap-4 border-t border-border pt-4">
-                  <CountStat to={9} label="Tools" />
+                  <CountStat to={12} label="Tools" />
                   <Stat n="∞" label="Free" />
                   <Stat n="0" label="Paywalls" />
                 </div>
@@ -251,7 +252,7 @@ function HeroCathedral() {
                 data-testid="button-explore-tools"
                 className="group relative inline-flex items-center gap-2 overflow-hidden rounded-full bg-foreground px-7 py-3.5 font-medium text-background transition-transform hover:-translate-y-0.5"
               >
-                <span className="relative z-10">Explore the nine</span>
+                <span className="relative z-10">Explore the twelve</span>
                 <ArrowUpRight size={16} className="relative z-10 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 <span className="absolute inset-0 -translate-x-full bg-primary transition-transform duration-500 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:translate-x-0" />
               </a>

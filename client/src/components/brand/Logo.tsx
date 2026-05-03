@@ -40,7 +40,7 @@ export function Logo({ size = 32, withWordmark = false, className = "" }: LogoPr
             The Mother <span className="text-muted-foreground not-italic">of</span> Econ
           </div>
           <div className="label-cap mt-1 text-[0.625rem]">
-            econ.mom · nine tools, one thesis
+            econ.mom · twelve tools, one thesis
           </div>
         </div>
       )}

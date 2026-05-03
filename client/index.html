@@ -6,11 +6,13 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
 
-    <title>The Mother Of Econ — nine free, citation-rigorous economics tools · econ.mom</title>
-    <meta name="description" content="Nine free, citation-rigorous economics tools for AP students, debaters, and policy nerds. AP FRQ Grader, TariffLab, Shadow Fed, Textbook Atlas, Shock Simulator, Paper Decoder, Econ News Translator, US Econ Dashboard, EconLever. Built by a National Economics Challenge finalist." />
-    <meta name="keywords" content="AP Macroeconomics, AP Microeconomics, AP FRQ grader, FRQ scoring, tariff calculator, deadweight loss, Taylor rule, Shadow Fed, Phillips curve, FRED data, NBER decoder, extemporaneous speaking, NSDA extemp, Colorado economy, economics tools, free econ tools, AP economics study, College Board rubric, econ.mom, Mother of Econ, Saras Totey" />
+    <title>Saras Totey · The Mother Of Econ — twelve free, citation-rigorous economics tools · econ.mom</title>
+    <meta name="description" content="Saras Totey (Boulder, Colorado · Fairview High School) built econ.mom: twelve free, citation-rigorous economics tools for AP students, debaters, and policy desks. AP FRQ Grader, TariffLab, Shadow Fed, Textbook Atlas, Shock Simulator, Paper Decoder, Econ News Translator, US Econ Dashboard, EconLever, Inflation Decomposer, Natural Experiment Finder, Counterfactual Engine." />
+    <meta name="keywords" content="Saras Totey, Saras Totey Boulder, Saras Totey Fairview, Saras Totey economics, Saras Totey econ.mom, Saras Totey EconLever, Saras Totey National Economics Challenge, Mother of Econ, econ.mom, AP Macroeconomics, AP Microeconomics, AP FRQ grader, FRQ scoring, tariff calculator, deadweight loss, Taylor rule, Shadow Fed, Phillips curve, FRED data, NBER decoder, Inflation Decomposer, Natural Experiment Finder, Counterfactual Engine, Bernanke Blanchard inflation, Card Krueger, Mariel boatlift, Vietnam draft lottery, Volcker disinflation, Lehman counterfactual, Fairview High School Boulder, Boulder Colorado economics" />
     <meta name="author" content="Saras Totey" />
-    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <meta name="geo.region" content="US-CO" />
+    <meta name="geo.placename" content="Boulder, Colorado" />
     <meta name="theme-color" content="#3b1612" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#1a1310" media="(prefers-color-scheme: dark)" />
     <link rel="canonical" href="https://econ.mom/" />
@@ -19,8 +21,8 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="The Mother Of Econ" />
     <meta property="og:url" content="https://econ.mom/" />
-    <meta property="og:title" content="The Mother Of Econ — nine free, citation-rigorous economics tools" />
-    <meta property="og:description" content="From AP free-response grading to live tariff modeling to a Shadow Fed with a public track record. Every formula shown. Every dataset cited. Built by a National Economics Challenge finalist." />
+    <meta property="og:title" content="Saras Totey · The Mother Of Econ — twelve free, citation-rigorous economics tools" />
+    <meta property="og:description" content="Built by Saras Totey (Boulder, Colorado · Fairview High School). From AP free-response grading to live tariff modeling, a Shadow Fed with a public track record, an Inflation Decomposer, a Natural Experiment Finder, and a Counterfactual Engine. Every formula shown. Every dataset cited." />
     <meta property="og:image" content="https://econ.mom/og.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -28,12 +30,12 @@
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="The Mother Of Econ · econ.mom" />
-    <meta name="twitter:description" content="Nine free, citation-rigorous economics tools. AP FRQ Grader, TariffLab, Shadow Fed, and more — every formula shown, every dataset cited." />
+    <meta name="twitter:title" content="Saras Totey · The Mother Of Econ · econ.mom" />
+    <meta name="twitter:description" content="Saras Totey (Boulder, CO · Fairview HS) — twelve free, citation-rigorous economics tools. AP FRQ Grader, TariffLab, Shadow Fed, Inflation Decomposer, Counterfactual Engine, and more." />
     <meta name="twitter:image" content="https://econ.mom/og.png" />
     <meta name="twitter:creator" content="@SarasTotey" />
 
-    <!-- Structured Data — Organization + Website + SearchAction -->
+    <!-- Structured Data — Organization + Website + Person + ProfilePage -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -42,11 +44,12 @@
             "@type": "Organization",
             "@id": "https://econ.mom/#org",
             "name": "The Mother Of Econ",
+            "alternateName": ["econ.mom", "Mother of Econ"],
             "url": "https://econ.mom/",
             "logo": "https://econ.mom/favicon.svg",
-            "founder": { "@type": "Person", "name": "Saras Totey" },
-            "foundingLocation": { "@type": "Place", "name": "Bennett, Colorado" },
-            "description": "Nine free, citation-rigorous economics tools for students, debaters, and policymakers."
+            "founder": { "@id": "https://econ.mom/#saras" },
+            "foundingLocation": { "@type": "Place", "name": "Boulder, Colorado" },
+            "description": "Twelve free, citation-rigorous economics tools for students, debaters, and policymakers."
           },
           {
             "@type": "WebSite",
@@ -54,14 +57,61 @@
             "url": "https://econ.mom/",
             "name": "The Mother Of Econ",
             "publisher": { "@id": "https://econ.mom/#org" },
-            "inLanguage": "en-US"
+            "inLanguage": "en-US",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://econ.mom/#/tools?q={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
           },
           {
             "@type": "Person",
+            "@id": "https://econ.mom/#saras",
             "name": "Saras Totey",
+            "givenName": "Saras",
+            "familyName": "Totey",
             "jobTitle": "Founder, The Mother Of Econ",
             "url": "https://econ.mom/#/founder",
-            "sameAs": ["https://econlever.org"]
+            "image": "https://econ.mom/og.png",
+            "description": "Saras Totey is a high-school economics researcher in Boulder, Colorado, attending Fairview High School. Founder of econ.mom and EconLever. National Economics Challenge competitor.",
+            "alumniOf": {
+              "@type": "EducationalOrganization",
+              "name": "Fairview High School",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Boulder",
+                "addressRegion": "CO",
+                "addressCountry": "US"
+              }
+            },
+            "homeLocation": {
+              "@type": "Place",
+              "name": "Boulder, Colorado",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Boulder",
+                "addressRegion": "CO",
+                "addressCountry": "US"
+              }
+            },
+            "knowsAbout": [
+              "Macroeconomics", "Monetary policy", "Fiscal policy",
+              "International trade", "Causal inference", "AP Economics",
+              "Taylor rule", "Phillips curve", "Bernanke-Blanchard inflation decomposition",
+              "Romer-Romer narrative shocks", "Auerbach-Gorodnichenko fiscal multipliers"
+            ],
+            "sameAs": [
+              "https://econlever.org",
+              "https://github.com/PandaXPanther",
+              "https://econ.mom/#/founder"
+            ]
+          },
+          {
+            "@type": "ProfilePage",
+            "@id": "https://econ.mom/#/founder",
+            "mainEntity": { "@id": "https://econ.mom/#saras" },
+            "url": "https://econ.mom/#/founder",
+            "name": "About Saras Totey · Founder · The Mother Of Econ"
           }
         ]
       }
@@ -79,8 +129,8 @@
       <noscript>
         <main style="font-family: Georgia, serif; max-width: 720px; margin: 80px auto; padding: 0 24px; line-height: 1.6;">
           <h1 style="font-size: 2.4rem; margin: 0 0 16px;">The Mother Of Econ</h1>
-          <p>An interactive library of nine economics tools. JavaScript is required to load the FRQ Grader, TariffLab, Shadow Fed, and the rest of the catalog.</p>
-          <p>Built by Saras Totey · Bennett, Colorado · econ.mom</p>
+          <p>An interactive library of twelve economics tools by <strong>Saras Totey</strong> (Boulder, Colorado · Fairview High School). JavaScript is required to load the FRQ Grader, TariffLab, Shadow Fed, Inflation Decomposer, Counterfactual Engine, and the rest of the catalog.</p>
+          <p>Built by Saras Totey · Boulder, Colorado · econ.mom</p>
         </main>
       </noscript>
     </div>

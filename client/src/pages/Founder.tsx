@@ -23,7 +23,7 @@ const FOUNDER_JSONLD = {
     },
     {
       "@type": "EducationalOrganization",
-      name: "Boulder High School",
+      name: "Fairview High School",
     },
   ],
   award: [
@@ -48,7 +48,7 @@ export default function Founder() {
     <PageShell>
       <SEO
         title="The Founder · Saras Totey · econ.mom"
-        description="Saras Totey, student at Boulder High School, Research Analyst Assistant at Northeastern University, and Head Economics Researcher at The Dividend Collective. Builder of EconLever and The Mother of Econ."
+        description="Saras Totey, student at Fairview High School in Boulder, Colorado. Research Analyst Assistant at Northeastern University and Head Economics Researcher at The Dividend Collective. Builder of EconLever and The Mother of Econ."
         path="/founder"
         jsonLd={FOUNDER_JSONLD}
       />
@@ -92,7 +92,7 @@ export default function Founder() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="prose-serif mt-6 max-w-2xl text-[1.18rem] text-foreground/85"
             >
-              Boulder High School student. Research Analyst Assistant at
+              Fairview High School student in Boulder, Colorado. Research Analyst Assistant at
               Northeastern University. Head Economics Researcher at{" "}
               <a
                 href="https://thedividendcollective.com/"
@@ -166,7 +166,7 @@ export default function Founder() {
             <span className="float-left mr-3 mt-1 font-display text-[4rem] font-semibold leading-[0.85] text-primary">
               S
             </span>
-            aras Totey is a student at Boulder High School and a Research
+            aras Totey is a student at Fairview High School in Boulder, Colorado, and a Research
             Analyst Assistant at Northeastern University, where he assists with
             research on the socioeconomic legacy of Reaganomics, specifically
             analyzing how the 1981 to 1989 reduction in top marginal rates and
@@ -210,7 +210,7 @@ export default function Founder() {
           </p>
           <p>
             So Saras kept building. The Mother of Econ is what came next: a
-            growing collection of nine purpose-built instruments for AP and
+            growing collection of twelve purpose-built instruments for AP and
             policy economics. Each one answers a question that, until now, had
             no public answer (or whose answer was paywalled, stale, or wrong).
           </p>
@@ -234,7 +234,7 @@ export default function Founder() {
               data-testid="link-see-tools"
               className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 font-medium text-background transition-transform hover:-translate-y-0.5"
             >
-              See the nine
+              See the twelve
               <ArrowUpRight
                 size={16}
                 className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"

@@ -8,13 +8,13 @@ export default function ToolsIndex() {
   return (
     <PageShell>
       <SEO
-        title="All nine tools — the complete library | The Mother Of Econ"
+        title="All twelve tools — the complete library | The Mother Of Econ"
         description="Every instrument in the econ.mom library: AP FRQ Grader, TariffLab, Textbook Atlas, Shock Simulator, Shadow Fed, Paper Decoder, Econ News Translator, US Econ Dashboard, EconLever."
         path="/tools"
       />
       <section className="border-b border-border">
         <div className="mx-auto max-w-7xl px-6 py-16 lg:px-10 lg:py-24">
-          <div className="label-cap mb-4">§ The Nine</div>
+          <div className="label-cap mb-4">§ The Twelve</div>
           <h1 className="text-editorial text-[2.75rem] sm:text-[3.75rem] lg:text-[4.5rem]">
             All instruments.
           </h1>
