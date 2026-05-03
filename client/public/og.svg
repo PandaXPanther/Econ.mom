@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f6efe2"/>
+      <stop offset="100%" stop-color="#ecdfc4"/>
+    </linearGradient>
+    <linearGradient id="ink" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3b1612"/>
+      <stop offset="100%" stop-color="#5a2018"/>
+    </linearGradient>
+    <filter id="noise">
+      <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch"/>
+      <feColorMatrix values="0 0 0 0 0.13 0 0 0 0 0.09 0 0 0 0 0.06 0 0 0 0.5 0"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="black" opacity="0.04" filter="url(#noise)"/>
+
+  <!-- Top rule + masthead -->
+  <line x1="80" y1="80" x2="1120" y2="80" stroke="#3b1612" stroke-width="2"/>
+  <line x1="80" y1="86" x2="1120" y2="86" stroke="#3b1612" stroke-width="0.8"/>
+
+  <text x="80" y="118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" letter-spacing="2.5" fill="#3b1612" opacity="0.7">ISSUE Nº 1 · VOL. I · ECON.MOM · MMXXVI</text>
+
+  <!-- Title -->
+  <text x="80" y="285" font-family="Georgia, 'Source Serif 4', serif" font-size="140" font-weight="300" fill="#1a1310" letter-spacing="-3">The <tspan font-weight="400" font-style="italic" fill="#3b1612">Mother</tspan></text>
+  <text x="80" y="425" font-family="Georgia, 'Source Serif 4', serif" font-size="140" font-weight="300" fill="#1a1310" letter-spacing="-3">of Econ.</text>
+
+  <!-- Subtitle -->
+  <text x="80" y="500" font-family="Georgia, 'Source Serif 4', serif" font-size="28" font-style="italic" fill="#1a1310" opacity="0.85">Eight free, citation-rigorous tools for the students,</text>
+  <text x="80" y="538" font-family="Georgia, 'Source Serif 4', serif" font-size="28" font-style="italic" fill="#1a1310" opacity="0.85">debaters, and policy nerds the textbooks forgot.</text>
+
+  <!-- Sigil — italic M + amber dot -->
+  <g transform="translate(960, 200)">
+    <circle cx="100" cy="100" r="105" fill="none" stroke="#3b1612" stroke-width="2.5"/>
+    <text x="100" y="148" text-anchor="middle" font-family="Georgia, serif" font-size="170" font-style="italic" font-weight="500" fill="#3b1612">M</text>
+    <circle cx="160" cy="48" r="10" fill="#cc8a23"/>
+  </g>
+
+  <!-- Bottom strip -->
+  <line x1="80" y1="565" x2="1120" y2="565" stroke="#3b1612" stroke-width="0.8"/>
+  <text x="80" y="595" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" letter-spacing="2.5" fill="#3b1612" opacity="0.7">FRQ GRADER · TARIFFLAB · SHADOW FED · TEXTBOOK ATLAS · SHOCK SIM · PAPER DECODER · EXTEMP · CO DASH</text>
+</svg>
