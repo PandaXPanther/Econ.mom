@@ -62,6 +62,15 @@ export function SiteFooter() {
                   </a>
                 </Link>
               </li>
+              <li>
+                <a
+                  href="mailto:motherofeconomics@gmail.com"
+                  className="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  data-testid="link-contact-email"
+                >
+                  Contact
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -71,6 +80,15 @@ export function SiteFooter() {
               Every tool here is free. Every formula is shown. Every dataset is
               cited. Economics is too important to lock behind a Bloomberg
               terminal.
+            </p>
+            <p className="mt-4 font-mono text-[0.78rem] text-muted-foreground">
+              Press, partnerships, classroom use:{" "}
+              <a
+                href="mailto:motherofeconomics@gmail.com"
+                className="text-foreground underline-offset-2 hover:text-primary hover:underline"
+              >
+                motherofeconomics@gmail.com
+              </a>
             </p>
           </div>
         </div>
