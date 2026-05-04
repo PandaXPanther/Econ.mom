@@ -21,7 +21,7 @@ import {
 const COMP = TOOL_BY_SLUG["us-econ"];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// STATE DATA — compiled from BLS LAUS (Sep 2025), QCEW Q2 2025 mean hourly wage,
+// STATE DATA, compiled from BLS LAUS (Sep 2025), QCEW Q2 2025 mean hourly wage,
 // MIT Living Wage Calculator (state median, 1 adult + 1 child), NCES 4-year
 // cohort grad rate (2021-22 most recent national release), Zillow ZHVI median
 // home value (Sep 2025). Numbers are representative single-snapshot figures.
@@ -93,7 +93,7 @@ const STATES: StateRow[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// COUNTY DATA — top counties per state. CO is full (preserved from prior dash).
+// COUNTY DATA, top counties per state. CO is full (preserved from prior dash).
 // Other states ship 4–6 representative high-pop counties.
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -273,14 +273,14 @@ export default function USEcon() {
   return (
     <PageShell>
       <SEO
-        title="US Econ Dashboard — every state, every county | The Mother Of Econ"
+        title="US Econ Dashboard, every state, every county | The Mother Of Econ"
         description="A national economic dashboard. All 50 states with unemployment, wages, living-wage thresholds, graduation rates, and median home values. Click any state to drill into county-level data. Sourced from BLS LAUS, QCEW, MIT Living Wage, NCES, and Zillow ZHVI."
         path="/us-econ"
       />
       <ToolPageHeader tool={COMP} />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
-        {/* HEADLINE STATS — US averages */}
+        {/* HEADLINE STATS, US averages */}
         <div className="mb-10 grid gap-px overflow-hidden rounded-xl border border-border bg-border md:grid-cols-4">
           <Stat label="US unemployment (pop-weighted)" value={`${usAverages.unemp.toFixed(2)}%`} sub="BLS LAUS · Sep 2025" />
           <Stat label="US mean hourly wage" value={`$${usAverages.meanWage.toFixed(2)}`} sub="QCEW · Q2 2025" />
@@ -326,10 +326,10 @@ export default function USEcon() {
                 </div>
               </div>
 
-              {/* SCATTER — wage vs unemployment, dot size = population */}
+              {/* SCATTER, wage vs unemployment, dot size = population */}
               <div className="mb-8 rounded-lg border border-border bg-card p-6">
                 <div className="mb-4 flex items-baseline justify-between border-b border-border pb-3">
-                  <h3 className="font-display text-[1.1rem] font-medium">Mean wage vs. unemployment — every state</h3>
+                  <h3 className="font-display text-[1.1rem] font-medium">Mean wage vs. unemployment, every state</h3>
                   <div className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">QCEW × LAUS · 2025</div>
                 </div>
                 <div style={{ width: "100%", height: 360 }}>
@@ -366,12 +366,30 @@ export default function USEcon() {
                           return p ? `${p.name} (${p.abbr})` : "";
                         }}
                       />
-                      <Scatter data={filtered} fill="hsl(var(--primary))" fillOpacity={0.7} stroke="hsl(var(--primary))" />
-                      <Scatter data={filtered.filter((s) => s.abbr === "CO")} fill="hsl(var(--destructive))" fillOpacity={1} stroke="hsl(var(--destructive))" strokeWidth={2} />
+                      <Scatter
+                        name="All states"
+                        data={filtered.filter((s) => s.abbr !== "CO")}
+                        fill="hsl(var(--primary))"
+                        fillOpacity={0.7}
+                        stroke="hsl(var(--primary))"
+                      />
+                      <Scatter
+                        name="Colorado (home state)"
+                        data={filtered.filter((s) => s.abbr === "CO")}
+                        fill="hsl(var(--destructive))"
+                        fillOpacity={1}
+                        stroke="hsl(var(--destructive))"
+                        strokeWidth={2}
+                      />
                     </ScatterChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="mt-3 font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+                <div className="mt-2 flex flex-wrap items-center gap-3 text-[0.7rem] text-muted-foreground">
+                  <span className="inline-flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: "hsl(var(--primary))", opacity: 0.7 }} />All states</span>
+                  <span className="inline-flex items-center gap-1.5"><span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: "hsl(var(--destructive))" }} />Colorado (home state)</span>
+                  <span className="opacity-70">Bubble size = population. Hover any point to see the state name.</span>
+                </div>
+                <div className="mt-2 font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">
                   Bubble size scales with state population (millions). Hover to identify.
                 </div>
               </div>
@@ -419,7 +437,7 @@ export default function USEcon() {
               <div className="mt-12 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6">
                 <div className="label-cap mb-2 text-primary">Editorial note · why national, then local</div>
                 <p className="prose-serif text-[0.95rem] text-foreground/85">
-                  National data tell a story; state-level data tell the truth. This dashboard puts every state on a single chart — then lets you drill into the county your students actually live in. Fifty states, fifteen counties deep where data is best, with Colorado as the home-county case study.
+                  National data tell a story; state-level data tell the truth. This dashboard puts every state on a single chart, then lets you drill into the county your students actually live in. Fifty states, fifteen counties deep where data is best, with Colorado as the home-county case study.
                 </p>
               </div>
             </motion.div>
@@ -466,7 +484,7 @@ export default function USEcon() {
               {/* WAGE GAP CHART */}
               <div className="mb-8 rounded-lg border border-border bg-card p-6">
                 <div className="mb-4 flex items-baseline justify-between border-b border-border pb-3">
-                  <h3 className="font-display text-[1.1rem] font-medium">Wage vs. living wage — {selectedState!.name}</h3>
+                  <h3 className="font-display text-[1.1rem] font-medium">Wage vs. living wage, {selectedState!.name}</h3>
                   <div className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">QCEW · MIT</div>
                 </div>
                 <div style={{ width: "100%", height: 220 }}>
@@ -537,7 +555,7 @@ function CountySection({ counties, stateName }: { counties: CountyRow[]; stateNa
     <div className="space-y-6">
       <div className="rounded-lg border border-border bg-card p-6">
         <div className="mb-4 flex items-baseline justify-between border-b border-border pb-3">
-          <h3 className="font-display text-[1.1rem] font-medium">County unemployment — {stateName}</h3>
+          <h3 className="font-display text-[1.1rem] font-medium">County unemployment, {stateName}</h3>
           <div className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">BLS LAUS · county</div>
         </div>
         <div style={{ width: "100%", height: Math.max(280, counties.length * 28) }}>

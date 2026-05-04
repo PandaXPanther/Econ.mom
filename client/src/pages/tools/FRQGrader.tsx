@@ -63,9 +63,24 @@ export default function FRQGrader() {
   }
 
   const onGrade = async () => {
+    // Empty-answer guard. The critique flagged that hitting Grade with blank
+    // answers gave no feedback. Now we count non-blank parts and warn first.
+    const filledParts = frq.parts.filter((p) => (responses[p.id] || "").trim().length >= 5).length;
+    if (filledParts === 0) {
+      setAiNotice(
+        "Please write a response in at least one part before grading. The grader needs at least 5 characters per part to score it."
+      );
+      return;
+    }
+    if (filledParts < frq.parts.length) {
+      const skipped = frq.parts.length - filledParts;
+      setAiNotice(
+        `${skipped} of ${frq.parts.length} part${skipped > 1 ? "s are" : " is"} blank or under 5 characters. Blank parts will score 0.`
+      );
+      // Continue grading anyway (notice is informational, not blocking).
+    }
     setGrading(true);
     setShowIdeal(false);
-    setAiNotice(null);
 
     const isGenerated = (frq as any).generated === true;
     if (useAI || isGenerated) {
@@ -124,7 +139,7 @@ export default function FRQGrader() {
   return (
     <PageShell>
       <SEO
-        title="AP FRQ Grader — College Board rubric scoring for AP Macro & Micro free-response | The Mother Of Econ"
+        title="AP FRQ Grader, College Board rubric scoring for AP Macro & Micro free-response | The Mother Of Econ"
         description="Paste any AP Macro or Micro free-response answer. Get scored against the official College Board rubric, point-by-point, with a 5/5 rewrite. Trained on every released CB rubric 2018–2025."
         path="/frq-grader"
       />
@@ -223,7 +238,7 @@ export default function FRQGrader() {
                         {f.title}
                       </div>
                       <div className="prose-serif mt-1 text-[0.85rem] text-muted-foreground">
-                        {(f as any).topic || (f.topics && (f.topics as string[]).join(" \u00b7 ")) || "Custom FRQ"}
+                        {(f as any).topic || ((f as any).topics && ((f as any).topics as string[]).join(" \u00b7 ")) || "Custom FRQ"}
                       </div>
                     </button>
                   );
@@ -244,7 +259,7 @@ export default function FRQGrader() {
 
               <div className="mt-6 rounded-md border border-dashed border-border p-4 text-[0.78rem] text-muted-foreground">
                 <div className="label-cap mb-2 text-foreground">Tip</div>
-                Describe diagrams in words: "I labeled the y-axis Price Level, x-axis Real GDP, drew downward-sloping AD…" — the grader checks for required graph elements by name.
+                Describe diagrams in words: "I labeled the y-axis Price Level, x-axis Real GDP, drew downward-sloping AD…", the grader checks for required graph elements by name.
               </div>
             </div>
           </aside>

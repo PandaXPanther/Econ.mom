@@ -57,7 +57,7 @@ const SAMPLES: Record<string, Decoded> = {
 
 async function extractPdfText(file: File): Promise<string> {
   // pdfjs-dist legacy build works in Vite browsers without worker config.
-  const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf");
+  const pdfjs: any = await import("pdfjs-dist/legacy/build/pdf.mjs");
   const workerSrc = (await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs?url")).default;
   pdfjs.GlobalWorkerOptions.workerSrc = workerSrc;
   const buf = await file.arrayBuffer();
@@ -148,7 +148,7 @@ export default function PaperDecoder() {
   return (
     <PageShell>
       <SEO
-        title="Econ Paper Decoder — turn any NBER, JEP, or AER paper into an extemp citation | The Mother Of Econ"
+        title="Econ Paper Decoder, turn any NBER, JEP, or AER paper into an extemp citation | The Mother Of Econ"
         description="Upload a working paper PDF or paste any URL. Decoder returns plain-English abstract, identification strategy, headline numeric finding, FRED series to watch, and a debate-ready 30-second citation block, powered by Gemini."
         path="/paper-decoder"
       />

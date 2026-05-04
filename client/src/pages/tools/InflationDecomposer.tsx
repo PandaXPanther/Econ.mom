@@ -83,11 +83,13 @@ export default function InflationDecomposer() {
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiData, setAiData] = useState<{
     narrative: string;
-    drivers: { label: string; explanation: string }[];
+    drivers: { name?: string; label?: string; contribution?: number; explanation: string; outlook?: string }[];
     supplyVsDemand: { supplyPp: number; demandPp: number; explanation: string };
     fedImplication: string;
     historicalContext: string;
     watchNext: string[];
+    _degraded?: boolean;
+    _reason?: string;
   } | null>(null);
 
   async function explainWithGemini() {
@@ -102,9 +104,17 @@ export default function InflationDecomposer() {
           components: result.components.map((c) => ({ label: c.label, value: c.value })),
         }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
-      setAiData(data);
+      // Server may return 502 with a `fallback` payload; render it gracefully.
+      if (!res.ok) {
+        if (data?.fallback) {
+          setAiData({ ...data.fallback, _degraded: true, _reason: data.error });
+        } else {
+          throw new Error(data?.error || `HTTP ${res.status}`);
+        }
+      } else {
+        setAiData(data);
+      }
     } catch (e: any) {
       setAiError(e?.message ?? "Gemini unavailable");
     } finally {
@@ -137,7 +147,7 @@ export default function InflationDecomposer() {
             <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-1">Regime</div>
             <div className="text-base font-medium">{result.regime}</div>
             <div className="text-xs text-muted-foreground mt-1">
-              Expectations {result.expectationsAnchored ? "anchored within ±0.4pp of 2%" : "DEANCHORED — restoration required"}
+              Expectations {result.expectationsAnchored ? "anchored within ±0.4pp of 2%" : "DEANCHORED, restoration required"}
             </div>
           </div>
           <Button onClick={onExport} variant="default" data-testid="button-export-brief">
@@ -277,9 +287,20 @@ export default function InflationDecomposer() {
               {aiLoading ? "Reading the data\u2026" : aiData ? "Refresh explanation" : "Explain this decomposition"}
             </Button>
           </div>
-          {aiError && <div className="text-xs text-destructive">{aiError}</div>}
+          {aiError && (
+            <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">
+              <div className="font-medium mb-1">Gemini call failed</div>
+              <div>{aiError}</div>
+              <button onClick={explainWithGemini} className="mt-2 underline">Try again</button>
+            </div>
+          )}
           {aiData && !aiError && (
             <div className="space-y-5">
+              {aiData._degraded && (
+                <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-xs text-amber-700 dark:text-amber-400">
+                  <span className="font-semibold">Static fallback shown.</span> {aiData._reason || "Gemini took too long; showing a deterministic decomposition."} Click “Refresh explanation” to retry the live model.
+                </div>
+              )}
               <div className="prose-serif text-[0.95rem] text-foreground/90 leading-relaxed">{aiData.narrative}</div>
 
               <div className="grid sm:grid-cols-2 gap-3">
@@ -300,8 +321,14 @@ export default function InflationDecomposer() {
                   <div className="space-y-2">
                     {aiData.drivers.map((d, i) => (
                       <div key={i} className="rounded-md border border-border bg-background p-3">
-                        <div className="text-sm font-medium mb-0.5">{d.label}</div>
+                        <div className="flex items-baseline justify-between mb-0.5">
+                          <div className="text-sm font-medium">{d.label || d.name || `Driver ${i + 1}`}</div>
+                          {typeof d.contribution === "number" && (
+                            <div className="text-xs font-mono tabular-nums text-muted-foreground">{d.contribution >= 0 ? "+" : ""}{d.contribution.toFixed(2)} pp</div>
+                          )}
+                        </div>
                         <div className="text-xs text-foreground/80">{d.explanation}</div>
+                        {d.outlook && <div className="text-[11px] text-muted-foreground italic mt-1">Outlook: {d.outlook}</div>}
                       </div>
                     ))}
                   </div>
