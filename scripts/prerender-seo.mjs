@@ -346,6 +346,7 @@ function buildPage(route) {
           "https://www.linkedin.com/in/saras-totey-64a777334/",
           "https://www.instagram.com/sarastotey_/",
           "https://github.com/PandaXPanther",
+          "https://www.buymeacoffee.com/sarast1",
         ],
       },
     };

@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { SEO } from "@/components/brand/SEO";
-import { ArrowUpRight, Linkedin, Instagram } from "lucide-react";
+import { ArrowUpRight, Linkedin, Instagram, Coffee } from "lucide-react";
 
 const FOUNDER_JSONLD = {
   "@context": "https://schema.org",
@@ -46,6 +46,7 @@ const FOUNDER_JSONLD = {
     "https://www.instagram.com/sarastotey_/",
     "https://thedividendcollective.com/",
     "https://thedividendcollective.com/saras-totey",
+    "https://www.buymeacoffee.com/sarast1",
   ],
 };
 
@@ -259,7 +260,36 @@ export default function Founder() {
           </a>
         </div>
 
-        <p className="mt-16 font-mono text-[0.7rem] text-muted-foreground">
+        <div className="mt-16 rounded-2xl border border-border bg-card/50 p-6 lg:p-8">
+          <div className="label-cap mb-3">Support this work</div>
+          <p className="text-[0.95rem] text-foreground/85">
+            If you like the design of this website,{" "}
+            <a
+              href="https://www.buymeacoffee.com/sarast1"
+              target="_blank"
+              rel="noreferrer"
+              data-testid="link-founder-buymeacoffee-inline"
+              className="editorial-link"
+            >
+              donate here
+            </a>
+            . Contributions help cover hosting, data, and the long evenings that go
+            into keeping the research and the websites freely available.
+          </p>
+          <a
+            href="https://www.buymeacoffee.com/sarast1"
+            target="_blank"
+            rel="noreferrer"
+            data-testid="link-founder-buymeacoffee"
+            className="mt-4 inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-transform hover:-translate-y-0.5"
+          >
+            <Coffee size={14} />
+            Buy me a coffee
+            <ArrowUpRight size={12} />
+          </a>
+        </div>
+
+        <p className="mt-12 font-mono text-[0.7rem] text-muted-foreground">
           Saras Totey · econ.mom
         </p>
       </section>
