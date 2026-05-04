@@ -1,4 +1,5 @@
 import { forwardRef } from "react";
+import { currentYear } from "@/lib/site-meta";
 
 /**
  * Tool-neutral one-page Policy Brief document.
@@ -304,7 +305,7 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
         }}
       >
         <span>{footerNote ?? "Illustrative · Not investment advice"}</span>
-        <span>Saras Totey · econ.mom · 2026</span>
+        <span>Saras Totey · econ.mom · {currentYear()}</span>
       </div>
     </div>
   );

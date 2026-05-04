@@ -1,6 +1,7 @@
 import { Link } from "wouter";
 import { Logo } from "./Logo";
 import { TOOLS } from "@/lib/tools";
+import { FOUNDED_YEAR, copyrightYears } from "@/lib/site-meta";
 import { Linkedin, Instagram, Github } from "lucide-react";
 
 export function SiteFooter() {
@@ -15,7 +16,7 @@ export function SiteFooter() {
               debaters, and policymakers the textbooks forgot.
             </p>
             <p className="mt-6 font-mono text-[0.7rem] text-muted-foreground">
-              econ.mom · Founded 2026 · Boulder, CO
+              econ.mom · Founded {FOUNDED_YEAR} · Boulder, CO
             </p>
           </div>
 
@@ -77,7 +78,7 @@ export function SiteFooter() {
         <div className="mt-16 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 text-[0.75rem] text-muted-foreground sm:flex-row sm:items-center">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
             <div className="font-mono">
-              © 2026 The Mother of Econ · econ.mom
+              © {copyrightYears()} The Mother of Econ · econ.mom
             </div>
             <span className="hidden sm:inline text-muted-foreground/40">·</span>
             <div className="font-mono">

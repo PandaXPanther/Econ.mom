@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { PageShell } from "@/components/brand/PageShell";
 import { SEO } from "@/components/brand/SEO";
 import { TOOLS } from "@/lib/tools";
+import { currentYear } from "@/lib/site-meta";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 20 },
@@ -181,7 +182,7 @@ function HeroCathedral() {
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
             <span>Twelve tools · Live</span>
           </div>
-          <div className="hidden sm:block">Boulder, CO · 2026</div>
+          <div className="hidden sm:block">Boulder, CO · {currentYear()}</div>
           <LiveClock />
         </motion.div>
 
