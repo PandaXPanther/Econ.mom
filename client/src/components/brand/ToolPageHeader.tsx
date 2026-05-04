@@ -12,7 +12,7 @@ export function ToolPageHeader({ tool }: { tool: Tool }) {
         </Link>
         <div className="flex flex-wrap items-baseline gap-4 mb-2">
           <span className="font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground">
-            Instrument Nº {tool.number} · {tool.category}
+            Tool {tool.number} · {tool.category}
           </span>
           <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground capitalize">
             {tool.status}

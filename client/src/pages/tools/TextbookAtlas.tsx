@@ -1206,7 +1206,7 @@ export default function TextbookAtlas() {
               )}
 
               <div className="mt-16 font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground">
-                econ.mom · Textbook Atlas · Concept Nº {CONCEPTS.findIndex((c) => c.id === active.id) + 1} of {CONCEPTS.length}
+                econ.mom · Textbook Atlas · Concept {CONCEPTS.findIndex((c) => c.id === active.id) + 1} of {CONCEPTS.length}
               </div>
             </motion.div>
           </article>

@@ -93,7 +93,7 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
               marginBottom: 4,
             }}
           >
-            econ.mom · Policy Brief {toolNumber ? `· N° ${toolNumber}` : ""}
+            econ.mom · Policy Brief {toolNumber ? `· Tool ${toolNumber}` : ""}
           </div>
           <div
             style={{
@@ -304,7 +304,7 @@ export const BriefDocument = forwardRef<HTMLDivElement, BriefDocProps>(function 
         }}
       >
         <span>{footerNote ?? "Illustrative · Not investment advice"}</span>
-        <span>Saras Totey · econ.mom · Issue Nº 1 · Vol. I · MMXXVI</span>
+        <span>Saras Totey · econ.mom · 2026</span>
       </div>
     </div>
   );

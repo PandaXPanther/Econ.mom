@@ -63,7 +63,7 @@ export default function Home() {
                 )}
                 <div className="flex items-start justify-between">
                   <span className={`font-mono text-[0.72rem] uppercase tracking-widest text-muted-foreground ${tool.flagship ? "pl-20" : ""}`}>
-                    Nº {tool.number}
+                    Tool {tool.number}
                   </span>
                   <StatusPill status={tool.status} />
                 </div>
@@ -179,9 +179,9 @@ function HeroCathedral() {
         >
           <div className="flex items-center gap-3">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            <span>Issue Nº 1 · Vol. I</span>
+            <span>Twelve tools · Live</span>
           </div>
-          <div className="hidden sm:block">Founded MMXXVI</div>
+          <div className="hidden sm:block">Boulder, CO · 2026</div>
           <LiveClock />
         </motion.div>
 

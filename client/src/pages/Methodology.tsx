@@ -100,7 +100,7 @@ export default function Methodology() {
           <article className="lg:col-span-9" key={tool.slug}>
             <div className="flex flex-wrap items-baseline gap-4">
               <span className="font-mono text-[0.75rem] uppercase tracking-widest text-muted-foreground">
-                Instrument Nº {tool.number} · {tool.category}
+                Tool {tool.number} · {tool.category}
               </span>
             </div>
             <h2 className="text-editorial mt-4 text-[2.25rem] lg:text-[3rem]">

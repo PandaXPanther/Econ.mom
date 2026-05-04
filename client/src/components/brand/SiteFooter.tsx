@@ -15,7 +15,7 @@ export function SiteFooter() {
               debaters, and policymakers the textbooks forgot.
             </p>
             <p className="mt-6 font-mono text-[0.7rem] text-muted-foreground">
-              econ.mom · Issue Nº 1 · Vol. I · MMXXVI
+              econ.mom · Founded 2026 · Boulder, CO
             </p>
           </div>
 
@@ -77,7 +77,7 @@ export function SiteFooter() {
         <div className="mt-16 flex flex-col items-start justify-between gap-6 border-t border-border pt-8 text-[0.75rem] text-muted-foreground sm:flex-row sm:items-center">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
             <div className="font-mono">
-              © MMXXVI The Mother of Econ · econ.mom
+              © 2026 The Mother of Econ · econ.mom
             </div>
             <span className="hidden sm:inline text-muted-foreground/40">·</span>
             <div className="font-mono">
@@ -127,8 +127,8 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-6 text-center font-mono text-[0.7rem] text-muted-foreground/70 italic">
-          "Economia, Mater Omnium.", Editorial Note, Issue Nº 1
+        <div className="mt-6 text-center font-mono text-[0.7rem] text-muted-foreground/70">
+          Built for AP Economics students, debaters, and policy researchers.
         </div>
       </div>
     </footer>

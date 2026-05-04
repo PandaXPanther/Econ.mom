@@ -34,7 +34,7 @@
   <line x1="80" y1="80" x2="1120" y2="80" stroke="#FAF6FF" stroke-width="2" opacity="0.55"/>
   <line x1="80" y1="86" x2="1120" y2="86" stroke="#FAF6FF" stroke-width="0.8" opacity="0.4"/>
 
-  <text x="80" y="118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" letter-spacing="2.5" fill="#F0DEFF" opacity="0.75">ISSUE Nº 1 · VOL. I · ECON.MOM · MMXXVI</text>
+  <text x="80" y="118" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="14" letter-spacing="2.5" fill="#F0DEFF" opacity="0.75">ECON.MOM · TWELVE TOOLS · BOULDER, CO</text>
 
   <!-- Title -->
   <text x="80" y="285" font-family="Fraunces, 'Playfair Display', Georgia, serif" font-size="140" font-weight="300" fill="#FAF6FF" letter-spacing="-3">The <tspan font-weight="500" font-style="italic" fill="#FFC2E5">Mother</tspan></text>
