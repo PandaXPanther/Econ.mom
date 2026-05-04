@@ -6,6 +6,7 @@ import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SECTORS, computeTariffImpact, Sector, TariffResult } from "@/lib/tariff-sectors";
 import { SEO } from "@/components/brand/SEO";
 import { TrendingDown, TrendingUp, Banknote, Users, AlertTriangle, Sparkles, Loader2 } from "lucide-react";
+import { GeminiProgress } from "@/components/GeminiProgress";
 
 interface LiveSector extends Sector {
   sources?: string[];
@@ -167,6 +168,19 @@ export default function TariffLab() {
                     {fetchError}
                   </div>
                 )}
+                <div className="mt-3">
+                  <GeminiProgress
+                    active={fetchState === "loading"}
+                    label="Gemini is calibrating this sector"
+                    etaSeconds={18}
+                    stages={[
+                      "Looking up HS code",
+                      "Calibrating elasticities",
+                      "Pulling 24 month price series",
+                      "Estimating retaliation risk",
+                    ]}
+                  />
+                </div>
               </div>
 
               <div className="rule mt-6" />

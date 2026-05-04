@@ -5,6 +5,7 @@ import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { FileSearch, Sparkles, Quote, Link as LinkIcon, Upload, AlertTriangle } from "lucide-react";
+import { GeminiProgress } from "@/components/GeminiProgress";
 
 interface Decoded {
   title: string;
@@ -236,9 +237,13 @@ export default function PaperDecoder() {
           <div className="lg:col-span-7">
             <AnimatePresence mode="wait">
               {loading && (
-                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="rounded-xl border border-border bg-card p-12 text-center">
-                  <Sparkles size={28} className="mx-auto animate-pulse text-primary" />
-                  <p className="prose-serif mt-4 text-muted-foreground">{loadingMessage}</p>
+                <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="rounded-xl border border-border bg-card p-6">
+                  <GeminiProgress
+                    active={loading}
+                    label="Decoding the paper"
+                    detail={loadingMessage}
+                    etaSeconds={20}
+                  />
                 </motion.div>
               )}
               {decoded && !loading && (

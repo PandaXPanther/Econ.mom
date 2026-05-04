@@ -5,6 +5,7 @@ import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Newspaper, Sparkles, AlertTriangle, ExternalLink } from "lucide-react";
+import { GeminiProgress } from "@/components/GeminiProgress";
 
 type ShockType = "demand_increase" | "demand_decrease" | "supply_increase" | "supply_decrease";
 
@@ -207,9 +208,18 @@ export default function ShockSim() {
                 </div>
               )}
               {loading && (
-                <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-10 text-center">
-                  <Sparkles size={20} className="mx-auto animate-pulse text-primary" />
-                  <p className="prose-serif mt-3 text-muted-foreground">Gemini is calibrating elasticities…</p>
+                <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6">
+                  <GeminiProgress
+                    active={loading}
+                    label="Gemini is calibrating elasticities"
+                    etaSeconds={10}
+                    stages={[
+                      "Classifying supply or demand",
+                      "Estimating elasticities",
+                      "Computing price and quantity changes",
+                      "Pulling historical analogs",
+                    ]}
+                  />
                 </div>
               )}
             </AnimatePresence>

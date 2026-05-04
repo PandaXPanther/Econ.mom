@@ -5,6 +5,7 @@ import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Sliders, ArrowUpRight, RotateCcw, Download, Sparkles, Loader2 } from "lucide-react";
+import { GeminiProgress } from "@/components/GeminiProgress";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -268,6 +269,19 @@ export default function EconLever() {
               {aiError && (
                 <div className="mt-2 font-mono text-[0.62rem] text-destructive">{aiError}</div>
               )}
+              <div className="mt-3">
+                <GeminiProgress
+                  active={aiLoading}
+                  label="Gemini is calibrating your preset"
+                  etaSeconds={10}
+                  stages={[
+                    "Reading your scenario",
+                    "Picking lever values",
+                    "Predicting regime",
+                    "Drafting rationale",
+                  ]}
+                />
+              </div>
               {aiResult && !aiError && (
                 <div className="mt-3 space-y-1.5 border-t border-primary/20 pt-3">
                   <div className="font-display text-[0.95rem] font-semibold leading-tight">{aiResult.label}</div>

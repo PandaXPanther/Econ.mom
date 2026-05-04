@@ -6,6 +6,7 @@ import { TOOL_BY_SLUG } from "@/lib/tools";
 import { FRQ_LIBRARY, gradeFRQ, GradeResult, type FRQ } from "@/lib/frq-rubrics";
 import { SEO } from "@/components/brand/SEO";
 import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle, Wand2, Loader2 } from "lucide-react";
+import { GeminiProgress } from "@/components/GeminiProgress";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function FRQGrader() {
@@ -203,6 +204,17 @@ export default function FRQGrader() {
                       {generating ? "Writing FRQ\u2026" : "Generate FRQ"}
                     </button>
                     {genErr && <div className="text-[10px] text-destructive">{genErr}</div>}
+                    <GeminiProgress
+                      active={generating}
+                      label="Gemini is writing your FRQ"
+                      etaSeconds={15}
+                      stages={[
+                        "Choosing AP-style parts",
+                        "Drafting prompts",
+                        "Building rubric",
+                        "Final formatting",
+                      ]}
+                    />
                     <div className="text-[10px] text-muted-foreground">
                       Powered by Gemini. Generated FRQs are AI-graded against an AI-written rubric, so they cannot fall back to the offline matcher.
                     </div>
@@ -345,6 +357,20 @@ export default function FRQGrader() {
                   Reset
                 </button>
               )}
+            </div>
+
+            <div className="mt-4">
+              <GeminiProgress
+                active={grading}
+                label={useAI ? "Gemini is grading your response" : "Grading your response"}
+                etaSeconds={useAI ? 25 : 5}
+                stages={useAI ? [
+                  "Reading each part",
+                  "Checking against rubric",
+                  "Awarding points",
+                  "Drafting feedback",
+                ] : undefined}
+              />
             </div>
 
             {/* Result */}

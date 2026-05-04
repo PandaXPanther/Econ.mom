@@ -9,6 +9,7 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
 import { Download, Sparkles, Loader2 } from "lucide-react";
 import { BriefDocument } from "@/components/brief/BriefDocument";
 import { exportBriefAsPdf } from "@/lib/brief/exportBrief";
+import { GeminiProgress } from "@/components/GeminiProgress";
 
 // Linear simulator factory used for AI-generated scenarios:
 // counterfactual[i] = actual[i] + Σ coeff_k * (param_k − defaultActual_k)
@@ -176,6 +177,19 @@ export default function CounterfactualEngine() {
             </Button>
           </div>
           {aiError && <div className="mt-2 text-xs text-destructive">{aiError}</div>}
+          <div className="mt-3">
+            <GeminiProgress
+              active={aiLoading}
+              label="Gemini is calibrating your counterfactual"
+              etaSeconds={15}
+              stages={[
+                "Reading historical context",
+                "Calibrating sliders",
+                "Computing baseline series",
+                "Linking citations",
+              ]}
+            />
+          </div>
         </Card>
 
         <div className="grid lg:grid-cols-3 gap-6">

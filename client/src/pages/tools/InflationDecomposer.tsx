@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { decomposeInflation, DECOMPOSE_PRESETS, type DecomposeInput } from "@/lib/inflation/decompose";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis, Cell, ReferenceLine } from "recharts";
 import { Download, RefreshCw, Loader2, RotateCcw, Sparkles } from "lucide-react";
+import { GeminiProgress } from "@/components/GeminiProgress";
 import { BriefDocument } from "@/components/brief/BriefDocument";
 import { exportBriefAsPdf } from "@/lib/brief/exportBrief";
 import { fetchInflationSnapshot } from "@/lib/fred";
@@ -294,6 +295,19 @@ export default function InflationDecomposer() {
               <button onClick={explainWithGemini} className="mt-2 underline">Try again</button>
             </div>
           )}
+          <div className="mb-4">
+            <GeminiProgress
+              active={aiLoading}
+              label="Reading your decomposition"
+              etaSeconds={15}
+              stages={[
+                "Reading the decomposition",
+                "Identifying supply vs demand drivers",
+                "Drafting Fed implication",
+                "Pulling historical analog",
+              ]}
+            />
+          </div>
           {aiData && !aiError && (
             <div className="space-y-5">
               {aiData._degraded && (

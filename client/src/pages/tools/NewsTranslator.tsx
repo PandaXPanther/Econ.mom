@@ -5,6 +5,7 @@ import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Newspaper, Sparkles, ArrowDown, ExternalLink, TrendingUp, History, Telescope } from "lucide-react";
+import { GeminiProgress } from "@/components/GeminiProgress";
 
 const COMP = TOOL_BY_SLUG["news-translator"];
 
@@ -439,9 +440,18 @@ export default function NewsTranslator() {
                     </p>
                   </div>
                   {enrichLoading && (
-                    <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-8 text-center">
-                      <Sparkles size={20} className="mx-auto animate-pulse text-primary" />
-                      <p className="prose-serif mt-3 text-muted-foreground">Gemini is calibrating numbers and finding the analog…</p>
+                    <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6">
+                      <GeminiProgress
+                        active={enrichLoading}
+                        label="Gemini is decoding the headline"
+                        etaSeconds={12}
+                        stages={[
+                          "Identifying the model",
+                          "Calibrating numbers",
+                          "Finding the historical analog",
+                          "Drafting the forecast",
+                        ]}
+                      />
                     </div>
                   )}
                   {enrichError && (
@@ -521,9 +531,17 @@ export default function NewsTranslator() {
                   </div>
 
                   {enrichLoading && (
-                    <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6 text-center">
-                      <Sparkles size={16} className="mx-auto animate-pulse text-primary" />
-                      <p className="prose-serif mt-2 text-sm text-muted-foreground">Gemini is layering on numbers, the historical analog, and a forecast…</p>
+                    <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6">
+                      <GeminiProgress
+                        active={enrichLoading}
+                        label="Gemini is layering on numbers and analogs"
+                        etaSeconds={12}
+                        stages={[
+                          "Layering on numbers",
+                          "Finding the historical analog",
+                          "Drafting the forecast",
+                        ]}
+                      />
                     </div>
                   )}
                   {enrichment && <GeminiBlock e={enrichment} />}
