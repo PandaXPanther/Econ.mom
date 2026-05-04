@@ -16,7 +16,7 @@ export interface DataSource {
   name: string;
   publisher: string;
   vintage: string;       // e.g. "2024 annual", "monthly, last update Apr 2026"
-  frequency: string;     // e.g. "monthly", "quarterly", "real-time"
+  frequency?: string;    // e.g. "monthly", "quarterly", "real-time"
   series?: string[];     // FRED/BEA/BLS series IDs
   url?: string;
   notes?: string;
@@ -46,7 +46,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
 
   "frq-grader": {
     overview:
-      "The AP FRQ Grader replicates the College Board's official rubric scoring process for AP Macroeconomics and AP Microeconomics free-response questions. Every released exam from 2018 through 2025 has been hand-coded into a structured rubric library — 7 long FRQs and 14 short FRQs per year per exam — with each scoring criterion stored as an atomic, machine-checkable rule. Responses are graded by an LLM grader that has been calibrated against the College Board's own published sample responses (the 0/5, 3/5, and 5/5 anchors that the chief reader uses to train human graders).",
+      "The AP FRQ Grader replicates the College Board's official rubric scoring process for AP Macroeconomics and AP Microeconomics free-response questions. Every released exam from 2018 through 2025 has been hand-coded into a structured rubric library, 7 long FRQs and 14 short FRQs per year per exam, with each scoring criterion stored as an atomic, machine-checkable rule. Responses are graded by an LLM grader that has been calibrated against the College Board's own published sample responses (the 0/5, 3/5, and 5/5 anchors that the chief reader uses to train human graders).",
     intellectualLineage:
       "The grader inherits the rubric structure and scoring philosophy laid out in the College Board's annual Chief Reader Reports, which since 2018 have been the most detailed public documentation of how AP Economics responses are evaluated. Where the Chief Reader Reports describe scoring decisions in prose, this tool encodes them as deterministic checks. The companion FRQ generator extends the same rubric grammar to produce original questions on any topic, following the same point distribution and graph-conventions that ETS and the AP Development Committee enforce.",
     sections: [
@@ -86,7 +86,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       {
         title: "5-out-of-5 model rewrite",
         body:
-          "After scoring, the grader generates a model response that satisfies every rubric point using the exact terminology AP graders are trained to reward. The rewrite is constrained to the user's original argument structure where possible, so students see what their answer would look like if it were just tighter — not an entirely different essay.",
+          "After scoring, the grader generates a model response that satisfies every rubric point using the exact terminology AP graders are trained to reward. The rewrite is constrained to the user's original argument structure where possible, so students see what their answer would look like if it were just tighter, not an entirely different essay.",
       },
       {
         title: "FRQ generator (companion)",
@@ -97,7 +97,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
     validation:
       "Tested against the full College Board sample-response corpus (2018-2025): the grader's point allocation matches the human-anchor score within ±1 on 96.4% of samples and within ±2 on 100%. Failures cluster on questions where the chief reader's prose explicitly notes 'graders showed inconsistency' (e.g., 2022 Macro FRQ #3 part c).",
     limitations: [
-      "Graders cannot detect mathematical errors that produce the right answer for the wrong reason — College Board human readers can sometimes catch this; the LLM grader is more lenient.",
+      "Graders cannot detect mathematical errors that produce the right answer for the wrong reason, College Board human readers can sometimes catch this; the LLM grader is more lenient.",
       "Vision OCR on phone photos taken at angle or in poor light may miss axis labels; the grader flags these as 'diagram unreadable' and grades the prose alone.",
       "The College Board has never released exam forms 2 and 3 publicly for most years; rubrics for those forms are inferred from form 1 plus released items in subsequent years.",
       "The 5/5 rewrite is illustrative; the College Board is the only authority on what would actually have scored 5/5 on a given exam day.",
@@ -150,7 +150,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
     overview:
       "TariffLab is a partial-equilibrium incidence model for any US import sector. It computes the welfare consequences of an arbitrary ad-valorem tariff: deadweight loss, consumer-surplus loss, producer-surplus gain, government revenue, employment effects, and net national welfare. Inputs are the import-demand elasticity, the rest-of-world export-supply elasticity, baseline imports and domestic output, and the tariff rate. Elasticities for the eight curated sectors are calibrated to USITC's TPIS database and the Kee-Nicita-Olarreaga (2008) cross-country panel; live sectors fetched via Gemini are calibrated against the same ranges.",
     intellectualLineage:
-      "The model follows the canonical two-country, single-good treatment in Krugman, Obstfeld & Melitz Chapter 9 — the same diagram every AP and undergraduate trade student learns — but uses contemporary elasticity estimates from Fajgelbaum, Goldberg, Kennedy & Khandelwal (2020) and Amiti, Redding & Weinstein (2019, 2020) for tariff pass-through. Where introductory texts assume infinite elasticity for the rest of the world, TariffLab uses finite εx so that pass-through is endogenous, matching the empirical finding that the 2018-19 US tariffs were borne almost entirely by US importers and consumers.",
+      "The model follows the canonical two-country, single-good treatment in Krugman, Obstfeld & Melitz Chapter 9, the same diagram every AP and undergraduate trade student learns, but uses contemporary elasticity estimates from Fajgelbaum, Goldberg, Kennedy & Khandelwal (2020) and Amiti, Redding & Weinstein (2019, 2020) for tariff pass-through. Where introductory texts assume infinite elasticity for the rest of the world, TariffLab uses finite εx so that pass-through is endogenous, matching the empirical finding that the 2018-19 US tariffs were borne almost entirely by US importers and consumers.",
     sections: [
       {
         title: "Welfare model",
@@ -279,7 +279,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       "Solow growth uses Penn World Tables which are released annually with a 2-3 year lag; recent years are extrapolated.",
     ],
     dataSources: [
-      { name: "FRED — Federal Reserve Economic Data", publisher: "St. Louis Fed", vintage: "real-time", frequency: "varies (daily to annual)", url: "https://fred.stlouisfed.org/", series: ["GDPC1", "GDPPOT", "GDPDEF", "UNRATE", "CPIAUCSL", "M2SL", "FEDFUNDS", "WALCL", "GS10", "GS2", "MORTGAGE30US", "BAA10Y", "JTSJOL", "DGS1MO-DGS30"] },
+      { name: "FRED, Federal Reserve Economic Data", publisher: "St. Louis Fed", vintage: "real-time", frequency: "varies (daily to annual)", url: "https://fred.stlouisfed.org/", series: ["GDPC1", "GDPPOT", "GDPDEF", "UNRATE", "CPIAUCSL", "M2SL", "FEDFUNDS", "WALCL", "GS10", "GS2", "MORTGAGE30US", "BAA10Y", "JTSJOL", "DGS1MO-DGS30"] },
       { name: "Penn World Tables 10.01", publisher: "University of Groningen GGDC", vintage: "2024 release (data through 2019)", frequency: "annual", url: "https://www.rug.nl/ggdc/productivity/pwt/", series: ["RKNANPUSA666NRUG", "RGDPNAUSA666NRUG"] },
       { name: "ALFRED archival FRED", publisher: "St. Louis Fed", vintage: "real-time vintages", frequency: "as released", url: "https://alfred.stlouisfed.org/", notes: "Used for revision-aware analysis on series <30 days old." },
     ],
@@ -334,7 +334,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       "Re-runs against historical episodes: the December 2015 Fed liftoff produces an IRF path within 0.1% of the realized GDP path through 2017. The 2009 ARRA stimulus simulation falls within the CBO and Romer-Bernstein contemporaneous estimates of the actual fiscal multiplier (1.4-1.6 cumulative).",
     limitations: [
       "IRFs are linearizations around small shocks; they extrapolate poorly to large shocks (e.g., 2020 COVID, 2022 Fed liftoff).",
-      "State-dependent fiscal multipliers have a wide CI (Auerbach-Gorodnichenko's recession point estimate of 3.5 has CI [0.6, 6.3]) — Shock Sim displays the band but users should not over-interpret the median.",
+      "State-dependent fiscal multipliers have a wide CI (Auerbach-Gorodnichenko's recession point estimate of 3.5 has CI [0.6, 6.3]), Shock Sim displays the band but users should not over-interpret the median.",
       "Headline classification is best-effort; ambiguous headlines may be misclassified, in which case the user can override the shock type.",
       "We do not handle multiple simultaneous shocks; pandemic-era data is excluded from the IRF estimation window.",
     ],
@@ -354,12 +354,12 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
     ],
     lastUpdated: "2026-05-03",
     reproducibility:
-      "All IRFs are stored as JSON arrays in client/src/lib/shocks.ts indexed by shock type and horizon. Replication: download the Ramey replication archive, run her Stata code, export the IRF coefficients — they should match within rounding.",
+      "All IRFs are stored as JSON arrays in client/src/lib/shocks.ts indexed by shock type and horizon. Replication: download the Ramey replication archive, run her Stata code, export the IRF coefficients, they should match within rounding.",
   },
 
   "shadow-fed": {
     overview:
-      "Shadow Fed publishes a weekly Taylor-rule-derived federal funds rate recommendation alongside its prediction error track record vs. the actual FOMC decision. The default rule is the original Taylor (1993) specification with FAIT-modified and inertial variants available. Inputs (CPI, Core PCE, U-rate, NAIRU) auto-update from FRED on Mondays at 09:00 ET; the recommendation is timestamped and immutable — once published, it cannot be retroactively edited, which is what makes the track record honest.",
+      "Shadow Fed publishes a weekly Taylor-rule-derived federal funds rate recommendation alongside its prediction error track record vs. the actual FOMC decision. The default rule is the original Taylor (1993) specification with FAIT-modified and inertial variants available. Inputs (CPI, Core PCE, U-rate, NAIRU) auto-update from FRED on Mondays at 09:00 ET; the recommendation is timestamped and immutable, once published, it cannot be retroactively edited, which is what makes the track record honest.",
     intellectualLineage:
       "The framework follows Taylor (1993)'s seminal rule, modernized to incorporate the Fed's 2020 Statement on Longer-Run Goals and Monetary Policy Strategy (Flexible Average Inflation Targeting). Inertial smoothing follows Coibion & Gorodnichenko (2012). Real-time-data complications (which were pivotal in Orphanides 2003's critique of rules) are addressed by using ALFRED real-time vintages so each historical recommendation uses only data the Fed had at the time.",
     sections: [
@@ -469,7 +469,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       "Pre-prints with unusual structure (Beamer slides as 'paper', long appendices) may parse poorly.",
       "Structural models with embedded reduced-form components are sometimes mis-classified as descriptive.",
       "Headline-finding magnitude extraction depends on tables being parseable; image-only tables (older papers) may be missed.",
-      "We do not evaluate replicability — that requires running the code, which is out of scope.",
+      "We do not evaluate replicability, that requires running the code, which is out of scope.",
     ],
     dataSources: [
       { name: "NBER Working Paper series", publisher: "National Bureau of Economic Research", vintage: "current + RSS feed", frequency: "weekly Monday releases", url: "https://www.nber.org/papers" },
@@ -515,13 +515,13 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       {
         title: "Confidence calibration",
         body:
-          "Each prediction ships with a confidence band — small/moderate/large — calibrated to the magnitude of comparable historical episodes. A 25bp Fed surprise lifts SOFR 25bp on the day with high confidence (n≈100 historical FOMC surprises); a tariff announcement's price effect is moderate confidence because pass-through varies.",
+          "Each prediction ships with a confidence band, small/moderate/large, calibrated to the magnitude of comparable historical episodes. A 25bp Fed surprise lifts SOFR 25bp on the day with high confidence (n≈100 historical FOMC surprises); a tariff announcement's price effect is moderate confidence because pass-through varies.",
       },
     ],
     validation:
       "Tested on 200 economic headlines from 2023-2025 with hand-coded ground-truth model assignments. Classifier accuracy: 94% exact match. Direction-of-shift accuracy: 97% (errors cluster on ambiguous expectations-channel headlines).",
     limitations: [
-      "Translator predicts what theory says, not what will actually happen — markets often surprise theory.",
+      "Translator predicts what theory says, not what will actually happen, markets often surprise theory.",
       "Confidence bands are based on small historical samples for novel shock types (e.g., AI-productivity announcements).",
       "We do not predict magnitudes precisely; the small/moderate/large bands are coarse.",
     ],
@@ -599,7 +599,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
 
   "econlever": {
     overview:
-      "EconLever is the original sister project (econlever.org), now embedded in The Mother of Econ. Four policy sliders — top marginal tax rate, corporate tax rate, social welfare spending (% GDP), and federal funds rate — drive a 10-year projection of US real GDP growth, the federal deficit, and the Gini coefficient. Coefficients are calibrated to peer-reviewed macro literature: Romer-Romer (2010) tax multipliers, Auerbach-Gorodnichenko (2012) state-dependent fiscal multipliers, Piketty-Saez-Zucman (2018) distributional national accounts.",
+      "EconLever is the original sister project (econlever.org), now embedded in The Mother of Econ. Four policy sliders, top marginal tax rate, corporate tax rate, social welfare spending (% GDP), and federal funds rate, drive a 10-year projection of US real GDP growth, the federal deficit, and the Gini coefficient. Coefficients are calibrated to peer-reviewed macro literature: Romer-Romer (2010) tax multipliers, Auerbach-Gorodnichenko (2012) state-dependent fiscal multipliers, Piketty-Saez-Zucman (2018) distributional national accounts.",
     intellectualLineage:
       "EconLever is a reduced-form policy simulator in the tradition of the original Federal Reserve Board MPS model and its later FRB/US descendant. It is not a DSGE: it does not solve forward-looking optimization problems. It is calibrated to elasticities estimated by reduced-form work (Romer-Romer, Auerbach-Gorodnichenko, Piketty-Saez-Zucman, Cloyne-Hürtgen 2016, Mertens-Ravn 2013), making it a transparent illustration of mainstream macro estimates rather than a frontier research model.",
     sections: [
@@ -703,7 +703,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       {
         title: "Expectations component",
         body:
-          "Expectations measured as the average of the 5-year breakeven (T5YIE) and the median Michigan survey expectation. Deviation from the 2% target is multiplied by 0.85 — the slope of long-run expectations on inflation in Hazell-Herreño-Nakamura-Steinsson (2022)'s structural model.",
+          "Expectations measured as the average of the 5-year breakeven (T5YIE) and the median Michigan survey expectation. Deviation from the 2% target is multiplied by 0.85, the slope of long-run expectations on inflation in Hazell-Herreño-Nakamura-Steinsson (2022)'s structural model.",
       },
       {
         title: "Policy lag component",
@@ -745,9 +745,9 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
 
   "natural-experiments": {
     overview:
-      "Natural Experiment Finder is a searchable library of 60+ canonical natural experiments — Card-Krueger NJ minimum wage, Mariel boatlift, Vietnam draft, Oregon Medicaid, China Shock, Volcker disinflation, MTO, RAND HIE — filterable by method (DiD, RDD, IV, RCT, synthetic control, bunching, shift-share, lottery), field, and AP-CED concept tag. Each entry includes the research question, treatment, headline finding, identification logic, diagnostic threats, and a downloadable strategy brief. Designed to invert the typical research workflow: instead of starting with a method, start with a research question and discover which experiments and methods apply.",
+      "Natural Experiment Finder is a searchable library of 60+ canonical natural experiments, Card-Krueger NJ minimum wage, Mariel boatlift, Vietnam draft, Oregon Medicaid, China Shock, Volcker disinflation, MTO, RAND HIE, filterable by method (DiD, RDD, IV, RCT, synthetic control, bunching, shift-share, lottery), field, and AP-CED concept tag. Each entry includes the research question, treatment, headline finding, identification logic, diagnostic threats, and a downloadable strategy brief. Designed to invert the typical research workflow: instead of starting with a method, start with a research question and discover which experiments and methods apply.",
     intellectualLineage:
-      "The library reflects the syllabi of first-year applied microeconometrics courses at Harvard, MIT, Berkeley, Stanford, and Chicago — the canonical examples that every PhD student is expected to have internalized. The taxonomy follows Angrist-Pischke and Cunningham; the diagnostic-threats list integrates Bertrand-Duflo-Mullainathan, McCrary, Calonico-Cattaneo-Titiunik, and Stock-Yogo.",
+      "The library reflects the syllabi of first-year applied microeconometrics courses at Harvard, MIT, Berkeley, Stanford, and Chicago, the canonical examples that every PhD student is expected to have internalized. The taxonomy follows Angrist-Pischke and Cunningham; the diagnostic-threats list integrates Bertrand-Duflo-Mullainathan, McCrary, Calonico-Cattaneo-Titiunik, and Stock-Yogo.",
     sections: [
       {
         title: "Library scope",
@@ -797,7 +797,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
 
   "counterfactual-engine": {
     overview:
-      "Counterfactual Engine simulates five canonical macro counterfactuals — Volcker 1979, Lehman 2008, ARP 2021, UK austerity 2010, Greenspan-era housing — with adjustable parameters and side-by-side actual-vs-counterfactual time-series. Each scenario is calibrated to a peer-reviewed paper that has explicitly estimated the relevant counterfactual elasticity, so users see what the literature actually says — not what feels right.",
+      "Counterfactual Engine simulates five canonical macro counterfactuals, Volcker 1979, Lehman 2008, ARP 2021, UK austerity 2010, Greenspan-era housing, with adjustable parameters and side-by-side actual-vs-counterfactual time-series. Each scenario is calibrated to a peer-reviewed paper that has explicitly estimated the relevant counterfactual elasticity, so users see what the literature actually says, not what feels right.",
     intellectualLineage:
       "The five scenarios anchor to five canonical papers: Sargent (1982) on the rational-expectations Volcker disinflation; Mian-Sufi (2014) House of Debt on Lehman housing-credit channel; Bernanke-Blanchard (2023) on ARP fiscal pass-through; Auerbach-Gorodnichenko (2012) on UK austerity multipliers; and Glaeser-Gottlieb-Gyourko (2010) on the Greenspan housing channel.",
     sections: [
