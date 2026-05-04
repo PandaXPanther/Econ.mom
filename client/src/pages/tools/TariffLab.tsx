@@ -84,8 +84,8 @@ export default function TariffLab() {
   return (
     <PageShell>
       <SEO
-        title="TariffLab — deadweight loss, surplus, and employment effects of any US tariff | The Mother Of Econ"
-        description="Pick a sector, set a tariff, and see the deadweight-loss triangle, consumer- and producer-surplus shifts, government revenue, and employment effects — with USITC and Peterson Institute elasticities."
+        title="TariffLab, deadweight loss, surplus, and employment effects of any US tariff | The Mother Of Econ"
+        description="Pick a sector, set a tariff, and see the deadweight-loss triangle, consumer- and producer-surplus shifts, government revenue, and employment effects, with USITC and Peterson Institute elasticities."
         path="/tarifflab"
       />
       <ToolPageHeader tool={tool} />
@@ -214,10 +214,32 @@ export default function TariffLab() {
           <div className="lg:col-span-8">
             {/* Top-line cards */}
             <div className="grid gap-4 md:grid-cols-4">
-              <KPI label="Consumer price ↑" value={`+${result.priceChangePct.toFixed(1)}%`} tone="negative" />
-              <KPI label="Imports" value={`$${result.importQuantityNew.toFixed(1)}B`} sub={`from $${sector.baselineImports}B`} tone="negative" />
-              <KPI label="Gov't revenue" value={`$${result.governmentRevenue.toFixed(1)}B`} tone="positive" />
-              <KPI label="Deadweight loss" value={`$${result.deadweightLoss.toFixed(1)}B`} tone="warning" highlight />
+              <KPI
+                label="Consumer price ↑"
+                value={`+${result.priceChangePct.toFixed(1)}%`}
+                tone="negative"
+                info={`% change in domestic price = pass-through × tariff. Pass-through = εx / (εm + εx) = ${(100 * sector.exportSupplyElasticity / (sector.importDemandElasticity + sector.exportSupplyElasticity)).toFixed(0)}%. Base = current world price (index = 100, 2024 vintage).`}
+              />
+              <KPI
+                label="Imports"
+                value={`$${result.importQuantityNew.toFixed(1)}B`}
+                sub={`from $${sector.baselineImports}B`}
+                tone="negative"
+                info={`New US imports of ${sector.label.toLowerCase()} after the tariff, in nominal 2024 USD billions. Computed by reducing baseline imports by import-demand elasticity × price change.`}
+              />
+              <KPI
+                label="Gov't revenue"
+                value={`$${result.governmentRevenue.toFixed(1)}B`}
+                tone="positive"
+                info={`Tariff rate × new import quantity, in nominal 2024 USD billions. Excludes tariff revenue lost to evasion or tariff exemptions.`}
+              />
+              <KPI
+                label="Deadweight loss"
+                value={`$${result.deadweightLoss.toFixed(1)}B`}
+                tone="warning"
+                highlight
+                info={`Welfare loss from misallocated resources. Computed as the area of the Harberger triangle: ½ × tariff × ΔQ. Harberger (1964); see Methodology page for derivation.`}
+              />
             </div>
 
             {/* S/D Graph */}
@@ -238,7 +260,7 @@ export default function TariffLab() {
               <SDGraph result={result} />
             </div>
 
-            {/* Live price series — only when Gemini-generated sector */}
+            {/* Live price series, only when Gemini-generated sector */}
             {liveSector.priceSeries && liveSector.priceSeries.length > 0 && (
               <div className="mt-8 rounded-xl border border-primary/30 bg-card p-6 lg:p-8">
                 <div className="flex items-baseline justify-between mb-4">
@@ -341,8 +363,8 @@ export default function TariffLab() {
                 <strong>${Math.abs(result.importQuantityDelta).toFixed(1)}B</strong>, and generates{" "}
                 <strong>${result.governmentRevenue.toFixed(1)}B</strong> in tariff revenue. Domestic producers see roughly{" "}
                 <strong>${result.producerSurplusGain.toFixed(1)}B</strong> in producer-surplus gains, but consumers lose{" "}
-                <strong>${result.consumerSurplusLoss.toFixed(1)}B</strong>. The deadweight-loss triangle —{" "}
-                <strong className="text-destructive">${result.deadweightLoss.toFixed(1)}B</strong> — is welfare that simply disappears, regardless of who you tax.
+                <strong>${result.consumerSurplusLoss.toFixed(1)}B</strong>. The deadweight-loss triangle , {" "}
+                <strong className="text-destructive">${result.deadweightLoss.toFixed(1)}B</strong>, is welfare that simply disappears, regardless of who you tax.
               </p>
             </div>
           </div>
@@ -361,14 +383,27 @@ function Param({ label, value }: { label: string; value: string }) {
   );
 }
 
-function KPI({ label, value, sub, tone, highlight }: { label: string; value: string; sub?: string; tone: "positive" | "negative" | "warning"; highlight?: boolean }) {
+function KPI({ label, value, sub, tone, highlight, info }: { label: string; value: string; sub?: string; tone: "positive" | "negative" | "warning"; highlight?: boolean; info?: string }) {
   const toneCls =
     tone === "positive" ? "text-emerald-700 dark:text-emerald-400"
     : tone === "negative" ? "text-foreground"
     : "text-destructive";
   return (
-    <div className={`rounded-lg border bg-card p-4 ${highlight ? "border-primary/40 shadow-sm" : "border-border"}`}>
-      <div className="label-cap text-[0.6rem]">{label}</div>
+    <div className={`group relative rounded-lg border bg-card p-4 ${highlight ? "border-primary/40 shadow-sm" : "border-border"}`}>
+      <div className="flex items-center gap-1.5">
+        <div className="label-cap text-[0.6rem]">{label}</div>
+        {info && (
+          <span
+            tabIndex={0}
+            role="button"
+            aria-label={`What is this metric? ${info}`}
+            title={info}
+            className="inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border border-muted-foreground/40 text-[8px] font-bold text-muted-foreground hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary cursor-help"
+          >
+            i
+          </span>
+        )}
+      </div>
       <div className={`num-display mt-2 text-[1.6rem] leading-none ${toneCls}`}>{value}</div>
       {sub && <div className="mt-1 font-mono text-[0.7rem] text-muted-foreground">{sub}</div>}
     </div>
@@ -411,7 +446,7 @@ function SDGraph({ result }: { result: TariffResult }) {
   const x = (q: number) => pad.l + (q / qMax) * innerW;
   const y = (p: number) => pad.t + innerH - (p / pMax) * innerH;
 
-  // Demand line: passes through (0, 2*pWorld) and (qMax, 0) — hand-calibrated for nice slope
+  // Demand line: passes through (0, 2*pWorld) and (qMax, 0), hand-calibrated for nice slope
   const demand = (q: number) => {
     const m = -(pMax - result.chart.pWorld * 0.4) / qMax;
     return Math.max(0, pMax + m * q);
@@ -482,7 +517,7 @@ function SDGraph({ result }: { result: TariffResult }) {
         fill="hsl(var(--chart-3) / 0.45)"
       />
 
-      {/* CS loss highlight — the slim trapezoid above pW between qConsumeTariff and qConsumeFreeTrade */}
+      {/* CS loss highlight, the slim trapezoid above pW between qConsumeTariff and qConsumeFreeTrade */}
       <rect
         x={pad.l}
         y={y(pT)}
