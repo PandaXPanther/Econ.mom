@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Logo } from "./Logo";
 import { TOOLS } from "@/lib/tools";
 import { FOUNDED_YEAR, copyrightYears } from "@/lib/site-meta";
-import { Linkedin, Instagram, Github } from "lucide-react";
+import { Linkedin, Instagram, Github, Coffee } from "lucide-react";
 
 export function SiteFooter() {
   return (
@@ -81,6 +81,16 @@ export function SiteFooter() {
               cited. Economics is too important to lock behind a Bloomberg
               terminal.
             </p>
+            <a
+              href="https://www.buymeacoffee.com/sarast1"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="link-buy-me-a-coffee"
+              className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-2 font-mono text-[0.72rem] uppercase tracking-widest text-primary transition-colors hover:border-primary hover:bg-primary/10"
+            >
+              <Coffee size={13} />
+              If this helped, buy me a coffee
+            </a>
             <p className="mt-4 font-mono text-[0.78rem] text-muted-foreground">
               Press, partnerships, classroom use:{" "}
               <a
@@ -142,6 +152,16 @@ export function SiteFooter() {
               data-testid="link-social-github"
             >
               <Github size={14} />
+            </a>
+            <a
+              href="https://www.buymeacoffee.com/sarast1"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Buy Saras a coffee"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              data-testid="link-social-buymeacoffee"
+            >
+              <Coffee size={14} />
             </a>
           </div>
         </div>
