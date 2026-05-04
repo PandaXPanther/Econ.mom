@@ -1,7 +1,7 @@
 export function EconLeverLogo({ className = "" }: { className?: string }) {
   // Geometric mark: a lever pivoting on a fulcrum.
   // A horizontal beam tilted slightly off-center, balancing on a triangular
-  // fulcrum — visualizing the policy "levers" the simulator exposes.
+  // fulcrum, visualizing the policy "levers" the simulator exposes.
   return (
     <svg
       viewBox="0 0 32 32"

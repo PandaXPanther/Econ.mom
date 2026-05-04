@@ -128,7 +128,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-6 text-center font-mono text-[0.7rem] text-muted-foreground/70 italic">
-          "Economia, Mater Omnium." — Editorial Note, Issue Nº 1
+          "Economia, Mater Omnium.", Editorial Note, Issue Nº 1
         </div>
       </div>
     </footer>

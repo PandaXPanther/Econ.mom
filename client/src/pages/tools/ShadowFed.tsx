@@ -108,7 +108,7 @@ export default function ShadowFed() {
   return (
     <PageShell>
       <SEO
-        title="Shadow Fed — weekly Taylor-rule rate recommendation with a public track record | The Mother Of Econ"
+        title="Shadow Fed, weekly Taylor-rule rate recommendation with a public track record | The Mother Of Econ"
         description="A public, weekly Taylor-rule-derived federal funds rate recommendation. The graph is reactive to the inflation, unemployment, and rule-variant sliders, with live FRED data pulled on load."
         path="/shadow-fed"
       />
@@ -117,7 +117,7 @@ export default function ShadowFed() {
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">
         <div className="grid gap-8 md:grid-cols-3 mb-12">
           <KPIBox icon={<Target size={14}/>} label="Your recommendation" value={`${recommended.toFixed(2)}%`} sub={`Δ ${delta >= 0 ? "+" : ""}${delta.toFixed(2)}pp vs baseline`} />
-          <KPIBox icon={<Landmark size={14}/>} label="Latest FOMC target" value={`${TRACK_RECORD.filter(r => r.fomc).pop()?.actual?.toFixed(2) || "—"}%`} sub="Upper bound, current range" />
+          <KPIBox icon={<Landmark size={14}/>} label="Latest FOMC target" value={`${TRACK_RECORD.filter(r => r.fomc).pop()?.actual?.toFixed(2) || ", "}%`} sub="Upper bound, current range" />
           <KPIBox icon={<Target size={14}/>} label="Avg accuracy vs FOMC" value={`±${(avgError * 100).toFixed(0)}bp`} sub={`${correctDirection} of ${fomcMeetings.length} meetings within 25bp`} />
         </div>
 

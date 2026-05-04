@@ -1,6 +1,6 @@
 # The Mother of Econ
 
-Eight purpose-built tools for AP and policy economics — at **[econ.mom](https://econ.mom)**.
+Eight purpose-built tools for AP and policy economics, at **[econ.mom](https://econ.mom)**.
 
 > *Economia, mater omnium.*
 
@@ -26,7 +26,7 @@ An editorial-grade companion site to [EconLever](https://econlever.org). Built b
 ## Stack
 
 - **Frontend** Vite · React · TypeScript · Tailwind · shadcn/ui · wouter (hash routing) · Recharts · Framer Motion
-- **Backend** Express (currently no API endpoints — frontend-only at the moment)
+- **Backend** Express (currently no API endpoints, frontend-only at the moment)
 - **Type** Fraunces (display, italic) · Inter Tight (body) · JetBrains Mono (data)
 - **Palette** Oxblood + parchment (light) · library-at-night + amber (dark)
 
@@ -45,7 +45,7 @@ npm run build
 # → dist/public  (static, deployable to any CDN)
 ```
 
-## Deployment — Netlify
+## Deployment, Netlify
 
 The repo is pre-configured for Netlify via `netlify.toml`:
 
@@ -63,7 +63,7 @@ The repo is pre-configured for Netlify via `netlify.toml`:
 4. **Domain settings** → *Add custom domain* → `econ.mom`
 5. Netlify will give you DNS records. Two options:
 
-   **Option A — Netlify DNS (easiest)**: Update nameservers at your registrar (e.g. Namecheap, Cloudflare) to:
+   **Option A, Netlify DNS (easiest)**: Update nameservers at your registrar (e.g. Namecheap, Cloudflare) to:
    ```
    dns1.p07.nsone.net
    dns2.p07.nsone.net
@@ -72,7 +72,7 @@ The repo is pre-configured for Netlify via `netlify.toml`:
    ```
    *(exact set provided by Netlify in the dashboard)*
 
-   **Option B — External DNS**: Add records at your registrar:
+   **Option B, External DNS**: Add records at your registrar:
    ```
    A     @      75.2.60.5
    CNAME www    <site-name>.netlify.app

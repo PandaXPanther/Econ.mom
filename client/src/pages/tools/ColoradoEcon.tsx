@@ -41,7 +41,7 @@ const COUNTY_DATA = [
   { county: "Bennett (E. Adams)", unemployment: 4.2, livingWage: 24.10, gradRate: 84.0, medianRent: 1700, popK: 4 },
 ];
 
-// Industry employment — CDLE QCEW snapshot. Values in thousands.
+// Industry employment, CDLE QCEW snapshot. Values in thousands.
 const INDUSTRY = [
   { name: "Health & Education", emp: 414, ya: 3.1 },
   { name: "Prof. & Business Svc.", emp: 395, ya: 0.4 },
@@ -93,8 +93,8 @@ export default function ColoradoEcon() {
   return (
     <PageShell>
       <SEO
-        title="Colorado Econ Dashboard — labor, cost-of-living, education | The Mother Of Econ"
-        description="Hyperlocal Colorado economic dashboard. County-by-county unemployment, living-wage thresholds, graduation rates, and industry employment — sourced from BLS LAUS, CDLE QCEW, CDE, and MIT Living Wage Calculator."
+        title="Colorado Econ Dashboard, labor, cost-of-living, education | The Mother Of Econ"
+        description="Hyperlocal Colorado economic dashboard. County-by-county unemployment, living-wage thresholds, graduation rates, and industry employment, sourced from BLS LAUS, CDLE QCEW, CDE, and MIT Living Wage Calculator."
         path="/colorado-econ"
       />
       <ToolPageHeader tool={COMP} />
@@ -140,7 +140,7 @@ export default function ColoradoEcon() {
         <div className="mt-16 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6">
           <div className="label-cap mb-2 text-primary">Editorial note · why Colorado</div>
           <p className="prose-serif text-[0.95rem] text-foreground/85">
-            National data tell a story; state-level data tells the truth. This dashboard puts every Colorado AP student's county on a chart that costs nothing — Pueblo to Grand Junction, Aurora to the eastern plains. Twelve counties; four lenses; one thesis: economics is local before it is anything else.
+            National data tell a story; state-level data tells the truth. This dashboard puts every Colorado AP student's county on a chart that costs nothing, Pueblo to Grand Junction, Aurora to the eastern plains. Twelve counties; four lenses; one thesis: economics is local before it is anything else.
           </p>
         </div>
       </section>
@@ -272,7 +272,7 @@ function EducationPanel() {
 function IndustryPanel() {
   return (
     <div className="space-y-6">
-      <ChartFrame title="Colorado employment by industry — thousands of jobs" source="CDLE QCEW · Q2 2025">
+      <ChartFrame title="Colorado employment by industry, thousands of jobs" source="CDLE QCEW · Q2 2025">
         <BarChart data={INDUSTRY}>
           <CartesianGrid stroke="hsl(var(--border))" vertical={false} />
           <XAxis dataKey="name" tick={{ fontSize: 9, fill: "hsl(var(--muted-foreground))" }} stroke="hsl(var(--border))" interval={0} angle={-25} textAnchor="end" height={80} />

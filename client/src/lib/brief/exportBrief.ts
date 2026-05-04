@@ -1,4 +1,4 @@
-// Generic policy brief PDF exporter — used by every tool that supports
+// Generic policy brief PDF exporter, used by every tool that supports
 // "Export Policy Brief (PDF)". Same engine as the EconLever exporter
 // (jsPDF + html2canvas, scale=3, single Letter page) but tool-neutral.
 import jsPDF from "jspdf";

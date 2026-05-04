@@ -1,4 +1,4 @@
-// Natural Experiment Finder — curated database of canonical
+// Natural Experiment Finder, curated database of canonical
 // identification strategies in economics (Card-Krueger 1994, Mariel boatlift,
 // Vietnam draft lottery, Oregon Medicaid, etc.). Searchable by question type,
 // method, treatment, and AP-CED concept tag.
@@ -231,7 +231,7 @@ export const NATURAL_EXPERIMENTS: NaturalExperiment[] = [
     question: "What is the multiplier on exogenous tax changes?",
     treatment: "Narrative classification of US tax changes 1947–2007 into 'exogenous' and 'endogenous'.",
     finding: "An exogenous 1% of GDP tax cut raises GDP by ~3% within 3 years.",
-    identification: "Narrative IV — Congressional Records used to classify tax changes by motivation; only exogenous (deficit-driven, ideological) used.",
+    identification: "Narrative IV, Congressional Records used to classify tax changes by motivation; only exogenous (deficit-driven, ideological) used.",
     diagnostics: ["Mertens-Ravn 2013 adjustment", "Coding subjectivity", "Anticipation effects"],
     apTag: ["Fiscal multiplier", "Tax policy"],
     keywords: ["narrative IV", "fiscal", "tax multiplier"],
@@ -338,7 +338,7 @@ export const NATURAL_EXPERIMENTS: NaturalExperiment[] = [
   },
   {
     id: "chetty-moving-2018",
-    title: "Moving to Opportunity (MTO) — Long-Run",
+    title: "Moving to Opportunity (MTO), Long-Run",
     method: "RCT",
     authors: "Chetty, Hendren, Katz",
     year: 2016,
@@ -363,7 +363,7 @@ export const NATURAL_EXPERIMENTS: NaturalExperiment[] = [
     field: ["Finance"],
     question: "Do borrower default rates change discontinuously at LTV/credit thresholds?",
     treatment: "Sharp credit-score thresholds (e.g., 620 FICO) used in mortgage underwriting.",
-    finding: "Marginal borrowers just above 620 default at 1.6× the rate of those just below — adverse selection by lenders.",
+    finding: "Marginal borrowers just above 620 default at 1.6× the rate of those just below, adverse selection by lenders.",
     identification: "Sharp RDD at FICO=620; tight bandwidth, McCrary density continuous.",
     diagnostics: ["Manipulation around threshold", "Bandwidth choice"],
     apTag: ["Credit markets", "Asymmetric information"],

@@ -5,7 +5,7 @@ interface LogoProps {
 }
 
 /**
- * econ.mom seal — italic serif M monogram on a purple→magenta gradient,
+ * econ.mom seal, italic serif M monogram on a purple→magenta gradient,
  * with a small "equilibrium dot" at the M's apex and a pink accent dot
  * representing the period in "econ.mom". Matches favicon.svg pixel-for-pixel.
  */
@@ -86,7 +86,7 @@ export function Logo({ size = 32, withWordmark = false, className = "" }: LogoPr
         <circle cx="32" cy="22.5" r="2.4" fill="#FFC2E5" />
         <circle cx="32" cy="22.5" r="1.1" fill="#E13DA8" />
 
-        {/* Accent dot — the period of econ.mom */}
+        {/* Accent dot, the period of econ.mom */}
         <circle cx="50" cy="50" r="2.6" fill="#FFC2E5" />
       </svg>
 

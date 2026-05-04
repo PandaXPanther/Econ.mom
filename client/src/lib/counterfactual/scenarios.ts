@@ -1,4 +1,4 @@
-// Counterfactual Engine — historical macro counterfactuals.
+// Counterfactual Engine, historical macro counterfactuals.
 // Each scenario specifies: actual time-series, a set of editable parameters,
 // and a deterministic simulator that recomputes the alternate path.
 //
@@ -114,9 +114,9 @@ const volcker: CounterfactualScenario = {
     });
   },
   citations: [
-    { label: "Volcker (1979) — Reserves operating procedure", url: "https://www.federalreserve.gov/monetarypolicy/historicalmaterial.htm" },
-    { label: "Sargent (1982) — 'Ends of Four Big Inflations'", url: "https://www.minneapolisfed.org/research/working-papers/the-ends-of-four-big-inflations" },
-    { label: "Romer & Romer (1989) — narrative monetary shocks", url: "https://www.nber.org/papers/w2966" },
+    { label: "Volcker (1979), Reserves operating procedure", url: "https://www.federalreserve.gov/monetarypolicy/historicalmaterial.htm" },
+    { label: "Sargent (1982), 'Ends of Four Big Inflations'", url: "https://www.minneapolisfed.org/research/working-papers/the-ends-of-four-big-inflations" },
+    { label: "Romer & Romer (1989), narrative monetary shocks", url: "https://www.nber.org/papers/w2966" },
   ],
 };
 
@@ -175,9 +175,9 @@ const lehman: CounterfactualScenario = {
     });
   },
   citations: [
-    { label: "Mian & Sufi (2014) — House of Debt", url: "https://press.uchicago.edu/ucp/books/book/chicago/H/bo16728737.html" },
-    { label: "Bernanke (2015) — The Courage to Act, Ch. 11–13" },
-    { label: "Taylor (2009) — 'The Financial Crisis and the Policy Responses'", url: "https://web.stanford.edu/~johntayl/FCPR.pdf" },
+    { label: "Mian & Sufi (2014), House of Debt", url: "https://press.uchicago.edu/ucp/books/book/chicago/H/bo16728737.html" },
+    { label: "Bernanke (2015), The Courage to Act, Ch. 11–13" },
+    { label: "Taylor (2009), 'The Financial Crisis and the Policy Responses'", url: "https://web.stanford.edu/~johntayl/FCPR.pdf" },
   ],
 };
 
@@ -233,9 +233,9 @@ const arp: CounterfactualScenario = {
     });
   },
   citations: [
-    { label: "Blanchard (2021) — 'In Defense of Concerns Over the $1.9 Trillion Relief Plan'", url: "https://www.piie.com/blogs/realtime-economic-issues-watch/defense-concerns-over-19-trillion-relief-plan" },
-    { label: "Bernanke & Blanchard (2023) — NBER w31417", url: "https://www.nber.org/papers/w31417" },
-    { label: "Furman (2022) — 'Why did inflation spike?', AEI", url: "https://www.piie.com/" },
+    { label: "Blanchard (2021), 'In Defense of Concerns Over the $1.9 Trillion Relief Plan'", url: "https://www.piie.com/blogs/realtime-economic-issues-watch/defense-concerns-over-19-trillion-relief-plan" },
+    { label: "Bernanke & Blanchard (2023), NBER w31417", url: "https://www.nber.org/papers/w31417" },
+    { label: "Furman (2022), 'Why did inflation spike?', AEI", url: "https://www.piie.com/" },
   ],
 };
 
@@ -288,9 +288,9 @@ const ukAusterity: CounterfactualScenario = {
     });
   },
   citations: [
-    { label: "Auerbach & Gorodnichenko (2012) — state-dependent multipliers", url: "https://www.aeaweb.org/articles?id=10.1257/pol.4.2.1" },
-    { label: "Wren-Lewis (2015) — 'The Macroeconomic Record of the Coalition'" },
-    { label: "Blyth (2013) — Austerity: The History of a Dangerous Idea" },
+    { label: "Auerbach & Gorodnichenko (2012), state-dependent multipliers", url: "https://www.aeaweb.org/articles?id=10.1257/pol.4.2.1" },
+    { label: "Wren-Lewis (2015), 'The Macroeconomic Record of the Coalition'" },
+    { label: "Blyth (2013), Austerity: The History of a Dangerous Idea" },
   ],
 };
 
@@ -347,9 +347,9 @@ const greenspan: CounterfactualScenario = {
     });
   },
   citations: [
-    { label: "Taylor (2007) — 'Housing and Monetary Policy'", url: "https://www.kansascityfed.org/research/jackson-hole-economic-symposium/" },
-    { label: "Glaeser, Gottlieb, Gyourko (2010) — 'Can Cheap Credit Explain the Housing Boom?'", url: "https://www.nber.org/papers/w16230" },
-    { label: "Gorton (2010) — Slapped by the Invisible Hand" },
+    { label: "Taylor (2007), 'Housing and Monetary Policy'", url: "https://www.kansascityfed.org/research/jackson-hole-economic-symposium/" },
+    { label: "Glaeser, Gottlieb, Gyourko (2010), 'Can Cheap Credit Explain the Housing Boom?'", url: "https://www.nber.org/papers/w16230" },
+    { label: "Gorton (2010), Slapped by the Invisible Hand" },
   ],
 };
 

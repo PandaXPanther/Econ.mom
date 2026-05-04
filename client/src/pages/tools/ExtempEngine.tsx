@@ -27,19 +27,19 @@ const PROMPTS: { id: string; q: string; topic: string; speech: SpeechBlock }[] =
     topic: "Trade & Tariffs",
     q: "Are the 2025–26 US tariffs delivering on their promise to revitalize American manufacturing?",
     speech: {
-      agd: "In 1828, John C. Calhoun called the Tariff of Abominations exactly that — abominable — because it taxed Southern consumers to enrich Northern factories. Two centuries later, we are still arguing about who really pays a tariff.",
+      agd: "In 1828, John C. Calhoun called the Tariff of Abominations exactly that, abominable, because it taxed Southern consumers to enrich Northern factories. Two centuries later, we are still arguing about who really pays a tariff.",
       link: "Today, after the largest tariff escalation since Smoot-Hawley, that argument is no longer academic.",
       restate: "The question: are the 2025–26 US tariffs delivering on their promise to revitalize American manufacturing?",
-      significance: "Manufacturing is 10.3% of US GDP and 7.9% of US employment, per the BEA — and Colorado alone has 156,000 manufacturing workers in aerospace, food processing, and medical devices according to CDLE.",
+      significance: "Manufacturing is 10.3% of US GDP and 7.9% of US employment, per the BEA, and Colorado alone has 156,000 manufacturing workers in aerospace, food processing, and medical devices according to CDLE.",
       question: "Are the tariffs working?",
       preview: [
-        "First — the price-level effect, where the burden has fallen on importers and consumers, not foreign exporters.",
-        "Second — the employment effect, where domestic factory hiring has lagged the political messaging.",
+        "First, the price-level effect, where the burden has fallen on importers and consumers, not foreign exporters.",
+        "Second, the employment effect, where domestic factory hiring has lagged the political messaging.",
       ],
       con1: {
         claim: "The tariffs have been paid by Americans, not by foreign producers.",
-        warrant: "Cavallo, Gopinath, Neiman, and Tang find in their NBER working paper that virtually 100% of the 2018–19 tariffs were passed through to US import prices — and the 2025 tariffs are showing the same pattern.",
-        impact: "The Peterson Institute estimates the 2025 tariffs cost the average US household $1,200 per year — a regressive tax falling hardest on households at the bottom of the income distribution.",
+        warrant: "Cavallo, Gopinath, Neiman, and Tang find in their NBER working paper that virtually 100% of the 2018–19 tariffs were passed through to US import prices, and the 2025 tariffs are showing the same pattern.",
+        impact: "The Peterson Institute estimates the 2025 tariffs cost the average US household $1,200 per year, a regressive tax falling hardest on households at the bottom of the income distribution.",
         cites: [
           { stat: "Tariff pass-through to US import prices: ~100%", src: "Cavallo et al., NBER WP 26396" },
           { stat: "Annual cost per US household: ~$1,200", src: "Peterson Institute, 2025" },
@@ -48,15 +48,15 @@ const PROMPTS: { id: string; q: string; topic: string; speech: SpeechBlock }[] =
       },
       con2: {
         claim: "Domestic manufacturing employment has not responded.",
-        warrant: "BLS Current Employment Statistics show manufacturing payrolls are essentially flat year-over-year, and the ISM Manufacturing PMI has spent most of 2025 below 50 — the line that separates expansion from contraction.",
-        impact: "In Colorado, CDLE's QCEW shows aerospace and food-processing employment growing — but driven by demand, not by tariff-induced reshoring. The political story and the ground truth do not match.",
+        warrant: "BLS Current Employment Statistics show manufacturing payrolls are essentially flat year-over-year, and the ISM Manufacturing PMI has spent most of 2025 below 50, the line that separates expansion from contraction.",
+        impact: "In Colorado, CDLE's QCEW shows aerospace and food-processing employment growing, but driven by demand, not by tariff-induced reshoring. The political story and the ground truth do not match.",
         cites: [
           { stat: "ISM Manufacturing PMI 2025 average: below 50", src: "Institute for Supply Management" },
           { stat: "US manufacturing payrolls YoY change: ~0%", src: "BLS CES" },
           { stat: "Colorado manufacturing employment: 156,000", src: "CDLE QCEW" },
         ],
       },
-      answer: "No — the tariffs are functioning as a regressive consumption tax that has not produced the manufacturing renaissance their architects promised.",
+      answer: "No, the tariffs are functioning as a regressive consumption tax that has not produced the manufacturing renaissance their architects promised.",
       tieback: "Calhoun's 1828 worry was that tariffs make ordinary people pay so a few protected interests can prosper. Two centuries later, the data say he was right.",
     },
   },
@@ -65,18 +65,18 @@ const PROMPTS: { id: string; q: string; topic: string; speech: SpeechBlock }[] =
     topic: "Monetary Policy",
     q: "Should the Federal Reserve cut interest rates in the next FOMC meeting?",
     speech: {
-      agd: "When Paul Volcker took the chairmanship of the Federal Reserve in 1979, inflation was 13%. He raised rates to 20%, broke the back of inflation, and made the Fed's credibility — its independence, its willingness to inflict pain — the most valuable asset in American economic life.",
+      agd: "When Paul Volcker took the chairmanship of the Federal Reserve in 1979, inflation was 13%. He raised rates to 20%, broke the back of inflation, and made the Fed's credibility, its independence, its willingness to inflict pain, the most valuable asset in American economic life.",
       link: "Forty-seven years later, that asset is being tested again.",
       restate: "The question: should the Federal Reserve cut interest rates in the next FOMC meeting?",
-      significance: "The Fed sets the rate at which the entire $25-trillion US economy borrows. A 25-basis-point cut is the difference, on a $400,000 mortgage, of about $80 a month — and the difference, in the aggregate, of hundreds of billions in business investment.",
+      significance: "The Fed sets the rate at which the entire $25-trillion US economy borrows. A 25-basis-point cut is the difference, on a $400,000 mortgage, of about $80 a month, and the difference, in the aggregate, of hundreds of billions in business investment.",
       question: "Should they cut?",
       preview: [
-        "First — the inflation case, where Core PCE has not yet stabilized at the 2% target.",
-        "Second — the labor-market case, where rising unemployment makes the cost of waiting higher than the cost of cutting.",
+        "First, the inflation case, where Core PCE has not yet stabilized at the 2% target.",
+        "Second, the labor-market case, where rising unemployment makes the cost of waiting higher than the cost of cutting.",
       ],
       con1: {
         claim: "Inflation has not yet returned to target.",
-        warrant: "Core PCE — the Fed's preferred gauge — sits stubbornly above 2.5% YoY, well above the 2% mandate. The Cleveland Fed's median CPI tells the same story.",
+        warrant: "Core PCE, the Fed's preferred gauge, sits stubbornly above 2.5% YoY, well above the 2% mandate. The Cleveland Fed's median CPI tells the same story.",
         impact: "Cutting prematurely would re-anchor inflation expectations upward, the precise mistake the 1970s Fed made and the precise mistake Volcker spent a decade unwinding.",
         cites: [
           { stat: "Core PCE YoY: above 2.5%", src: "BEA Personal Income & Outlays" },
@@ -86,15 +86,15 @@ const PROMPTS: { id: string; q: string; topic: string; speech: SpeechBlock }[] =
       },
       con2: {
         claim: "The labor market is softening fast enough that waiting is the bigger risk.",
-        warrant: "Unemployment has risen meaningfully off its cycle low — the Sahm Rule, a recession indicator with a near-perfect track record, is flashing. The Beveridge curve has moved back to its pre-pandemic position.",
-        impact: "Monetary policy operates with what Milton Friedman called 'long and variable lags.' Waiting for inflation to perfectly hit 2% before cutting risks driving unemployment past the natural rate — a much harder problem to fix than mild inflation overshoot.",
+        warrant: "Unemployment has risen meaningfully off its cycle low, the Sahm Rule, a recession indicator with a near-perfect track record, is flashing. The Beveridge curve has moved back to its pre-pandemic position.",
+        impact: "Monetary policy operates with what Milton Friedman called 'long and variable lags.' Waiting for inflation to perfectly hit 2% before cutting risks driving unemployment past the natural rate, a much harder problem to fix than mild inflation overshoot.",
         cites: [
           { stat: "Sahm Rule indicator: above 0.5", src: "FRED SAHMCURRENT" },
           { stat: "Unemployment rate vs. cycle low: +0.6pp", src: "BLS CPS" },
           { stat: "Job openings per unemployed worker: 1.0×", src: "BLS JOLTS" },
         ],
       },
-      answer: "Yes — a measured 25-basis-point cut, with forward guidance making clear the cut is risk-management against labor-market deterioration, is the correct call.",
+      answer: "Yes, a measured 25-basis-point cut, with forward guidance making clear the cut is risk-management against labor-market deterioration, is the correct call.",
       tieback: "Volcker's lesson was that credibility matters. But credibility is two-sided: it means tightening when inflation runs hot, and it means easing when the labor market signals a downturn. Doing either at the wrong moment costs the same asset.",
     },
   },
@@ -103,19 +103,19 @@ const PROMPTS: { id: string; q: string; topic: string; speech: SpeechBlock }[] =
     topic: "Colorado Policy",
     q: "Should Colorado preempt local zoning to address its housing crisis?",
     speech: {
-      agd: "Charles Tiebout's 1956 paper 'A Pure Theory of Local Expenditures' argued that people 'vote with their feet' — they pick the city whose policies they like best. But what happens when every city votes for the same policy, and the policy is to build nothing?",
+      agd: "Charles Tiebout's 1956 paper 'A Pure Theory of Local Expenditures' argued that people 'vote with their feet', they pick the city whose policies they like best. But what happens when every city votes for the same policy, and the policy is to build nothing?",
       link: "That is the question Colorado's legislature is wrestling with right now.",
       restate: "The question: should Colorado preempt local zoning to address its housing crisis?",
-      significance: "The median home in Denver Metro is now over $640,000 according to the Colorado Association of Realtors — about 7.4× the median household income. The CDLE reports that 60,000 Coloradans commute over an hour each way, in part because they cannot afford to live near where they work.",
+      significance: "The median home in Denver Metro is now over $640,000 according to the Colorado Association of Realtors, about 7.4× the median household income. The CDLE reports that 60,000 Coloradans commute over an hour each way, in part because they cannot afford to live near where they work.",
       question: "Should Colorado preempt local zoning?",
       preview: [
-        "First — the supply argument, where local discretion has produced a coordinated under-build across the metro region.",
-        "Second — the equity argument, where zoning's history is inseparable from its racial and economic exclusion.",
+        "First, the supply argument, where local discretion has produced a coordinated under-build across the metro region.",
+        "Second, the equity argument, where zoning's history is inseparable from its racial and economic exclusion.",
       ],
       con1: {
         claim: "Local zoning has produced a Colorado-wide housing under-build.",
-        warrant: "A 2025 Common Sense Institute study estimates Colorado is short roughly 100,000 units of housing — and that shortage is concentrated in cities whose zoning makes multifamily construction effectively illegal. Denver, per CDLE building-permit data, issued the fewest housing permits per capita in 2024 of any major Mountain West metro.",
-        impact: "When supply is inelastic, every dollar of demand growth becomes a price increase, not a quantity increase — Econ 101. Coloradans pay the price.",
+        warrant: "A 2025 Common Sense Institute study estimates Colorado is short roughly 100,000 units of housing, and that shortage is concentrated in cities whose zoning makes multifamily construction effectively illegal. Denver, per CDLE building-permit data, issued the fewest housing permits per capita in 2024 of any major Mountain West metro.",
+        impact: "When supply is inelastic, every dollar of demand growth becomes a price increase, not a quantity increase, Econ 101. Coloradans pay the price.",
         cites: [
           { stat: "Colorado housing shortage: ~100,000 units", src: "Common Sense Institute, 2025" },
           { stat: "Denver Metro median home price: $640k+", src: "Colorado Association of Realtors" },
@@ -124,15 +124,15 @@ const PROMPTS: { id: string; q: string; topic: string; speech: SpeechBlock }[] =
       },
       con2: {
         claim: "The history of single-family zoning is the history of exclusion.",
-        warrant: "Richard Rothstein's 'The Color of Law' documents that single-family-only zoning was originally adopted in many U.S. cities — including in Colorado — explicitly to keep multifamily housing, and the families who would live there, out. The policy outlived its origin; the effect did not.",
-        impact: "States from Oregon to Montana have already preempted single-family-only zoning. The early data — particularly from Minneapolis — suggest small-multifamily construction rises and rent growth slows.",
+        warrant: "Richard Rothstein's 'The Color of Law' documents that single-family-only zoning was originally adopted in many U.S. cities, including in Colorado, explicitly to keep multifamily housing, and the families who would live there, out. The policy outlived its origin; the effect did not.",
+        impact: "States from Oregon to Montana have already preempted single-family-only zoning. The early data, particularly from Minneapolis, suggest small-multifamily construction rises and rent growth slows.",
         cites: [
           { stat: "Minneapolis 2040 plan, 4 years post-passage: 12% slower rent growth than peer cities", src: "Pew Charitable Trusts" },
           { stat: "Oregon HB 2001 (2019): legalized duplexes statewide", src: "Oregon Legislative Assembly" },
           { stat: "States that have passed zoning preemption: 6 (and counting)", src: "Sightline Institute" },
         ],
       },
-      answer: "Yes — Colorado should preempt single-family-only zoning, with carve-outs for genuinely unique local conditions but a default in favor of allowing the housing the state's labor market urgently needs.",
+      answer: "Yes, Colorado should preempt single-family-only zoning, with carve-outs for genuinely unique local conditions but a default in favor of allowing the housing the state's labor market urgently needs.",
       tieback: "Tiebout assumed people could vote with their feet between cities. The Colorado data show that, increasingly, the only feet doing the voting are leaving the state. Zoning reform is how that changes.",
     },
   },
@@ -158,11 +158,11 @@ export default function ExtempEngine() {
       "Two contentions.",
       ...s.preview,
       "",
-      `CONTENTION ONE — ${s.con1.claim}`,
+      `CONTENTION ONE, ${s.con1.claim}`,
       s.con1.warrant,
       s.con1.impact,
       "",
-      `CONTENTION TWO — ${s.con2.claim}`,
+      `CONTENTION TWO, ${s.con2.claim}`,
       s.con2.warrant,
       s.con2.impact,
       "",
@@ -180,7 +180,7 @@ export default function ExtempEngine() {
   return (
     <PageShell>
       <SEO
-        title="Extemp Engine — 7-minute economics speeches with cited stats | The Mother Of Econ"
+        title="Extemp Engine, 7-minute economics speeches with cited stats | The Mother Of Econ"
         description="Built by an extemper for extempers. Generate fully-cited 7-minute extemporaneous speeches on economics topics, with Colorado examples, both sides steel-manned, and a teleprompter view."
         path="/extemp-engine"
       />

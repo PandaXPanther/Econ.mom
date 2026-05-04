@@ -1,6 +1,6 @@
 /**
  * Fixed-size, print-only chart variants used inside the PolicyBriefDocument.
- * Recharts' ResponsiveContainer requires a measurable parent — when the brief
+ * Recharts' ResponsiveContainer requires a measurable parent, when the brief
  * is rendered off-screen, the container reports zero width and the chart fails
  * to draw. These variants pass explicit width/height instead.
  */

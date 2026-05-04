@@ -286,7 +286,7 @@ export default function CounterfactualEngine() {
           },
           {
             heading: "Citations",
-            paragraphs: scenario.citations.map((c) => `${c.label}${c.url ? ` — ${c.url}` : ""}`),
+            paragraphs: scenario.citations.map((c) => `${c.label}${c.url ? `, ${c.url}` : ""}`),
           },
         ]}
         footerNote="Calibrated to peer-reviewed estimates · Illustrative only"

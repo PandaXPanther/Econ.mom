@@ -18,7 +18,7 @@ const fadeUp = {
 const HOME_JSONLD = {
   "@context": "https://schema.org",
   "@type": "ItemList",
-  name: "The Twelve — Mother Of Econ tools",
+  name: "The Twelve, Mother Of Econ tools",
   itemListElement: [
     "AP FRQ Grader", "TariffLab", "Textbook Atlas", "Shock Simulator",
     "Shadow Fed", "Econ Paper Decoder", "Econ News Translator", "US Econ Dashboard", "EconLever",
@@ -30,14 +30,14 @@ export default function Home() {
   return (
     <PageShell>
       <SEO
-        title="Saras Totey · The Mother Of Econ — twelve free, citation-rigorous economics tools · econ.mom"
-        description="Saras Totey (Boulder, Colorado · Fairview High School) built econ.mom: twelve free, citation-rigorous economics tools. AP FRQ grading, live tariff modeling, a Shadow Fed, an Inflation Decomposer, a Natural Experiment Finder, a Counterfactual Engine, and more — every formula shown, every dataset cited."
+        title="Saras Totey · The Mother Of Econ, twelve free, citation-rigorous economics tools · econ.mom"
+        description="Saras Totey (Boulder, Colorado · Fairview High School) built econ.mom: twelve free, citation-rigorous economics tools. AP FRQ grading, live tariff modeling, a Shadow Fed, an Inflation Decomposer, a Natural Experiment Finder, a Counterfactual Engine, and more, every formula shown, every dataset cited."
         path="/"
         jsonLd={HOME_JSONLD}
       />
       <HeroCathedral />
 
-      {/* THE TWELVE — Tool index, editorial layout */}
+      {/* THE TWELVE, Tool index, editorial layout */}
       <section className="relative mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
         <div className="mb-16 grid items-end gap-8 md:grid-cols-12">
           <div className="md:col-span-7">
@@ -47,7 +47,7 @@ export default function Home() {
             </h2>
           </div>
           <p className="prose-serif md:col-span-5 text-foreground/80">
-            Each instrument below answers a question that has no public-internet answer — or whose existing answer is wrong, paywalled, or stale. Click any to begin.
+            Each instrument below answers a question that has no public-internet answer, or whose existing answer is wrong, paywalled, or stale. Click any to begin.
           </p>
         </div>
 
@@ -88,7 +88,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* THESIS — Editorial pull-quote */}
+      {/* THESIS, Editorial pull-quote */}
       <ThesisBand />
 
       {/* CTA strip */}
@@ -143,7 +143,7 @@ function Pillar({ title, body }: { title: string; body: string }) {
 }
 
 /* ============================================================
- * HERO — Cathedral
+ * HERO, Cathedral
  * Massive editorial display. Parallax. Animated ticker. Live clock.
  * Hero word ‘Mother’ has a hover micro-interaction (italic glide).
  * ============================================================ */
@@ -156,7 +156,7 @@ function HeroCathedral() {
 
   return (
     <section ref={ref} className="relative grain overflow-hidden border-b border-border">
-      {/* Layered background — oxblood wash, ambient gradient */}
+      {/* Layered background, oxblood wash, ambient gradient */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background via-background to-muted/20" />
       <div
         aria-hidden
@@ -211,7 +211,7 @@ function HeroCathedral() {
               policy desks the textbooks forgot. From{" "}
               <span className="italic text-foreground">AP free-response grading</span> to{" "}
               <span className="italic text-foreground">live tariff modeling</span> to a{" "}
-              <span className="italic text-foreground">Shadow Fed</span> with a public track record — every formula shown, every dataset cited.
+              <span className="italic text-foreground">Shadow Fed</span> with a public track record, every formula shown, every dataset cited.
             </motion.p>
 
             {/* Editor counter card with animated metrics */}
@@ -278,7 +278,7 @@ function HeroCathedral() {
         </motion.div>
       </div>
 
-      {/* Ticker tape — dual rows opposite directions */}
+      {/* Ticker tape, dual rows opposite directions */}
       <div className="border-y border-foreground/15 bg-card/40 py-2.5">
         <div className="marquee gap-10 whitespace-nowrap font-mono text-[0.72rem] uppercase tracking-[0.2em] text-muted-foreground">
           {[...Array(2)].map((_, k) => (
@@ -319,7 +319,7 @@ const SOURCES = [
   "Source: Peterson Institute", "Source: CBO", "Source: U.S. Treasury",
 ];
 
-/* Live local clock — auto-detects user's timezone via Intl. */
+/* Live local clock, auto-detects user's timezone via Intl. */
 function LiveClock() {
   const [now, setNow] = useState<string>("");
   useEffect(() => {
@@ -349,7 +349,7 @@ function LiveClock() {
   return <span data-testid="text-live-clock">{now}</span>;
 }
 
-/* Kinetic headline — dramatic display, hover-italic transformation on ‘Mother’. */
+/* Kinetic headline, dramatic display, hover-italic transformation on ‘Mother’. */
 function KineticHeadline() {
   return (
     <span className="block">
@@ -408,7 +408,7 @@ function CountStat({ to, label }: { to: number; label: string }) {
 }
 
 /* ============================================================
- * THESIS BAND — Big editorial pull-quote with sticky display.
+ * THESIS BAND, Big editorial pull-quote with sticky display.
  * ============================================================ */
 function ThesisBand() {
   return (

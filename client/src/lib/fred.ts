@@ -1,4 +1,4 @@
-// FRED client helper — talks to /api/fred (Netlify Function proxy).
+// FRED client helper, talks to /api/fred (Netlify Function proxy).
 // Never exposes the API key; always goes through the proxy.
 
 import { apiRequest } from "@/lib/queryClient";

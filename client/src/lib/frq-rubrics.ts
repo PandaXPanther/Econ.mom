@@ -107,7 +107,7 @@ export const FRQ_LIBRARY: FRQ[] = [
             idealAnswer:
               "The Federal Reserve should BUY government bonds (Treasury securities) in the open market.",
             explainIfMissed:
-              "Expansionary OMO = Fed BUYS bonds. A common error is saying 'the Fed lowers interest rates' — that's the OUTCOME, not the OMO action. The action is buying bonds.",
+              "Expansionary OMO = Fed BUYS bonds. A common error is saying 'the Fed lowers interest rates', that's the OUTCOME, not the OMO action. The action is buying bonds.",
           },
         ],
       },
@@ -191,7 +191,7 @@ export const FRQ_LIBRARY: FRQ[] = [
             idealAnswer:
               "Sun Orchards should continue to produce if P > AVC, because it can cover all of its variable costs plus some fixed costs. If P < AVC, it should shut down because it cannot even cover variable costs.",
             explainIfMissed:
-              "Use the SHUTDOWN RULE explicitly: compare P to AVC. Do not compare P to ATC for the shutdown decision — that's the profit decision, not the shutdown decision.",
+              "Use the SHUTDOWN RULE explicitly: compare P to AVC. Do not compare P to ATC for the shutdown decision, that's the profit decision, not the shutdown decision.",
           },
         ],
       },
@@ -263,7 +263,7 @@ export const FRQ_LIBRARY: FRQ[] = [
             idealAnswer:
               "The currency will depreciate. Lower nominal interest rates in Country Z reduce the return on Country Z's financial assets relative to other countries, so financial capital flows out. This decreases demand for Country Z's currency (and/or increases supply of it), causing it to depreciate.",
             explainIfMissed:
-              "Two parts needed: (1) currency DEPRECIATES, and (2) the capital-flow mechanism — lower i means foreigners want fewer of Country Z's assets, demand for the currency falls, currency depreciates.",
+              "Two parts needed: (1) currency DEPRECIATES, and (2) the capital-flow mechanism, lower i means foreigners want fewer of Country Z's assets, demand for the currency falls, currency depreciates.",
           },
         ],
       },
@@ -413,11 +413,11 @@ export function gradeFRQ(responses: Record<string, string>, frq: FRQ): GradeResu
   if (pct >= 0.9) {
     overallFeedback = "Outstanding. This response would likely earn a 5 on the full exam. Clean, precise, rubric-aligned language.";
   } else if (pct >= 0.7) {
-    overallFeedback = "Strong response. You understand the material — missed points are usually about rubric-aligned WORDING rather than understanding. Study the 'Ideal rewrite' below to see the exact phrasing graders reward.";
+    overallFeedback = "Strong response. You understand the material, missed points are usually about rubric-aligned WORDING rather than understanding. Study the 'Ideal rewrite' below to see the exact phrasing graders reward.";
   } else if (pct >= 0.4) {
-    overallFeedback = "Work in progress. You have the right ideas but miss the specific rubric terms graders are trained to look for. Study the ideal rewrite — AP Econ FRQs reward the exact language.";
+    overallFeedback = "Work in progress. You have the right ideas but miss the specific rubric terms graders are trained to look for. Study the ideal rewrite, AP Econ FRQs reward the exact language.";
   } else {
-    overallFeedback = "Not yet. Re-read the ideal rewrite below line-by-line. On AP Econ FRQs, graders look for specific terms and direction statements — 'AD decreases', 'price depreciates', 'Fed BUYS bonds'. Vague description earns zero.";
+    overallFeedback = "Not yet. Re-read the ideal rewrite below line-by-line. On AP Econ FRQs, graders look for specific terms and direction statements, 'AD decreases', 'price depreciates', 'Fed BUYS bonds'. Vague description earns zero.";
   }
 
   const idealRewrite = frq.parts

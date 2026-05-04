@@ -30,7 +30,7 @@ export async function registerRoutes(
                 `  Point ${i + 1} [${rp.id}] (${rp.points} pt): ${rp.prompt}\n    Ideal: ${rp.idealAnswer || ""}`
             )
             .join("\n");
-          return `Part ${p.label} (${p.id}) — ${p.prompt}\n${points}`;
+          return `Part ${p.label} (${p.id}), ${p.prompt}\n${points}`;
         })
         .join("\n\n");
 

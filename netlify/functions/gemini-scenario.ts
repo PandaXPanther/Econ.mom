@@ -47,7 +47,7 @@ Return ONLY JSON (no markdown):
 }
 
 Rules:
-- Use REAL historical FRED data for "series" — exact monthly or quarterly observations.
+- Use REAL historical FRED data for "series", exact monthly or quarterly observations.
 - "coefficient" is the linear sensitivity of outcome to (param − defaultActual). Sign matters.
 - 12-24 series points covering the era. Realistic variation.
 - Cite real sources with real URLs.

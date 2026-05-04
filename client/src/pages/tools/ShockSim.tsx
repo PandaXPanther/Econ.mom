@@ -69,7 +69,7 @@ export default function ShockSim() {
   return (
     <PageShell>
       <SEO
-        title="Shock Simulator — paste a headline, see the supply-and-demand graph shift correctly | The Mother Of Econ"
+        title="Shock Simulator, paste a headline, see the supply-and-demand graph shift correctly | The Mother Of Econ"
         description="Drop any economics news headline in. Shock Simulator classifies it as a supply or demand shock, quantifies the price and quantity effects, and renders the correct S/D graph shift with realistic elasticities."
         path="/shock-sim"
       />
@@ -143,8 +143,8 @@ export default function ShockSim() {
                   <div className="mt-5 grid grid-cols-2 gap-2">
                     <Stat label="ΔP" value={`${result.priceChangePct >= 0 ? "+" : ""}${result.priceChangePct.toFixed(1)}%`} sign={result.priceChangePct} />
                     <Stat label="ΔQ" value={`${result.quantityChangePct >= 0 ? "+" : ""}${result.quantityChangePct.toFixed(1)}%`} sign={result.quantityChangePct} />
-                    <Stat label="|εd|" value={result.elasticityDemand?.toFixed(2) ?? "—"} mono />
-                    <Stat label="|εs|" value={result.elasticitySupply?.toFixed(2) ?? "—"} mono />
+                    <Stat label="|εd|" value={result.elasticityDemand?.toFixed(2) ?? ", "} mono />
+                    <Stat label="|εs|" value={result.elasticitySupply?.toFixed(2) ?? ", "} mono />
                     <Stat label="Curve shift" value={`${result.shiftPct >= 0 ? "+" : ""}${result.shiftPct?.toFixed(1)}%`} mono />
                     <Stat label="Magnitude" value={result.magnitude} mono />
                   </div>
@@ -157,7 +157,7 @@ export default function ShockSim() {
                         <ul className="prose-serif text-foreground/85 space-y-1.5">
                           {result.historicalAnalogs.map((a, i) => (
                             <li key={i} className="text-[0.9rem]">
-                              <strong>{a.event}</strong> ({a.year}) — {a.outcome}
+                              <strong>{a.event}</strong> ({a.year}), {a.outcome}
                             </li>
                           ))}
                         </ul>
@@ -348,7 +348,7 @@ function SDDiagram({ type }: { type: ShockType }) {
         </>
       )}
 
-      {/* E1 — original equilibrium */}
+      {/* E1, original equilibrium */}
       <circle cx={170} cy={110} r={3.5} fill="hsl(var(--foreground))" />
       <text x={176} y={106} fontSize={10} fontFamily="JetBrains Mono" fill="hsl(var(--foreground))">E₁</text>
 
@@ -365,7 +365,7 @@ function SDDiagram({ type }: { type: ShockType }) {
         />
       )}
 
-      {/* E2 — new equilibrium (algebraically correct position) */}
+      {/* E2, new equilibrium (algebraically correct position) */}
       <motion.circle
         initial={{ cx: 170, cy: 110, r: 0 }}
         animate={{ cx: e2cx, cy: e2cy, r: 4 }}

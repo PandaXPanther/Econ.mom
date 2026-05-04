@@ -132,7 +132,7 @@ const CONCEPTS: Concept[] = [
         "Wage-price pressure: −β·(u − u*) = −0.5·(−1.0) = +0.5 pp",
         "Add expectations and shock: π = 2 + 0.5 + 1.2",
       ],
-      answer: "π ≈ 3.7% — the supply shock alone explains over half the deviation from target.",
+      answer: "π ≈ 3.7%, the supply shock alone explains over half the deviation from target.",
     },
     commonMistakes: [
       "Treating the curve as a stable long-run trade-off (Friedman/Phelps disproved this).",
@@ -152,11 +152,11 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "The interest rate at which depository institutions lend reserve balances to other depository institutions overnight. The Federal Open Market Committee (FOMC) sets a target range; the effective rate (EFFR) is the volume-weighted median of trades.",
     intuition:
-      "When the Fed wants to slow the economy, it raises the FFR target — borrowing costs ripple through Treasuries, mortgages, and corporate debt. Tightening cycles compress aggregate demand by raising the user cost of capital. The 2022–2024 cycle (0% → 5.33%) was the steepest since Volcker.",
+      "When the Fed wants to slow the economy, it raises the FFR target, borrowing costs ripple through Treasuries, mortgages, and corporate debt. Tightening cycles compress aggregate demand by raising the user cost of capital. The 2022–2024 cycle (0% → 5.33%) was the steepest since Volcker.",
     equations: [
       { tex: "i_{\\text{ON-RRP}} \\;\\le\\; \\text{EFFR} \\;\\le\\; i_{\\text{IORB}}", caption: "Modern floor system: IORB caps the rate, ON-RRP supports the floor." },
-      { tex: "i_t = r^* + \\pi_t + 0.5\\,(\\pi_t - \\pi^*) + 0.5\\,(y_t - y^*)", caption: "Taylor rule — the standard policy benchmark." },
-      { tex: "r_t = i_t - \\pi^e_t", caption: "Real interest rate — what ultimately matters for investment decisions." },
+      { tex: "i_t = r^* + \\pi_t + 0.5\\,(\\pi_t - \\pi^*) + 0.5\\,(y_t - y^*)", caption: "Taylor rule, the standard policy benchmark." },
+      { tex: "r_t = i_t - \\pi^e_t", caption: "Real interest rate, what ultimately matters for investment decisions." },
     ],
     keyAssumptions: [
       "The Fed has credible inflation-targeting commitment (post-1994).",
@@ -170,7 +170,7 @@ const CONCEPTS: Concept[] = [
         "Output gap component: 0.5·(0.5) = 0.25",
         "Sum: i = 0.5 + 3.2 + 0.6 + 0.25",
       ],
-      answer: "Implied policy rate ≈ 4.55% — close to actual 2024 EFFR.",
+      answer: "Implied policy rate ≈ 4.55%, close to actual 2024 EFFR.",
     },
     commonMistakes: [
       "Confusing the discount rate (lending facility) with the FFR (interbank market).",
@@ -194,7 +194,7 @@ const CONCEPTS: Concept[] = [
     equations: [
       { tex: "\\text{CPI}_t = 100 \\cdot \\frac{\\sum_i p_{i,t}\\,q_{i,0}}{\\sum_i p_{i,0}\\,q_{i,0}}", caption: "Laspeyres formula: fixed base-period quantities q_{i,0}." },
       { tex: "\\pi_t = \\frac{\\text{CPI}_t - \\text{CPI}_{t-12}}{\\text{CPI}_{t-12}} \\times 100", caption: "Year-over-year inflation rate." },
-      { tex: "w^{\\text{real}}_t = \\frac{w^{\\text{nom}}_t}{\\text{CPI}_t / 100}", caption: "Deflating a nominal wage — the most-used CPI application." },
+      { tex: "w^{\\text{real}}_t = \\frac{w^{\\text{nom}}_t}{\\text{CPI}_t / 100}", caption: "Deflating a nominal wage, the most-used CPI application." },
     ],
     keyAssumptions: [
       "Basket weights updated biennially (BLS now uses a chained methodology for C-CPI-U).",
@@ -208,12 +208,12 @@ const CONCEPTS: Concept[] = [
         "Ratio: 21.8 / 270.9 = 0.0805",
         "Convert to %: × 100",
       ],
-      answer: "π ≈ 8.0% — the highest annual inflation reading since 1981.",
+      answer: "π ≈ 8.0%, the highest annual inflation reading since 1981.",
     },
     commonMistakes: [
       "Comparing CPI levels across years without converting to growth rates.",
       "Ignoring the difference between CPI, PCE (the Fed's preferred measure), and the GDP deflator.",
-      "Forgetting that real values use a base year — always check which one.",
+      "Forgetting that real values use a base year, always check which one.",
     ],
     relatedConcepts: ["real-nominal-gdp", "phillips", "money-multiplier"],
     chart: { type: "area", title: "CPI-U, 2020–2026 (1982–84 = 100)", source: "FRED: CPIAUCSL", data: CPI_DATA },
@@ -231,7 +231,7 @@ const CONCEPTS: Concept[] = [
       "U-3 tells you who is actively seeking work and not finding it. It misses discouraged workers (U-4), marginally attached (U-5), and part-time-for-economic-reasons workers (U-6). The 2020 spike to 14.7% (April) was the highest since the BLS series began in 1948.",
     equations: [
       { tex: "u = \\frac{U}{E + U} = \\frac{\\text{unemployed}}{\\text{labor force}}", caption: "Headline U-3 definition." },
-      { tex: "\\text{LFPR} = \\frac{E + U}{\\text{Population}_{16+}}", caption: "Labor force participation — captures who is in the count at all." },
+      { tex: "\\text{LFPR} = \\frac{E + U}{\\text{Population}_{16+}}", caption: "Labor force participation, captures who is in the count at all." },
       { tex: "\\Delta u \\;\\approx\\; -0.5\\,(g_y - g_y^*)", caption: "Okun's law: each pp above potential GDP growth lowers u by ~0.5pp." },
     ],
     keyAssumptions: [
@@ -246,10 +246,10 @@ const CONCEPTS: Concept[] = [
         "u = 6.8 / 168.8 = 0.0403",
         "LFPR = 168.8 / 270 = 0.625",
       ],
-      answer: "u ≈ 4.0%, LFPR ≈ 62.5% — close to the 2024 actual.",
+      answer: "u ≈ 4.0%, LFPR ≈ 62.5%, close to the 2024 actual.",
     },
     commonMistakes: [
-      "Treating LFPR drops as 'low unemployment' — they may signal discouragement.",
+      "Treating LFPR drops as 'low unemployment', they may signal discouragement.",
       "Comparing pre-1994 BLS data with post-redesign series without adjustment.",
       "Forgetting that U-6 is roughly 2× U-3 in normal times.",
     ],
@@ -262,13 +262,13 @@ const CONCEPTS: Concept[] = [
     unit: "AP Macro · Unit 4",
     course: "Macro",
     apCED: ["MAC-4.D"],
-    shortDef: "MV = PY — the foundational identity linking money supply, prices, and output.",
+    shortDef: "MV = PY, the foundational identity linking money supply, prices, and output.",
     formalDefinition:
       "Originating with Hume and formalized by Irving Fisher (1911), MV = PY is an accounting identity that becomes a theory once V (velocity) and Y (real output) are assumed stable. Then ΔM ≈ ΔP, i.e., money growth drives inflation in the long run.",
     intuition:
-      "If you double the money stock and velocity doesn't change, nominal GDP must double — and if real output is fixed, all the change is in prices. The 2020–2022 episode was a stress test: M2 surged ~40%, velocity collapsed, then both partially reversed as inflation worked through.",
+      "If you double the money stock and velocity doesn't change, nominal GDP must double, and if real output is fixed, all the change is in prices. The 2020–2022 episode was a stress test: M2 surged ~40%, velocity collapsed, then both partially reversed as inflation worked through.",
     equations: [
-      { tex: "M \\cdot V = P \\cdot Y", caption: "Fisher's equation of exchange — definitional." },
+      { tex: "M \\cdot V = P \\cdot Y", caption: "Fisher's equation of exchange, definitional." },
       { tex: "\\Delta \\ln M + \\Delta \\ln V = \\Delta \\ln P + \\Delta \\ln Y", caption: "Take logs and differentiate: growth-rate form." },
       { tex: "\\text{If } \\Delta V \\approx 0,\\ \\Delta Y \\approx \\Delta Y^* \\;\\Longrightarrow\\; \\pi \\approx \\Delta M - \\Delta Y^*", caption: "Friedman's monetarist conclusion." },
     ],
@@ -304,10 +304,10 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "Aggregate demand (AD) is the negative relationship between price level P and real output Y; aggregate supply has a short-run upward-sloping curve (SRAS) and a vertical long-run curve (LRAS) at potential output Y*. Equilibrium is the intersection.",
     intuition:
-      "Demand shocks (fiscal, monetary, confidence) move AD. Supply shocks (oil, pandemic, productivity) move SRAS. In the long run, the economy returns to Y* via wage and price adjustment — only the price level changes. The 2021–2022 inflation was a textbook case of AD shifting right faster than SRAS could accommodate.",
+      "Demand shocks (fiscal, monetary, confidence) move AD. Supply shocks (oil, pandemic, productivity) move SRAS. In the long run, the economy returns to Y* via wage and price adjustment, only the price level changes. The 2021–2022 inflation was a textbook case of AD shifting right faster than SRAS could accommodate.",
     equations: [
       { tex: "\\text{AD:}\\quad Y = C(Y - T) + I(r) + G + NX(e)", caption: "Components of aggregate demand; r and e are policy-sensitive." },
-      { tex: "\\text{SRAS:}\\quad P = P^e \\left(\\frac{Y}{Y^*}\\right)^{\\alpha}", caption: "Lucas/Phelps imperfect-information form — upward sloping when P > Pᵉ." },
+      { tex: "\\text{SRAS:}\\quad P = P^e \\left(\\frac{Y}{Y^*}\\right)^{\\alpha}", caption: "Lucas/Phelps imperfect-information form, upward sloping when P > Pᵉ." },
       { tex: "\\text{LRAS:}\\quad Y = Y^* \\quad (\\text{vertical})", caption: "Potential output is determined by capital, labor, and technology." },
     ],
     keyAssumptions: [
@@ -326,7 +326,7 @@ const CONCEPTS: Concept[] = [
     },
     commonMistakes: [
       "Confusing AD/AS axes (P, Y) with micro supply/demand axes (P, Q).",
-      "Thinking LRAS slopes upward — it's vertical at potential.",
+      "Thinking LRAS slopes upward, it's vertical at potential.",
       "Misidentifying supply vs. demand shocks (key FRQ trap).",
     ],
     relatedConcepts: ["phillips", "output-gap", "real-nominal-gdp"],
@@ -337,14 +337,14 @@ const CONCEPTS: Concept[] = [
     unit: "AP Macro · Unit 4 (extension)",
     course: "Macro",
     apCED: ["MAC-4.A", "MAC-4.B", "MAC-4.C"],
-    shortDef: "Joint equilibrium in goods (IS) and money (LM) markets — the workhorse Keynesian model.",
+    shortDef: "Joint equilibrium in goods (IS) and money (LM) markets, the workhorse Keynesian model.",
     formalDefinition:
       "Hicks (1937) reformulated Keynes' General Theory as two curves in (Y, r) space: IS gives goods-market equilibrium where investment equals saving; LM gives money-market equilibrium where money demand equals money supply. Their intersection pins down output and the interest rate.",
     intuition:
-      "Fiscal expansion shifts IS right — output and interest rates rise. Monetary expansion shifts LM right — output rises and rates fall. The model explains why monetary policy is impotent in a liquidity trap (flat LM at the zero lower bound), motivating fiscal-policy advocacy.",
+      "Fiscal expansion shifts IS right, output and interest rates rise. Monetary expansion shifts LM right, output rises and rates fall. The model explains why monetary policy is impotent in a liquidity trap (flat LM at the zero lower bound), motivating fiscal-policy advocacy.",
     equations: [
-      { tex: "\\text{IS:}\\quad Y = C(Y - T) + I(r) + G", caption: "Goods-market equilibrium — lower r raises I, raising equilibrium Y." },
-      { tex: "\\text{LM:}\\quad \\frac{M}{P} = L(r,\\,Y)", caption: "Money-market equilibrium — higher Y raises money demand, requiring higher r." },
+      { tex: "\\text{IS:}\\quad Y = C(Y - T) + I(r) + G", caption: "Goods-market equilibrium, lower r raises I, raising equilibrium Y." },
+      { tex: "\\text{LM:}\\quad \\frac{M}{P} = L(r,\\,Y)", caption: "Money-market equilibrium, higher Y raises money demand, requiring higher r." },
       { tex: "\\text{Liquidity trap:}\\quad \\frac{\\partial L}{\\partial r} \\to \\infty \\;\\Longrightarrow\\; \\text{LM horizontal}", caption: "Monetary expansion has no effect on r or Y at the zero lower bound." },
     ],
     keyAssumptions: [
@@ -362,7 +362,7 @@ const CONCEPTS: Concept[] = [
       answer: "Net ΔY ≈ +350. Crowding out reclaims roughly 12% of the fiscal stimulus.",
     },
     commonMistakes: [
-      "Treating IS-LM as a long-run model — it's strictly short-run with fixed P.",
+      "Treating IS-LM as a long-run model, it's strictly short-run with fixed P.",
       "Forgetting crowding out reduces the simple Keynesian multiplier.",
       "Confusing the LM curve's slope with the Phillips curve.",
     ],
@@ -378,7 +378,7 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "A classical (long-run) framework where the real interest rate r equilibrates national saving (S = private + public) with investment demand I. Government deficits reduce public saving, raising r and crowding out private investment.",
     intuition:
-      "Imagine a market where savers lend and borrowers borrow. The 'price' is r. When the government runs a deficit, it competes for the same pool of funds — pushing r up and squeezing private investment. This is crowding out.",
+      "Imagine a market where savers lend and borrowers borrow. The 'price' is r. When the government runs a deficit, it competes for the same pool of funds, pushing r up and squeezing private investment. This is crowding out.",
     equations: [
       { tex: "\\underbrace{(Y - T - C)}_{S_{\\text{private}}} + \\underbrace{(T - G)}_{S_{\\text{public}}} = I", caption: "National saving identity in equilibrium." },
       { tex: "S = S(r,\\,Y),\\quad \\frac{\\partial S}{\\partial r} > 0", caption: "Upward-sloping supply: higher r incentivizes saving." },
@@ -415,7 +415,7 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "If banks hold a fraction rr of deposits as reserves and the public holds no currency, a $1 reserve injection supports $1/rr of new deposits. With a currency-deposit ratio cr, the multiplier becomes (1 + cr) / (rr + cr).",
     intuition:
-      "Bank A lends out (1−rr) of a new deposit. The borrower spends it; the recipient deposits at Bank B, which keeps rr and lends out (1−rr) again. The geometric series sums to 1/rr. In practice, post-2008 abundant reserves break the textbook multiplier — banks aren't constrained by reserves.",
+      "Bank A lends out (1−rr) of a new deposit. The borrower spends it; the recipient deposits at Bank B, which keeps rr and lends out (1−rr) again. The geometric series sums to 1/rr. In practice, post-2008 abundant reserves break the textbook multiplier, banks aren't constrained by reserves.",
     equations: [
       { tex: "m = \\frac{1}{rr}", caption: "Simple multiplier: closed system, no currency leakage." },
       { tex: "m = \\frac{1 + cr}{rr + cr}", caption: "Full multiplier with cr = currency/deposit ratio (cash leakage shrinks m)." },
@@ -435,7 +435,7 @@ const CONCEPTS: Concept[] = [
       answer: "ΔM ≈ +$700M (textbook). In practice (2008–present), excess reserves dampen this drastically.",
     },
     commonMistakes: [
-      "Using m = 1/rr in modern data — it doesn't fit since 2008.",
+      "Using m = 1/rr in modern data, it doesn't fit since 2008.",
       "Confusing M0 (base), M1 (currency + checkable), and M2 (M1 + savings).",
       "Forgetting that the Fed's balance sheet expansion does not mechanically increase M.",
     ],
@@ -469,12 +469,12 @@ const CONCEPTS: Concept[] = [
         "Linear index: −0.5 + (−0.7)·(−1.05) = −0.5 + 0.735 = 0.235",
         "Φ(0.235) ≈ 0.59",
       ],
-      answer: "P(recession in 12m) ≈ 59% — a deeply inverted curve historically associated with downturn risk.",
+      answer: "P(recession in 12m) ≈ 59%, a deeply inverted curve historically associated with downturn risk.",
     },
     commonMistakes: [
       "Using stocks instead of Treasury yields.",
       "Confusing the level of rates with the slope (an inverted curve at high rates ≠ inverted at low rates).",
-      "Treating inversion as guaranteed recession — false positives exist (1966, late 1990s).",
+      "Treating inversion as guaranteed recession, false positives exist (1966, late 1990s).",
     ],
     relatedConcepts: ["ffr", "loanable-funds", "output-gap"],
     chart: { type: "line", title: "10y–3m Treasury Spread, 2019–2026 (pp)", source: "FRED: T10Y3M", data: YIELD_SPREAD },
@@ -489,7 +489,7 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "Gap = (Y − Y*) / Y* × 100, where Y* is potential output (CBO estimate). A negative gap signals recession; positive signals overheating. Used to calibrate fiscal stimulus and policy rules.",
     intuition:
-      "Potential is what the economy could produce at full employment with stable inflation. Real output rarely sits exactly there — recessions push it down (negative gap), booms push it up. The 2020 gap fell to −3.8% in Q2; by 2022 it had swung positive as stimulus and reopening combined.",
+      "Potential is what the economy could produce at full employment with stable inflation. Real output rarely sits exactly there, recessions push it down (negative gap), booms push it up. The 2020 gap fell to −3.8% in Q2; by 2022 it had swung positive as stimulus and reopening combined.",
     equations: [
       { tex: "\\text{Gap}_t = \\frac{Y_t - Y_t^*}{Y_t^*} \\times 100", caption: "Standard CBO measure." },
       { tex: "\\text{Gap}_t \\approx -2\\,(u_t - u^*)", caption: "Okun's law: each pp above NAIRU ≈ 2pp negative output gap." },
@@ -535,7 +535,7 @@ const CONCEPTS: Concept[] = [
     ],
     keyAssumptions: [
       "Base year choice matters less under chained methodology.",
-      "Real GDP captures changes in quantities — it is the proper welfare metric.",
+      "Real GDP captures changes in quantities, it is the proper welfare metric.",
       "Nominal series should be deflated for any cross-time comparison.",
     ],
     workedExample: {
@@ -549,7 +549,7 @@ const CONCEPTS: Concept[] = [
     },
     commonMistakes: [
       "Comparing nominal series across decades without deflating.",
-      "Confusing GDP deflator with CPI — they differ in scope and methodology.",
+      "Confusing GDP deflator with CPI, they differ in scope and methodology.",
       "Using Y in level terms when you mean per-capita (which divides by population).",
     ],
     relatedConcepts: ["cpi", "output-gap", "ad-as"],
@@ -561,11 +561,11 @@ const CONCEPTS: Concept[] = [
     unit: "AP Macro · Unit 3",
     course: "Macro",
     apCED: ["MAC-3.B"],
-    shortDef: "Each $1 of new income generates MPC × $1 of consumption — and the spending cascades.",
+    shortDef: "Each $1 of new income generates MPC × $1 of consumption, and the spending cascades.",
     formalDefinition:
       "MPC = ΔC/ΔY_d. The simple Keynesian multiplier 1/(1−MPC) summarizes how an autonomous spending change propagates: new spending becomes someone's income, of which MPC is re-spent, etc., yielding a geometric series.",
     intuition:
-      "If MPC = 0.8 and the government spends $100, recipients spend $80, those recipients spend $64, and so on — totaling $500. The multiplier is amplified by the strength of the consumption response and dampened by taxes, imports, and crowding out.",
+      "If MPC = 0.8 and the government spends $100, recipients spend $80, those recipients spend $64, and so on, totaling $500. The multiplier is amplified by the strength of the consumption response and dampened by taxes, imports, and crowding out.",
     equations: [
       { tex: "\\text{MPC} = \\frac{\\Delta C}{\\Delta Y_d}, \\qquad \\text{MPS} = 1 - \\text{MPC}", caption: "Income split between consumption and saving." },
       { tex: "k = \\frac{1}{1 - \\text{MPC}}", caption: "Simple multiplier: closed economy, no taxes." },
@@ -583,7 +583,7 @@ const CONCEPTS: Concept[] = [
         "Multiplier: 1 / (1 − 0.60 + 0.10) = 1 / 0.50 = 2.0",
         "ΔY = k · ΔG = 2.0 · 100",
       ],
-      answer: "ΔY ≈ $200B — the multiplier is significantly smaller than the closed-economy 4.0.",
+      answer: "ΔY ≈ $200B, the multiplier is significantly smaller than the closed-economy 4.0.",
     },
     commonMistakes: [
       "Using the closed-economy formula in modern open settings.",
@@ -620,11 +620,11 @@ const CONCEPTS: Concept[] = [
         "Total over all i,j (incl. duplicates): 2 · 80 = 160",
         "G = 160 / (2 · 3² · 40) = 160 / 720",
       ],
-      answer: "G ≈ 0.222 — moderate inequality.",
+      answer: "G ≈ 0.222, moderate inequality.",
     },
     commonMistakes: [
       "Comparing Gini across countries with different reporting bases (income vs. consumption).",
-      "Treating Gini as a complete welfare statistic — it ignores level of income.",
+      "Treating Gini as a complete welfare statistic, it ignores level of income.",
       "Confusing pre- and post-redistribution measures.",
     ],
     relatedConcepts: ["labor-share", "debt-gdp"],
@@ -647,7 +647,7 @@ const CONCEPTS: Concept[] = [
       { tex: "\\alpha_L^{\\text{obs}} = \\frac{\\alpha_L^{\\text{comp}}}{\\mu}", caption: "Rising markups μ mechanically reduce observed labor share." },
     ],
     keyAssumptions: [
-      "Cobb–Douglas implies a constant labor share — empirically violated.",
+      "Cobb–Douglas implies a constant labor share, empirically violated.",
       "Mismeasurement (housing, intangibles, self-employed) may overstate decline.",
       "Cross-country evidence shows broad-based decline (Karabarbounis & Neiman 2014).",
     ],
@@ -674,7 +674,7 @@ const CONCEPTS: Concept[] = [
     unit: "AP Macro · Unit 5",
     course: "Macro",
     apCED: ["MAC-5.A"],
-    shortDef: "Federal debt held by the public divided by GDP — the headline fiscal-sustainability ratio.",
+    shortDef: "Federal debt held by the public divided by GDP, the headline fiscal-sustainability ratio.",
     formalDefinition:
       "Debt held by the public excludes intragovernmental holdings (Social Security trust funds, etc.). The dynamics follow d_t − d_{t−1} = (r − g)·d_{t−1} − pb_t, where d = debt/GDP, pb = primary balance, r = interest rate, g = growth.",
     intuition:
@@ -718,15 +718,15 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "ε_d = (%ΔQ_d) / (%ΔP). |ε_d| > 1 = elastic; |ε_d| = 1 = unit elastic; |ε_d| < 1 = inelastic. Determinants: substitute availability, share of budget, time horizon, necessity vs. luxury.",
     intuition:
-      "Gasoline is famously inelastic in the short run (~0.3): if prices rise 10%, consumption falls only 3%. Restaurant meals are highly elastic — a 10% price hike sends diners elsewhere. Total revenue and elasticity move in opposite directions: cutting prices raises revenue when demand is elastic.",
+      "Gasoline is famously inelastic in the short run (~0.3): if prices rise 10%, consumption falls only 3%. Restaurant meals are highly elastic, a 10% price hike sends diners elsewhere. Total revenue and elasticity move in opposite directions: cutting prices raises revenue when demand is elastic.",
     equations: [
       { tex: "\\varepsilon_d = \\frac{\\Delta Q / Q}{\\Delta P / P} = \\frac{\\Delta Q}{\\Delta P} \\cdot \\frac{P}{Q}", caption: "Point elasticity." },
-      { tex: "\\varepsilon_d^{\\text{mid}} = \\frac{(Q_2 - Q_1)/\\tfrac{Q_1 + Q_2}{2}}{(P_2 - P_1)/\\tfrac{P_1 + P_2}{2}}", caption: "Midpoint formula — avoids reference-point ambiguity." },
+      { tex: "\\varepsilon_d^{\\text{mid}} = \\frac{(Q_2 - Q_1)/\\tfrac{Q_1 + Q_2}{2}}{(P_2 - P_1)/\\tfrac{P_1 + P_2}{2}}", caption: "Midpoint formula, avoids reference-point ambiguity." },
       { tex: "\\text{TR} = P \\cdot Q \\;\\Longrightarrow\\; \\frac{d\\,\\text{TR}}{dP} > 0 \\iff |\\varepsilon_d| < 1", caption: "Inelastic demand: raise price to raise revenue." },
     ],
     keyAssumptions: [
       "Other determinants (income, prices of substitutes) held constant.",
-      "Elasticity varies along a linear demand curve — specify the point.",
+      "Elasticity varies along a linear demand curve, specify the point.",
       "Long-run elasticities exceed short-run.",
     ],
     workedExample: {
@@ -739,7 +739,7 @@ const CONCEPTS: Concept[] = [
       answer: "ε_d ≈ −1.22 (elastic). Revenue change: 12·80 − 10·100 = 960 − 1000 = −$40 (revenue falls when raising prices in elastic range).",
     },
     commonMistakes: [
-      "Forgetting the negative sign — ε_d is conventionally reported as |ε_d|.",
+      "Forgetting the negative sign, ε_d is conventionally reported as |ε_d|.",
       "Using point elasticity over wide price ranges.",
       "Confusing elasticity with the slope of the demand curve.",
     ],
@@ -755,7 +755,7 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "Consumer surplus (CS) = area between the demand curve and price, integrated up to Q. Producer surplus (PS) = area between price and the supply curve. Total surplus = CS + PS measures social welfare in the absence of externalities.",
     intuition:
-      "If you'd pay $50 for a concert ticket but it costs $30, your CS is $20 — the value beyond what you paid. Similarly, sellers receive PS = price minus marginal cost. A binding price ceiling reduces total surplus by creating a deadweight loss triangle.",
+      "If you'd pay $50 for a concert ticket but it costs $30, your CS is $20, the value beyond what you paid. Similarly, sellers receive PS = price minus marginal cost. A binding price ceiling reduces total surplus by creating a deadweight loss triangle.",
     equations: [
       { tex: "\\text{CS} = \\int_0^{Q^*} \\bigl(D(q) - P^*\\bigr)\\,dq", caption: "Consumer surplus: area below demand, above price." },
       { tex: "\\text{PS} = \\int_0^{Q^*} \\bigl(P^* - S(q)\\bigr)\\,dq", caption: "Producer surplus: area above supply, below price." },
@@ -777,7 +777,7 @@ const CONCEPTS: Concept[] = [
     },
     commonMistakes: [
       "Computing CS using market price × quantity (that's revenue, not surplus).",
-      "Treating tax revenue as deadweight loss — it's a transfer.",
+      "Treating tax revenue as deadweight loss, it's a transfer.",
       "Forgetting that a price ceiling above equilibrium has zero effect.",
     ],
     relatedConcepts: ["elasticity", "monopoly-dwl", "externalities"],
@@ -792,7 +792,7 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "Ricardo (1817): country A has comparative advantage in good X if its opportunity cost of producing X (in terms of Y forgone) is lower than country B's. Specialization plus trade can move both countries beyond their PPFs in consumption.",
     intuition:
-      "A surgeon may type faster than her assistant — but her opportunity cost of typing (forgone surgery) is enormous, so she should still hire the assistant. Comparative (not absolute) advantage governs efficient specialization.",
+      "A surgeon may type faster than her assistant, but her opportunity cost of typing (forgone surgery) is enormous, so she should still hire the assistant. Comparative (not absolute) advantage governs efficient specialization.",
     equations: [
       { tex: "\\text{OC}_A(X) = \\frac{\\Delta Y_A}{\\Delta X_A}", caption: "Country A's opportunity cost of one unit of X (units of Y forgone)." },
       { tex: "\\text{A has CA in } X \\iff \\text{OC}_A(X) < \\text{OC}_B(X)", caption: "Specialization rule." },
@@ -815,7 +815,7 @@ const CONCEPTS: Concept[] = [
     commonMistakes: [
       "Confusing absolute and comparative advantage.",
       "Forgetting that opportunity costs must be expressed in the same units.",
-      "Concluding 'the more productive country gains all the trade benefits' — both gain.",
+      "Concluding 'the more productive country gains all the trade benefits', both gain.",
     ],
     relatedConcepts: ["ppf"],
   },
@@ -829,11 +829,11 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "The set of maximum output combinations of two goods producible with all available factors fully and efficiently employed. The PPF's slope at any point equals the marginal opportunity cost of the x-axis good in terms of the y-axis good.",
     intuition:
-      "A bowed-out PPF reflects increasing opportunity cost — resources aren't equally suited to both goods. A linear PPF reflects constant opportunity cost. Inside the PPF = inefficient (unemployment); on it = efficient; beyond = infeasible without growth or trade.",
+      "A bowed-out PPF reflects increasing opportunity cost, resources aren't equally suited to both goods. A linear PPF reflects constant opportunity cost. Inside the PPF = inefficient (unemployment); on it = efficient; beyond = infeasible without growth or trade.",
     equations: [
-      { tex: "-\\frac{dY}{dX} = \\text{MRT}_{X \\to Y}", caption: "Slope of the PPF — marginal rate of transformation = opportunity cost." },
-      { tex: "Y = a - b\\,X \\quad \\Longrightarrow \\quad \\text{constant OC} = b", caption: "Linear PPF — constant opportunity cost." },
-      { tex: "Y = \\bigl(R - X^k\\bigr)^{1/m}", caption: "Bowed PPF — increasing opportunity cost (realistic case)." },
+      { tex: "-\\frac{dY}{dX} = \\text{MRT}_{X \\to Y}", caption: "Slope of the PPF, marginal rate of transformation = opportunity cost." },
+      { tex: "Y = a - b\\,X \\quad \\Longrightarrow \\quad \\text{constant OC} = b", caption: "Linear PPF, constant opportunity cost." },
+      { tex: "Y = \\bigl(R - X^k\\bigr)^{1/m}", caption: "Bowed PPF, increasing opportunity cost (realistic case)." },
     ],
     keyAssumptions: [
       "Resources and technology are fixed.",
@@ -850,7 +850,7 @@ const CONCEPTS: Concept[] = [
       answer: "Each additional X costs 2Y. Producing inside (e.g., X=10, Y=30) wastes 10 units of Y.",
     },
     commonMistakes: [
-      "Calling points inside the PPF 'impossible' — they are merely inefficient.",
+      "Calling points inside the PPF 'impossible', they are merely inefficient.",
       "Forgetting that economic growth shifts the PPF outward.",
       "Confusing the PPF with the budget constraint (different concept).",
     ],
@@ -866,14 +866,14 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "A monopolist faces the entire market demand and equates marginal revenue (MR) with marginal cost (MC). Since MR < P (demand), the monopoly output Q_m < Q_competitive, and the price P_m > MC. The triangle between the demand and MC curves over [Q_m, Q_c] is deadweight loss.",
     intuition:
-      "A competitive market produces where P = MC — every unit whose value to consumers exceeds its cost gets made. A monopolist withholds these socially valuable units to sustain a higher price. The forgone trades are pure waste, not transfers.",
+      "A competitive market produces where P = MC, every unit whose value to consumers exceeds its cost gets made. A monopolist withholds these socially valuable units to sustain a higher price. The forgone trades are pure waste, not transfers.",
     equations: [
-      { tex: "\\text{MR} = P \\left(1 + \\frac{1}{\\varepsilon_d}\\right)", caption: "Inverse-elasticity rule — MR < P whenever demand is finitely elastic." },
-      { tex: "\\text{MR} = \\text{MC} \\;\\Longrightarrow\\; \\frac{P - \\text{MC}}{P} = -\\frac{1}{\\varepsilon_d}", caption: "Lerner index — optimal markup is inversely related to elasticity." },
+      { tex: "\\text{MR} = P \\left(1 + \\frac{1}{\\varepsilon_d}\\right)", caption: "Inverse-elasticity rule, MR < P whenever demand is finitely elastic." },
+      { tex: "\\text{MR} = \\text{MC} \\;\\Longrightarrow\\; \\frac{P - \\text{MC}}{P} = -\\frac{1}{\\varepsilon_d}", caption: "Lerner index, optimal markup is inversely related to elasticity." },
       { tex: "\\text{DWL} = \\tfrac{1}{2}\\,(Q_c - Q_m)(P_m - \\text{MC})", caption: "Welfare-loss triangle (linear approximation)." },
     ],
     keyAssumptions: [
-      "Single price (no perfect price discrimination — which would eliminate DWL but transfer all CS to firm).",
+      "Single price (no perfect price discrimination, which would eliminate DWL but transfer all CS to firm).",
       "Constant marginal cost or known cost function.",
       "No regulation or natural-monopoly cost structure.",
     ],
@@ -904,10 +904,10 @@ const CONCEPTS: Concept[] = [
     formalDefinition:
       "A negative externality (e.g., pollution) arises when MSC > MPC: the social cost exceeds the private cost. The market overproduces. Pigou (1920): set a tax τ = MSC − MPC at the social optimum to internalize the externality and restore efficiency.",
     intuition:
-      "A power plant that emits CO₂ doesn't pay for the climate damage — so it produces too much electricity. A tax equal to the marginal climate damage forces the plant to internalize the cost, cutting output to the socially optimal level. Coase (1960) showed bargaining can also work when property rights are well-defined.",
+      "A power plant that emits CO₂ doesn't pay for the climate damage, so it produces too much electricity. A tax equal to the marginal climate damage forces the plant to internalize the cost, cutting output to the socially optimal level. Coase (1960) showed bargaining can also work when property rights are well-defined.",
     equations: [
       { tex: "\\text{MSC} = \\text{MPC} + \\text{MEC}, \\quad \\text{MEC} > 0", caption: "Negative externality: marginal external cost added to private cost." },
-      { tex: "\\text{MSC} = \\text{MSB} \\quad \\text{(social optimum)}", caption: "Efficiency requires equating social — not private — margins." },
+      { tex: "\\text{MSC} = \\text{MSB} \\quad \\text{(social optimum)}", caption: "Efficiency requires equating social, not private, margins." },
       { tex: "\\tau^* = \\text{MEC} \\big|_{Q = Q^*}", caption: "Pigouvian tax level that achieves the social optimum." },
     ],
     keyAssumptions: [
@@ -943,7 +943,7 @@ const CONCEPTS: Concept[] = [
     intuition:
       "Two suspects can each cooperate (stay silent) or defect (confess). Both defecting is the unique Nash equilibrium even though both cooperating yields higher joint payoff. The lesson: rational individual choice can be collectively self-destructive, motivating institutions and contracts.",
     equations: [
-      { tex: "\\forall i:\\quad s_i^* \\in \\arg\\max_{s_i} u_i\\bigl(s_i,\\,s_{-i}^*\\bigr)", caption: "Nash equilibrium — mutual best response." },
+      { tex: "\\forall i:\\quad s_i^* \\in \\arg\\max_{s_i} u_i\\bigl(s_i,\\,s_{-i}^*\\bigr)", caption: "Nash equilibrium, mutual best response." },
       { tex: "u_i(s_i,\\,\\sigma_{-i}^*) = \\text{const}\\quad \\forall\\,s_i \\in \\text{supp}(\\sigma_i^*)", caption: "Indifference condition for mixed-strategy Nash." },
       { tex: "q_i^* = \\frac{a - c}{3b} \\quad \\text{(symmetric Cournot duopoly)}", caption: "Nash output per firm with linear demand P = a - bQ." },
     ],
@@ -1011,7 +1011,7 @@ export default function TextbookAtlas() {
   return (
     <PageShell>
       <SEO
-        title="Textbook Atlas — every AP Econ concept with formal definitions, equations, worked examples | The Mother Of Econ"
+        title="Textbook Atlas, every AP Econ concept with formal definitions, equations, worked examples | The Mother Of Econ"
         description="A living textbook for AP Macro and AP Micro. 24 core concepts, each with formal definitions, intuition, equations, key assumptions, worked numerical examples, and live FRED charts."
         path="/textbook-atlas"
       />

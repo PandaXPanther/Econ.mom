@@ -12,7 +12,7 @@ interface SEOProps {
 const SITE = "https://econ.mom";
 
 /**
- * SEO — sets per-page <title>, meta tags, OpenGraph, Twitter card, canonical
+ * SEO, sets per-page <title>, meta tags, OpenGraph, Twitter card, canonical
  * URL, and an optional JSON-LD blob. Mounts on render, restores nothing
  * on unmount (router will overwrite on next page).
  */

@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 /*
-  THE MOTHER OF ECON — econ.mom
+  THE MOTHER OF ECON, econ.mom
   Design language: Editorial cathedral × Bloomberg Terminal × Holographic foil
-  Primary: Royal Violet (deep plum) — gravitas with electricity
-  Accent: Magenta strobe — for flagship marks and live ribbons
+  Primary: Royal Violet (deep plum), gravitas with electricity
+  Accent: Magenta strobe, for flagship marks and live ribbons
   Display: Fraunces (variable serif)
   Body: Inter Tight
   Mono: JetBrains Mono
 */
 
-/* LIGHT MODE — Vellum (cool parchment, lavender tint) */
+/* LIGHT MODE, Vellum (cool parchment, lavender tint) */
 :root {
   --button-outline: rgba(40, 18, 60, 0.12);
   --badge-outline: rgba(40, 18, 60, 0.08);
@@ -39,7 +39,7 @@
   --popover-foreground: 268 24% 12%;
   --popover-border: 270 16% 88%;
 
-  /* Royal Violet — primary accent */
+  /* Royal Violet, primary accent */
   --primary: 268 62% 38%;
   --primary-foreground: 280 32% 97%;
   --secondary: 280 22% 90%;
@@ -53,7 +53,7 @@
   --input: 270 14% 80%;
   --ring: 268 62% 38%;
 
-  /* Chart palette — editorial-data, purple-led */
+  /* Chart palette, editorial-data, purple-led */
   --chart-1: 268 62% 38%;     /* royal violet */
   --chart-2: 320 78% 58%;     /* magenta */
   --chart-3: 158 38% 28%;     /* forest (independent series) */
@@ -92,7 +92,7 @@
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
-/* DARK MODE — Library at Night (deep plum) */
+/* DARK MODE, Library at Night (deep plum) */
 .dark {
   --button-outline: rgba(240, 230, 255, 0.10);
   --badge-outline: rgba(240, 230, 255, 0.06);
@@ -197,7 +197,7 @@
   }
   .dark .grain::before { mix-blend-mode: screen; opacity: 0.08; }
 
-  /* Holographic foil — for flagship marks & rare accents */
+  /* Holographic foil, for flagship marks & rare accents */
   .holo {
     background-image: linear-gradient(
       115deg,
@@ -258,7 +258,7 @@
     border-color: hsl(var(--primary) / 0.30);
   }
 
-  /* Marquee — dual direction */
+  /* Marquee, dual direction */
   @keyframes marquee {
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }

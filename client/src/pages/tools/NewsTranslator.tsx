@@ -40,7 +40,7 @@ interface Headline {
   exemplar?: string; // historical episode for confidence calibration
 }
 
-// Core taxonomy — built by hand. Each entry maps a regex pattern of the headline
+// Core taxonomy, built by hand. Each entry maps a regex pattern of the headline
 // onto a deterministic textbook treatment. Pattern matching is inclusive: the
 // first match wins, but unmatched headlines fall through to a smart heuristic.
 const PATTERNS: Headline[] = [
@@ -355,7 +355,7 @@ export default function NewsTranslator() {
   return (
     <PageShell>
       <SEO
-        title="Econ News Translator — read any headline like a textbook | The Mother Of Econ"
+        title="Econ News Translator, read any headline like a textbook | The Mother Of Econ"
         description="Paste any economics news headline and get the textbook model that applies, the predicted graph shift, the FRED series to watch, and what theory says happens next. Reverse of Shock Simulator."
         path="/news-translator"
       />
@@ -536,7 +536,7 @@ export default function NewsTranslator() {
         <div className="mt-16 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6">
           <div className="label-cap mb-2 text-primary">How the translator works</div>
           <p className="prose-serif text-[0.95rem] text-foreground/85">
-            Headlines are matched against a hand-built taxonomy of canonical economic models — AS-AD, IS-LM, Phillips, Loanable Funds, Money Market, Solow Growth, Sectoral S/D, and Trade. Each match returns a deterministic graph treatment using AP-CED conventions, plus a short- and long-run prediction grounded in the textbook chapter cited. FRED series are chosen as the variables most likely to move first under the predicted shift. The Translator is the inverse of Shock Simulator: Shock Sim takes a curated shock and shows the response; Translator takes raw news and identifies the shock.
+            Headlines are matched against a hand-built taxonomy of canonical economic models, AS-AD, IS-LM, Phillips, Loanable Funds, Money Market, Solow Growth, Sectoral S/D, and Trade. Each match returns a deterministic graph treatment using AP-CED conventions, plus a short- and long-run prediction grounded in the textbook chapter cited. FRED series are chosen as the variables most likely to move first under the predicted shift. The Translator is the inverse of Shock Simulator: Shock Sim takes a curated shock and shows the response; Translator takes raw news and identifies the shock.
           </p>
         </div>
       </section>
@@ -545,7 +545,7 @@ export default function NewsTranslator() {
 }
 
 /* ============================================================================
- * Schematic graph — renders the predicted shift as a clean SVG diagram.
+ * Schematic graph, renders the predicted shift as a clean SVG diagram.
  * ============================================================================ */
 function ModelGraph({ translation }: { translation: Translation }) {
   const { model, direction } = translation;

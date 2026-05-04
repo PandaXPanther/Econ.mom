@@ -90,7 +90,7 @@ export const BASELINE = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Coefficient table — REPLACE WITH CITED VALUES FROM RESEARCH
+// Coefficient table, REPLACE WITH CITED VALUES FROM RESEARCH
 // Each entry maps a lever's deviation from "neutral" to its directional impact
 // on GDP, deficit, and Gini. Sign conventions:
 //   GDP   → positive = boost, negative = drag
@@ -233,7 +233,7 @@ export function classifyRegime(levers: PolicyLevers): PolicyRegime {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Dynamic analysis text — generated from regime + magnitudes
+// Dynamic analysis text, generated from regime + magnitudes
 // ─────────────────────────────────────────────────────────────────────────────
 
 export function generateAnalysis(
@@ -299,7 +299,7 @@ export function generateAnalysis(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Scenario presets — one-click historical snapshots
+// Scenario presets, one-click historical snapshots
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const PRESETS: Array<{ id: string; label: string; description: string; levers: PolicyLevers }> = [

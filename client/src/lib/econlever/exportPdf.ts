@@ -70,7 +70,7 @@ export async function exportPolicyBriefAsPdf(
 
     // Always fit the brief onto a single Letter page. If the rendered
     // content is slightly taller than the page, scale it down proportionally
-    // and center it horizontally — this prevents stray blank trailing pages.
+    // and center it horizontally, this prevents stray blank trailing pages.
     let drawWidth = renderWidth;
     let drawHeight = renderHeight;
     if (renderHeight > pageHeight) {

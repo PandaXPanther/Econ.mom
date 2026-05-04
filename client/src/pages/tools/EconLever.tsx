@@ -102,8 +102,8 @@ export default function EconLever() {
   return (
     <PageShell>
       <SEO
-        title="EconLever — project US GDP, deficit & inequality 2026–2036 | The Mother Of Econ"
-        description="Move four policy levers — top marginal tax, corporate tax, social welfare spending, federal funds rate — and watch a 10-year projection of US GDP growth, federal deficit, and Gini coefficient. Calibrated to peer-reviewed macroeconomic literature."
+        title="EconLever, project US GDP, deficit & inequality 2026–2036 | The Mother Of Econ"
+        description="Move four policy levers, top marginal tax, corporate tax, social welfare spending, federal funds rate, and watch a 10-year projection of US GDP growth, federal deficit, and Gini coefficient. Calibrated to peer-reviewed macroeconomic literature."
         path="/econlever"
       />
       <ToolPageHeader tool={COMP} />
@@ -335,9 +335,9 @@ export default function EconLever() {
                 <strong>{finalDeficitPctGDP.toFixed(2)}% GDP</strong>, and a final-year Gini of{" "}
                 <strong>{result.finalGini.toFixed(3)}</strong>.
                 {avgGdp > DISPLAY_BASELINE.gdpGrowth + 0.15
-                  ? " Trajectory runs above potential — watch for inflationary overheating."
+                  ? " Trajectory runs above potential, watch for inflationary overheating."
                   : avgGdp < DISPLAY_BASELINE.gdpGrowth - 0.15
-                  ? " Trajectory runs below potential — output gap widens, unemployment likely rises."
+                  ? " Trajectory runs below potential, output gap widens, unemployment likely rises."
                   : " Trajectory tracks the calibrated baseline within noise."}
               </p>
             </motion.div>

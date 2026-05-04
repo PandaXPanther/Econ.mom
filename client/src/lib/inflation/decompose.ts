@@ -1,4 +1,4 @@
-// Inflation Decomposer engine — splits headline CPI into supply, demand,
+// Inflation Decomposer engine, splits headline CPI into supply, demand,
 // expectations, and policy components using a simplified Bernanke-Blanchard
 // (2023, NBER w31417) two-stage approach + Cleveland Fed trend-cycle method.
 //
@@ -65,7 +65,7 @@ export function decomposeInflation(x: DecomposeInput): DecomposeOutput {
   // Output gap adds an additional small slope (Phillips curve, ~0.15).
   demandComponent += x.outputGap * 0.15;
 
-  // 3. Expectations channel — composite of TIPS breakeven and survey.
+  // 3. Expectations channel, composite of TIPS breakeven and survey.
   // Anchored if both within 0.5pp of 2% target; else expectations drift adds
   // π_e = (composite − 2.0) × 0.85 (Hazell-Herreño-Nakamura-Steinsson).
   const composite = 0.5 * x.breakeven5y + 0.5 * x.surveyExpect5y;
@@ -102,8 +102,8 @@ export function decomposeInflation(x: DecomposeInput): DecomposeOutput {
     dominant.value > 0.6
       ? `${dominant.label.split(" (")[0]}-driven inflation`
       : Math.abs(residual) > 0.8
-      ? "Unexplained — likely measurement or wage-price spiral"
-      : "Mixed — inflation near trend";
+      ? "Unexplained, likely measurement or wage-price spiral"
+      : "Mixed, inflation near trend";
 
   const expectationsAnchored = Math.abs(composite - PI_TARGET) < 0.4;
 
@@ -112,8 +112,8 @@ export function decomposeInflation(x: DecomposeInput): DecomposeOutput {
       ? "Look-through: expectations anchored, supply shock will fade. Hold policy."
       : demandComponent > 0.8
       ? "Demand pressure with anchored expectations: modest tightening sufficient."
-      : "Inflation near trend with anchored expectations — current stance appropriate."
-    : "Expectations DEANCHORED — restore credibility before easing. Volcker mode warranted.";
+      : "Inflation near trend with anchored expectations, current stance appropriate."
+    : "Expectations DEANCHORED, restore credibility before easing. Volcker mode warranted.";
 
   return { components, total, residual, regime, expectationsAnchored, recommendation };
 }

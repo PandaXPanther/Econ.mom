@@ -8,7 +8,7 @@ export default function ToolsIndex() {
   return (
     <PageShell>
       <SEO
-        title="All twelve tools — the complete library | The Mother Of Econ"
+        title="All twelve tools, the complete library | The Mother Of Econ"
         description="Every instrument in the econ.mom library: AP FRQ Grader, TariffLab, Textbook Atlas, Shock Simulator, Shadow Fed, Paper Decoder, Econ News Translator, US Econ Dashboard, EconLever."
         path="/tools"
       />
