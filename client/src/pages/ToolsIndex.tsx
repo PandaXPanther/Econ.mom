@@ -45,6 +45,9 @@ export default function ToolsIndex() {
                   <p className="prose-serif mt-2 text-[0.95rem] text-muted-foreground">
                     {tool.tagline}
                   </p>
+                  <p className="mt-3 font-mono text-[0.68rem] uppercase tracking-widest text-muted-foreground/80">
+                    Teaches: {tool.apUnit}
+                  </p>
                 </div>
                 <div className="col-span-6 md:col-span-2">
                   <div className="label-cap">{tool.category}</div>

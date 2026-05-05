@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
+import { ToolExplainer } from "@/components/brand/ToolExplainer";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -140,6 +141,7 @@ export default function InflationDecomposer() {
   return (
     <div>
       <ToolPageHeader tool={tool} />
+      <ToolExplainer tool={tool} />
 
       <section className="mx-auto max-w-6xl px-6 lg:px-10 pb-24">
         {/* Status bar */}

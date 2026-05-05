@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
+import { ToolExplainer } from "@/components/brand/ToolExplainer";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Newspaper, Sparkles, ArrowDown, ExternalLink, TrendingUp, History, Telescope } from "lucide-react";
@@ -361,6 +362,7 @@ export default function NewsTranslator() {
         path="/news-translator"
       />
       <ToolPageHeader tool={COMP} />
+      <ToolExplainer tool={COMP} />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-12">

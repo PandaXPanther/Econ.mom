@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
+import { ToolExplainer } from "@/components/brand/ToolExplainer";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { FRQ_LIBRARY, gradeFRQ, GradeResult, type FRQ } from "@/lib/frq-rubrics";
 import { SEO } from "@/components/brand/SEO";
@@ -145,6 +146,7 @@ export default function FRQGrader() {
         path="/frq-grader"
       />
       <ToolPageHeader tool={tool} />
+      <ToolExplainer tool={tool} />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-12">

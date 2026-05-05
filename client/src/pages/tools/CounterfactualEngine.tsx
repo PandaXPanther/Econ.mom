@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
+import { ToolExplainer } from "@/components/brand/ToolExplainer";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -124,6 +125,7 @@ export default function CounterfactualEngine() {
   return (
     <div>
       <ToolPageHeader tool={tool} />
+      <ToolExplainer tool={tool} />
 
       <section className="mx-auto max-w-7xl px-6 lg:px-10 pb-24">
         <div className="rounded-2xl border border-border bg-card p-5 mb-6 flex flex-wrap items-center justify-between gap-4">

@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
+import { ToolExplainer } from "@/components/brand/ToolExplainer";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Sliders, ArrowUpRight, RotateCcw, Download, Sparkles, Loader2 } from "lucide-react";
@@ -108,6 +109,7 @@ export default function EconLever() {
         path="/econlever"
       />
       <ToolPageHeader tool={COMP} />
+      <ToolExplainer tool={COMP} />
 
       {/* Off-screen, byte-for-byte upstream Policy Brief */}
       <PolicyBriefDocument ref={briefRef} levers={L} result={result} />

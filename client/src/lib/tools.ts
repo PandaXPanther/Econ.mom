@@ -15,6 +15,12 @@ export interface Tool {
   flagship?: boolean;
   citations: { label: string; url?: string }[];
   methodology: string[];  // bullet methodology points
+  // Explainer fields (used by ToolExplainer + tool cards)
+  whatThisTeaches: string;   // 2-4 sentence plain-English explanation of what concept the tool teaches
+  apUnit: string;            // AP CED unit mapping, e.g., "AP Macro Unit 4 (Financial Sector) and Unit 5 (Long-Run Consequences)"
+  whoItsFor: string;         // one-line audience descriptor
+  tryThis: string;           // a concrete example prompt or scenario the user can try
+  howItWorks: string[];      // 3-5 plain-English bullets describing what happens when you click the button (less technical than methodology)
 }
 
 export const TOOLS: Tool[] = [
@@ -40,6 +46,17 @@ export const TOOLS: Tool[] = [
       "Graph checks parse user-described diagrams (or uploaded images via OCR) for axis labels, curve shifts, and equilibrium markers.",
       "The 5/5 rewrite is generated to satisfy every rubric point with the exact terminology graders are trained to reward.",
       "Graders calibrated against College Board sample responses graded 0/5, 3/5, and 5/5 to ensure consistent point allocation.",
+    ],
+    whatThisTeaches:
+      "How College Board actually scores AP Macro and Micro free-response questions. Graders give points for hitting specific rubric language (correctly labeled axes, identified shifters, named direction of change), not for sounding smart. This tool shows you exactly which words earn which points so you can train your hand to write 5/5 responses on test day.",
+    apUnit: "All AP Macro units (1 to 6) and all AP Micro units (1 to 6); rubric coverage spans every released exam 2018 to 2025.",
+    whoItsFor: "AP Macro and AP Micro students prepping for the May exam.",
+    tryThis: "Paste a 2024 released FRQ response (or your own attempt at one) and watch the grader call out missing rubric points line by line.",
+    howItWorks: [
+      "You paste your FRQ response into the box.",
+      "The grader compares your answer to the official College Board rubric for that exact question, checking for axis labels, named curves, direction of shift, and equilibrium markers.",
+      "You get a point-by-point breakdown showing which rubric points you earned and which you missed.",
+      "A 5/5 model rewrite is generated using the precise terminology AP graders are trained to reward.",
     ],
   },
   {
@@ -68,6 +85,17 @@ export const TOOLS: Tool[] = [
       "Retaliation matrix tracks Canadian, Chinese (MOFCOM), and EU (Reg. 2025/1564) responses as of last refresh.",
       "Aggregate baseline anchored to US 2024 imports of $3,295.6B (BEA / Census USA Trade Online).",
     ],
+    whatThisTeaches:
+      "Tariffs are a tax on imports, and like any tax they create deadweight loss. This tool teaches you to draw the tariff diagram correctly: shrunken consumer surplus, expanded producer surplus, government revenue rectangle, and the two deadweight loss triangles. It also shows you the empirical reality, that current US tariffs pass through almost entirely to American consumers, not foreign exporters.",
+    apUnit: "AP Macro Unit 6 (Open Economy, International Trade and Finance); AP Micro Unit 6 (Market Failure and the Role of Government).",
+    whoItsFor: "Students learning tariff diagrams and anyone trying to make sense of the 2025 trade-war headlines.",
+    tryThis: "Set steel at a 25% tariff and watch the deadweight-loss triangle, the consumer surplus loss, and the employment number all redraw together.",
+    howItWorks: [
+      "You pick a sector (or HS code) and dial in a tariff rate.",
+      "The model uses USITC sector elasticities and Fajgelbaum et al. pass-through rates to compute the new equilibrium price and quantity.",
+      "It draws the tariff diagram with consumer surplus, producer surplus, government revenue, and deadweight loss labeled in dollars.",
+      "The 2025 baseline already includes Executive Order 14257's universal 10% tariff and Annex II exemptions, so your scenarios stack on top of current policy.",
+    ],
   },
   {
     slug: "textbook-atlas",
@@ -93,6 +121,17 @@ export const TOOLS: Tool[] = [
       "Solow growth: capital stock (RKNANPUSA666NRUG) and output (RGDPNAUSA666NRUG) from PWT 10.01.",
       "Beveridge curve: JTSJOL × UNRATE; yield curve: DGS1MO through DGS30 daily snapshots.",
     ],
+    whatThisTeaches:
+      "Every AP Econ graph (AS-AD, Phillips Curve, Money Market, Loanable Funds, Solow) is supposed to describe the real economy. The Atlas wires every textbook diagram to a live FRED chart so you can see whether the textbook story actually fits today's data. When the textbook diverges from reality, that gap is the lesson.",
+    apUnit: "AP Macro Units 2 to 5 (Economic Indicators, National Income & Price Determination, Financial Sector, Long-Run Consequences).",
+    whoItsFor: "Students who want to stop memorizing graphs and start reading them.",
+    tryThis: "Open the Phillips Curve panel and see whether the unemployment-inflation trade-off the textbook draws still holds in the 2024 to 2026 data.",
+    howItWorks: [
+      "You click a textbook concept (Phillips Curve, AS-AD, Money Market, Loanable Funds, etc.).",
+      "The Atlas pulls the relevant FRED series live (CPI, unemployment, M2, fed funds, 10-year Treasury, etc.).",
+      "It plots the textbook diagram on top of the actual US data and labels every axis with the FRED series ID.",
+      "Each chart updates monthly, so the version you see today is the version reflecting the most recent BLS / BEA / Fed release.",
+    ],
   },
   {
     slug: "shock-sim",
@@ -114,6 +153,17 @@ export const TOOLS: Tool[] = [
       "Fiscal multipliers state-dependent per Auerbach & Gorodnichenko (2012): recession multiplier ≈ 3.5 (CI 0.6–6.3); near-zero in expansion.",
       "Real-GDP, consumption, investment, and employment paths follow the published 3-year IRF responses (recession +0.33% / expansion -0.05% / linear +0.19%).",
       "Headline classifier maps news copy to a hand-built taxonomy of shock types before triggering the appropriate IRF panel.",
+    ],
+    whatThisTeaches:
+      "How an economic shock propagates through AS-AD. Supply shocks shift SRAS; demand shocks shift AD; expectations shocks move SRAS through wage- and price-setting. This tool drills the muscle memory of which curve shifts which direction so you can answer FRQ shock questions without second-guessing.",
+    apUnit: "AP Macro Unit 3 (National Income and Price Determination); AP Macro Unit 4 (Financial Sector) for monetary shocks.",
+    whoItsFor: "Students learning AS-AD and anyone reading the news and wondering 'wait, which curve shifts here?'",
+    tryThis: "Paste a real headline like 'OPEC cuts production by 2 million barrels per day' and watch the SRAS shift left with the new equilibrium labeled.",
+    howItWorks: [
+      "You paste an economic headline.",
+      "A classifier reads the headline and maps it to one of four shock types: supply, demand, expectations, or policy.",
+      "The right diagram (AS-AD, Money Market, or Loanable Funds) renders with the correct curve shifting in the correct direction.",
+      "Empirical magnitudes are pulled from Ramey (2016) for monetary shocks and Auerbach-Gorodnichenko (2012) for fiscal shocks, so 'small / medium / large' has actual numbers behind it.",
     ],
   },
   {
@@ -139,6 +189,17 @@ export const TOOLS: Tool[] = [
       "Counterfactual path comparison vs. FRB/US-style standard rule (which would have lifted off summer 2021 and reached ≈8% by late 2022).",
       "Inputs (CPI, Core PCE, U-rate, NAIRU) auto-update from FRED on Mondays at 09:00 ET.",
     ],
+    whatThisTeaches:
+      "The Federal Reserve doesn't pick interest rates randomly. The Taylor Rule says r = neutral + inflation + 0.5(inflation gap) + 0.5(output gap), and most actual Fed decisions land within a percentage point of what the rule prescribes. Shadow Fed lets you watch the rule run live, compare it to the FOMC's own dot plot, and build intuition for why the Fed cuts or hikes.",
+    apUnit: "AP Macro Unit 4 (Financial Sector); AP Macro Unit 5 (Long-Run Consequences of Stabilization Policies).",
+    whoItsFor: "Students learning monetary policy and anyone who wants a reasoned answer to 'should the Fed cut at the next meeting?'",
+    tryThis: "Open the latest CPI and unemployment release, plug them in, and see whether the Taylor Rule says the Fed should cut, hold, or hike. Then check the actual FOMC decision when it comes out.",
+    howItWorks: [
+      "The tool pulls fresh inputs from FRED every Monday at 9 AM ET (CPI, Core PCE, unemployment, NAIRU estimate).",
+      "It runs both the original Taylor (1993) rule and a FAIT-modified variant that matches the Powell-era reaction function.",
+      "It compares the rule's prescription against the FOMC's own median dot from the Summary of Economic Projections.",
+      "After every FOMC meeting it logs the gap between prediction and decision, so the track record builds publicly week after week.",
+    ],
   },
   {
     slug: "paper-decoder",
@@ -161,6 +222,17 @@ export const TOOLS: Tool[] = [
       "RDD diagnostics scan for McCrary density tests; absence triggers a replication red-flag.",
       "DiD diagnostics check for parallel-trends event-study plots; IV diagnostics demand first-stage F > 10.",
       "Citation block includes title, authors, journal, year, finding magnitude, and a one-sentence framing.",
+    ],
+    whatThisTeaches:
+      "Empirical economics papers all follow a hidden grammar: a research question, an identification strategy (RCT, diff-in-diff, IV, RDD), a headline finding, and a set of robustness checks. Once you can name those four parts on sight, you can read any NBER paper in ten minutes. This tool teaches that grammar by pulling it out of real papers for you.",
+    apUnit: "Beyond AP, useful for AP Research, college applications, and any econ-curious student starting to read primary literature.",
+    whoItsFor: "Students writing research papers, debate cases, or college essays that cite real economics literature.",
+    tryThis: "Upload a recent NBER working paper (or paste a link) and read the structured breakdown before you commit to reading the full paper.",
+    howItWorks: [
+      "You upload a PDF or paste a paper URL.",
+      "The tool parses the PDF, finds the abstract, methodology section, and headline tables.",
+      "It classifies the identification strategy (RCT, diff-in-diff, IV, RDD, synthetic control, structural, descriptive) and runs the canonical diagnostics for that method.",
+      "It returns a plain-English abstract, the strategy diagram, the headline finding, and a citation block ready to drop into a paper.",
     ],
   },
   {
@@ -187,6 +259,17 @@ export const TOOLS: Tool[] = [
       "Output is structured: Model · Shift · FRED watch list · Textbook prediction · Confidence band.",
       "Built to invert Shock Simulator: Shock Sim takes a curated shock and shows the response; Translator takes raw news and identifies the shock.",
     ],
+    whatThisTeaches:
+      "Every economic news story is secretly a textbook chapter. A CPI print is the Phillips Curve. A Fed decision is the Money Market. A tariff is supply and demand for a single market. A trade-deficit headline is open-economy AS-AD. This tool teaches you to read the news the way an economist reads it, by mapping each headline to the model that explains it.",
+    apUnit: "All of AP Macro and AP Micro; built specifically against the AP-CED model inventory.",
+    whoItsFor: "Students prepping for AP exams and anyone trying to use real news as study material.",
+    tryThis: "Paste this morning's Wall Street Journal headline (CPI release, FOMC announcement, tariff news, anything) and see which AP graph it maps to.",
+    howItWorks: [
+      "You paste any economic headline.",
+      "A classifier maps the headline to one of the canonical AP models: AS-AD, IS-LM, Phillips Curve, Loanable Funds, Money Market, Solow, single-market S/D, or open-economy.",
+      "The right graph renders with the correct curve shifting in AP-CED-conventional direction.",
+      "You get a list of FRED series likely to move first, a textbook-grounded prediction, and a confidence band so you know when the model is on solid ground vs. speculative.",
+    ],
   },
   {
     slug: "us-econ",
@@ -210,6 +293,17 @@ export const TOOLS: Tool[] = [
       "County drilldown: BLS LAUS county series + ZHVI median home value where available; counties limited to top-population subset for performance.",
       "Colorado specialist data preserved: CDLE QCEW Q2 2024 cleanup adjustment (+19.4%); county graduation rates from CDE district-aggregated cohorts.",
       "All state and county records ship with last-observation timestamps and source URLs. National baseline: mean hourly wage $32.66 (US QCEW).",
+    ],
+    whatThisTeaches:
+      "National economic statistics hide enormous regional variation. The US unemployment rate is one number, but Larimer County's is a different number from Mesa County's, and the cost of living to wages ratio in Boulder is nothing like the same ratio in Pueblo. This tool teaches you to think about labor markets, cost of living, and education at the resolution they actually matter, by state and by county.",
+    apUnit: "AP Macro Unit 2 (Economic Indicators and the Business Cycle); useful for any student writing about local labor markets.",
+    whoItsFor: "Students writing economics-flavored college essays, debate cases on local policy, or capstone projects on their home community.",
+    tryThis: "Pick your home state, drill into your county, and compare its unemployment rate and living wage against the state median.",
+    howItWorks: [
+      "You pick any of the 50 states from the map.",
+      "It loads the BLS LAUS unemployment, QCEW total payrolls, MIT Living Wage, and NCES graduation rate for that state.",
+      "You drill down into a specific county and the same metrics render at county resolution where data is available.",
+      "Every record ships with a last-observation timestamp and a link back to the source dataset.",
     ],
   },
   {
@@ -238,6 +332,17 @@ export const TOOLS: Tool[] = [
       "Improvement over the original econlever.org: USITC EE-2024 elasticities for trade pass-through, current 3.25% policy rate baseline, FAIT-modified Taylor reaction.",
       "Illustrative simulation; coefficients calibrated to mainstream macroeconomic literature; not a substitute for DSGE/VAR analysis.",
     ],
+    whatThisTeaches:
+      "Fiscal and monetary policy are not free; every lever has trade-offs across growth, deficits, and inequality. EconLever teaches you to feel those trade-offs by moving sliders and watching ten-year projections redraw. Cutting the top marginal rate boosts growth a little but widens Gini noticeably. Raising welfare spending shrinks Gini but widens the deficit unless growth offsets it. The tool turns abstract policy debate into a numerical instinct.",
+    apUnit: "AP Macro Unit 3 (Fiscal Policy); AP Macro Unit 4 (Monetary Policy); AP Macro Unit 5 (Long-Run Consequences); AP Micro Unit 6 (Income Distribution).",
+    whoItsFor: "Students learning fiscal-monetary policy and anyone who wants to argue tax policy with numbers instead of vibes.",
+    tryThis: "Drop the top marginal tax rate from 37% to 28% and the corporate rate from 21% to 15%, then watch what happens to GDP growth, the deficit, and Gini over ten years.",
+    howItWorks: [
+      "Four sliders set the scenario: top marginal income tax, corporate tax, social welfare spending, and fed funds rate.",
+      "The model uses Romer-Romer (2010) tax-change multipliers and Auerbach-Gorodnichenko (2012) state-dependent spending multipliers.",
+      "Inequality moves through Piketty-Saez-Zucman top-1% / bottom-50% income elasticities.",
+      "Three time-series redraw together: real GDP growth, the federal deficit, and the Gini coefficient over a ten-year horizon.",
+    ],
   },
   {
     slug: "inflation-decomposer",
@@ -265,6 +370,17 @@ export const TOOLS: Tool[] = [
       "Policy: (r* − real rate) × 0.18 with HLW 2024 r* ≈ 0.5; 4-quarter lag.",
       "Anchored if composite expectations within ±0.4pp of 2% target. Five built-in presets including 1980 Q1, 2009 Q4, 2022 Q2.",
     ],
+    whatThisTeaches:
+      "Inflation is never one thing. The 8.9% peak in 2022 was mostly supply (energy and food) plus demand (tight labor market), not Fed laxity. The 14% spike in 1980 was mostly unanchored expectations. This tool teaches you that 'inflation' is a sum of components, each driven by a different mechanism, and policy works only when it targets the right component.",
+    apUnit: "AP Macro Unit 2 (Economic Indicators); AP Macro Unit 4 (Financial Sector); AP Macro Unit 5 (Long-Run Consequences).",
+    whoItsFor: "Students learning the Phillips Curve and anyone trying to follow the post-2021 inflation debate.",
+    tryThis: "Load the 2022 Q2 preset and see how much of that 8.9% headline inflation came from energy and food versus from a hot labor market.",
+    howItWorks: [
+      "You enter (or load a preset for) one quarter's worth of inputs: energy YoY, food YoY, labor-market tightness, breakeven expectations, real interest rate.",
+      "The Bernanke-Blanchard (2023) two-stage decomposition splits headline CPI into supply, demand, expectations, and policy components.",
+      "It checks whether expectations are anchored (composite within plus or minus 0.4 percentage points of 2%).",
+      "It returns a stacked-bar breakdown showing how much of the headline number each channel contributed.",
+    ],
   },
   {
     slug: "natural-experiments",
@@ -289,6 +405,17 @@ export const TOOLS: Tool[] = [
       "Identification descriptions follow Angrist-Pischke and Imbens-Rubin terminology; diagnostic threats list common rebuttals (parallel-trends violations, McCrary density, weak first-stage F, SUTVA spillovers).",
       "Method primers match the assumption ladder used in any first-year PhD identification course.",
       "Designed to invert the typical research workflow: instead of starting with method, start with a research question and discover which experiments and methods apply.",
+    ],
+    whatThisTeaches:
+      "Causal claims in economics rest on identification strategies: research designs that isolate one variable's effect from everything else moving in the world. The Mariel Boatlift (immigration), Card-Krueger (minimum wage), the Vietnam Draft (education), and Oregon Medicaid (health insurance) are the canonical examples. This tool teaches you the strategies by showing you the cases that made them famous.",
+    apUnit: "Beyond AP, foundational for AP Research, AP Statistics extension work, and any college economics course.",
+    whoItsFor: "Students writing research papers, debate cases, or applying to economics-track college programs.",
+    tryThis: "Filter for 'difference in differences' and read the Card-Krueger NJ minimum wage entry, the strategy that defined a generation of empirical labor economics.",
+    howItWorks: [
+      "You filter sixty-plus canonical experiments by method (DiD, RDD, IV, RCT, synthetic control, bunching, shift-share, lottery), field, or AP-CED concept.",
+      "Each entry lays out the research question, treatment, finding, and identification logic in plain English.",
+      "Diagnostic threats are flagged (parallel-trends violations, McCrary density, weak first-stage F, SUTVA spillovers) so you understand the rebuttals.",
+      "You can download a strategy brief for any entry to use as a primer or research starting point.",
     ],
   },
   {
@@ -316,6 +443,17 @@ export const TOOLS: Tool[] = [
       "UK austerity 2010: Auerbach-Gorodnichenko slack-state multiplier (1.5–3.5) × cumulative fiscal impulse.",
       "Greenspan 2003-04: Glaeser-Gottlieb-Gyourko mortgage-rate channel (4% lower HPI growth per 100bp fed funds).",
       "Each scenario ships with its own actual time-series and editable parameters; defaults reproduce observed history exactly.",
+    ],
+    whatThisTeaches:
+      "History looks inevitable in retrospect, but every macro crisis was a policy choice. What if Volcker hadn't hiked to 19% in 1979? What if Lehman had been bailed out? What if the American Rescue Plan had been half its size? This tool teaches you to think counterfactually, the same way professional macroeconomists do, by re-running history with different parameters and watching the path diverge.",
+    apUnit: "AP Macro Unit 4 (Financial Sector); AP Macro Unit 5 (Long-Run Consequences); AP Macro Unit 3 (Fiscal Policy).",
+    whoItsFor: "Students who already know the standard AP curriculum and want the next level: how policy choices shape the macro path.",
+    tryThis: "Load Volcker 1979 and lower the peak fed funds rate from 19% to 12%. Watch the inflation path stay elevated through the 1980s instead of breaking.",
+    howItWorks: [
+      "You pick one of five canonical macro episodes (Volcker 1979, Lehman 2008, ARP 2021, UK austerity 2010, or Greenspan-era housing).",
+      "You adjust the key policy parameter (peak fed funds, fiscal stimulus size, mortgage-rate path, etc.).",
+      "The model runs an empirically calibrated equation drawn from the canonical paper for that episode (Sargent, Mian-Sufi, Bernanke-Blanchard, Auerbach-Gorodnichenko, or Glaeser-Gottlieb-Gyourko).",
+      "It plots the actual historical time-series alongside your counterfactual so the divergence is visible quarter by quarter.",
     ],
   },
 ];
