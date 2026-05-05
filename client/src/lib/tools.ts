@@ -43,7 +43,7 @@ export const TOOLS: Tool[] = [
     methodology: [
       "Rubric loaded directly from College Board's published scoring guidelines for every released exam (2018–2025) plus the current Course & Exam Description.",
       "Each FRQ part is graded against its specific rubric points (e.g., 'correctly labeled S/D graph with axes', 'identifies new equilibrium').",
-      "Graph checks parse user-described diagrams (or uploaded images via OCR) for axis labels, curve shifts, and equilibrium markers.",
+      "Graph parts include a built-in drawing canvas. Gemini's vision model reads the actual sketch and checks it for axis labels, curve names, shift direction, and equilibrium markers.",
       "The 5/5 rewrite is generated to satisfy every rubric point with the exact terminology graders are trained to reward.",
       "Graders calibrated against College Board sample responses graded 0/5, 3/5, and 5/5 to ensure consistent point allocation.",
     ],
@@ -57,7 +57,7 @@ export const TOOLS: Tool[] = [
       "The grader compares your answer to the official College Board rubric for that exact question (or the AI-built rubric for generated FRQs), checking for axis labels, named curves, direction of shift, and equilibrium markers.",
       "You get a point-by-point breakdown showing which rubric points you earned and which you missed.",
       "A 5/5 model rewrite is generated using the precise terminology AP graders are trained to reward.",
-      "Graph-heavy question? Draw the diagram in the new Graph Grader (link inside the tool) and Gemini scores the actual sketch, not your description of it.",
+      "Any part that asks you to 'draw a correctly labeled graph' renders an inline drawing canvas, sketch the diagram (pen, eraser, color, label tool) and Gemini grades the actual image, not your description of it.",
     ],
   },
   {

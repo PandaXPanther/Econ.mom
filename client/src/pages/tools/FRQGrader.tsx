@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
@@ -6,8 +6,8 @@ import { ToolExplainer } from "@/components/brand/ToolExplainer";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { FRQ_LIBRARY, gradeFRQ, GradeResult, type FRQ } from "@/lib/frq-rubrics";
 import { SEO } from "@/components/brand/SEO";
-import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle, Wand2, Loader2, PencilRuler } from "lucide-react";
-import { Link } from "wouter";
+import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle, Wand2, Loader2 } from "lucide-react";
+import { GraphCanvas } from "@/components/brand/GraphCanvas";
 import { GeminiProgress } from "@/components/GeminiProgress";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -34,6 +34,37 @@ export default function FRQGrader() {
   const [showGenerator, setShowGenerator] = useState(false);
 
   const frq = useMemo(() => allFrqs.find((f) => f.id === selectedFrqId)!, [allFrqs, selectedFrqId]);
+
+  // Per-part canvases. We hold one canvas DOM ref per graph part and a flag
+  // recording whether the student has actually drawn on it. `partsNeedingGraph`
+  // is recomputed from the FRQ each time the selection changes.
+  const canvasRefs = useRef<Record<string, HTMLCanvasElement | null>>({});
+  const [hasDrawing, setHasDrawing] = useState<Record<string, boolean>>({});
+  const partsNeedingGraph = useMemo(() => {
+    const needs: Record<string, { axes?: string; drawHint?: string }> = {};
+    for (const part of frq.parts) {
+      // Built-in FRQs: rubric points carry checkType === "graph".
+      const ruleSaysGraph = part.rubricPoints.some((rp: any) => rp.checkType === "graph");
+      // AI-generated FRQs: scan the part prompt for the canonical "correctly labeled graph" phrasing.
+      const promptSaysGraph = /\b(draw|sketch|using a correctly labeled|correctly labeled (graph|diagram))\b/i.test(part.prompt);
+      if (ruleSaysGraph || promptSaysGraph) {
+        // Pull a graph-elements hint from the rubric if available.
+        const elements = part.rubricPoints
+          .flatMap((rp: any) => (rp.graphElements as string[]) || [])
+          .filter(Boolean);
+        const drawHint = elements.length > 0 ? `Required labels: ${elements.join(", ")}.` : undefined;
+        needs[part.id] = { drawHint };
+      }
+    }
+    return needs;
+  }, [frq]);
+
+  const setHasDrawingFor = useCallback(
+    (partId: string, has: boolean) => {
+      setHasDrawing((prev) => (prev[partId] === has ? prev : { ...prev, [partId]: has }));
+    },
+    []
+  );
 
   async function onGenerate() {
     if (!genTopic.trim()) {
@@ -66,29 +97,49 @@ export default function FRQGrader() {
   }
 
   const onGrade = async () => {
-    // Empty-answer guard. The critique flagged that hitting Grade with blank
-    // answers gave no feedback. Now we count non-blank parts and warn first.
-    const filledParts = frq.parts.filter((p) => (responses[p.id] || "").trim().length >= 5).length;
+    // A part counts as "answered" if it has either text >=5 chars OR a drawing
+    // on its canvas. This way a graph-only part isn't flagged blank just because
+    // the student didn't type anything.
+    const isPartAnswered = (p: any) => {
+      const textOk = (responses[p.id] || "").trim().length >= 5;
+      const drawOk = !!hasDrawing[p.id];
+      return textOk || drawOk;
+    };
+    const filledParts = frq.parts.filter(isPartAnswered).length;
     if (filledParts === 0) {
       setAiNotice(
-        "Please write a response in at least one part before grading. The grader needs at least 5 characters per part to score it."
+        "Please answer at least one part before grading. Type a response or draw the graph."
       );
       return;
     }
     if (filledParts < frq.parts.length) {
       const skipped = frq.parts.length - filledParts;
       setAiNotice(
-        `${skipped} of ${frq.parts.length} part${skipped > 1 ? "s are" : " is"} blank or under 5 characters. Blank parts will score 0.`
+        `${skipped} of ${frq.parts.length} part${skipped > 1 ? "s are" : " is"} blank. Blank parts will score 0.`
       );
       // Continue grading anyway (notice is informational, not blocking).
     }
     setGrading(true);
     setShowIdeal(false);
 
+    // Snapshot any drawn canvases as PNG data URLs, keyed by part id. Sent
+    // to the grader so Gemini's vision model can score the diagrams.
+    const partImages: Record<string, string> = {};
+    for (const partId of Object.keys(partsNeedingGraph)) {
+      if (!hasDrawing[partId]) continue;
+      const c = canvasRefs.current[partId];
+      if (!c) continue;
+      try {
+        partImages[partId] = c.toDataURL("image/png");
+      } catch {
+        // ignore export failures, the part will fall back to text only
+      }
+    }
+
     const isGenerated = (frq as any).generated === true;
     if (useAI || isGenerated) {
       try {
-        const resp = await apiRequest("POST", "/api/grade-frq", { frq, responses });
+        const resp = await apiRequest("POST", "/api/grade-frq", { frq, responses, partImages });
         const data = await resp.json();
         if (data && typeof data.totalEarned === "number" && Array.isArray(data.parts)) {
           setResult(data as GradeResult);
@@ -132,6 +183,8 @@ export default function FRQGrader() {
     setResponses({});
     setResult(null);
     setShowIdeal(false);
+    setHasDrawing({});
+    canvasRefs.current = {};
   };
 
   const totalPossible = frq.parts.reduce(
@@ -272,29 +325,9 @@ export default function FRQGrader() {
                 </div>
               </div>
 
-              <Link
-                href="/graph-grader"
-                data-testid="link-graph-grader"
-                className="group mt-6 block rounded-lg border border-primary/40 bg-primary/5 p-5 transition hover:border-primary hover:bg-primary/10"
-              >
-                <div className="flex items-center gap-2">
-                  <PencilRuler size={14} className="text-primary" />
-                  <span className="label-cap text-primary">New · Graph Grader</span>
-                </div>
-                <div className="mt-2 font-display text-[1.05rem] font-medium text-foreground">
-                  Draw the diagram, let Gemini score the sketch.
-                </div>
-                <div className="prose-serif mt-1 text-[0.85rem] text-muted-foreground">
-                  AS-AD, money market, monopoly, externalities, and more. Gemini reads your actual graph (axes, curves, equilibria) against the AP rubric.
-                </div>
-                <div className="mt-3 inline-flex items-center gap-1 text-[0.78rem] font-medium text-primary group-hover:gap-2 transition-all">
-                  Open Graph Grader <ArrowRight size={12} />
-                </div>
-              </Link>
-
-              <div className="mt-4 rounded-md border border-dashed border-border p-4 text-[0.78rem] text-muted-foreground">
+              <div className="mt-6 rounded-md border border-dashed border-border p-4 text-[0.78rem] text-muted-foreground">
                 <div className="label-cap mb-2 text-foreground">Tip</div>
-                For text-only parts, describe diagrams in words: "y-axis Price Level, x-axis Real GDP, downward-sloping AD…" the grader checks for required graph elements by name. For full graphs, use the Graph Grader above.
+                Graph parts get a built-in drawing canvas, sketch the diagram and Gemini grades the actual image against the rubric. Text-only parts: type your response below.
               </div>
             </div>
           </aside>
@@ -311,30 +344,55 @@ export default function FRQGrader() {
             </div>
 
             <div className="mt-8 space-y-8">
-              {frq.parts.map((part) => (
-                <div key={part.id}>
-                  <div className="flex items-baseline gap-3">
-                    <span className="font-mono text-[0.8rem] text-muted-foreground">
-                      Part {part.label}
-                    </span>
-                    <span className="label-cap text-foreground/60">
-                      {part.rubricPoints.reduce((s, p) => s + p.points, 0)} pts
-                    </span>
+              {frq.parts.map((part) => {
+                const graphInfo = partsNeedingGraph[part.id];
+                const isGraphPart = !!graphInfo;
+                return (
+                  <div key={part.id}>
+                    <div className="flex items-baseline gap-3">
+                      <span className="font-mono text-[0.8rem] text-muted-foreground">
+                        Part {part.label}
+                      </span>
+                      <span className="label-cap text-foreground/60">
+                        {part.rubricPoints.reduce((s, p) => s + p.points, 0)} pts
+                      </span>
+                      {isGraphPart && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 text-[9px] font-medium uppercase tracking-widest text-primary">
+                          graph
+                        </span>
+                      )}
+                    </div>
+                    <p className="prose-serif mt-2 text-[0.98rem] text-foreground/85 whitespace-pre-line">
+                      {part.prompt}
+                    </p>
+
+                    {isGraphPart && (
+                      <GraphCanvas
+                        partId={part.id}
+                        drawHint={graphInfo.drawHint}
+                        ref={(node) => {
+                          canvasRefs.current[part.id] = node;
+                        }}
+                        onChange={(has) => setHasDrawingFor(part.id, has)}
+                      />
+                    )}
+
+                    <textarea
+                      data-testid={`textarea-response-${part.id}`}
+                      value={responses[part.id] || ""}
+                      onChange={(e) =>
+                        setResponses({ ...responses, [part.id]: e.target.value })
+                      }
+                      placeholder={
+                        isGraphPart
+                          ? "Optional: describe anything in your sketch the grader should know about…"
+                          : "Type your response here…"
+                      }
+                      className="mt-4 w-full min-h-[140px] rounded-md border border-border bg-background p-4 font-sans text-[0.95rem] leading-relaxed focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+                    />
                   </div>
-                  <p className="prose-serif mt-2 text-[0.98rem] text-foreground/85 whitespace-pre-line">
-                    {part.prompt}
-                  </p>
-                  <textarea
-                    data-testid={`textarea-response-${part.id}`}
-                    value={responses[part.id] || ""}
-                    onChange={(e) =>
-                      setResponses({ ...responses, [part.id]: e.target.value })
-                    }
-                    placeholder="Type your response here…"
-                    className="mt-4 w-full min-h-[140px] rounded-md border border-border bg-background p-4 font-sans text-[0.95rem] leading-relaxed focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-                  />
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">

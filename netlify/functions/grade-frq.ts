@@ -25,7 +25,7 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    const { frq, responses } = JSON.parse(event.body || "{}");
+    const { frq, responses, partImages } = JSON.parse(event.body || "{}");
     if (!frq || !responses) {
       return {
         statusCode: 400,
@@ -91,7 +91,8 @@ export const handler: Handler = async (event) => {
 Rules:
 - pointId must match the rubric point id exactly.
 - partId / partLabel must match the rubric part.
-- For graph points, students may describe diagrams in words; reward explicit labels of axes, curves, equilibrium points, and shifts.
+- For graph points, an image of the student's hand-drawn diagram may be attached below, tagged like [GRAPH FOR PART a]. Read the image directly: check the actual axes labels, curve labels, shift directions, equilibrium markers (P*, Q*, Y1, Yf, etc.). Reward what is visible on the sketch. If both a sketch AND words are provided, the sketch is the primary evidence; the words can disambiguate sloppy handwriting.
+- If a graph point is required and no sketch was attached for that part, fall back to the student's text description (axes, curves, shifts named in words).
 - Be encouraging but rigorous. Cite missing rubric language in feedback.
 - idealRewrite is a paragraph-level "5/5" rewrite for the entire FRQ, separated by \\n\\n with optional **Part A** style headers.
 
@@ -115,11 +116,26 @@ Return ONLY the JSON object. Do not wrap in markdown code fences. Do not add com
     const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
+    // Build the multimodal payload. Text prompt first, then any per-part graph images.
+    // Each image gets a small text label so the model can attribute it to the correct part.
+    const userParts: any[] = [{ text: prompt }];
+    if (partImages && typeof partImages === "object") {
+      for (const [partId, dataUrl] of Object.entries(partImages as Record<string, string>)) {
+        if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) continue;
+        const m = dataUrl.match(/^data:(image\/(?:png|jpe?g|webp));base64,(.+)$/);
+        if (!m) continue;
+        userParts.push({ text: `[GRAPH FOR PART ${partId}]` });
+        userParts.push({
+          inlineData: { mimeType: m[1], data: m[2] },
+        });
+      }
+    }
+
     const geminiResp = await fetch(geminiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
+        contents: [{ role: "user", parts: userParts }],
         generationConfig: {
           temperature: 0.2,
           responseMimeType: "application/json",

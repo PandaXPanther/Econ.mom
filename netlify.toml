@@ -30,13 +30,6 @@
   status = 200
   force  = true
 
-# Gemini multimodal graph grader.
-[[redirects]]
-  from = "/api/grade-graph"
-  to   = "/.netlify/functions/grade-graph"
-  status = 200
-  force  = true
-
 # NBER working-paper feed for Natural Experiments tool.
 [[redirects]]
   from = "/api/nber-feed"

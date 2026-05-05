@@ -24,7 +24,6 @@ import EconLever from "@/pages/tools/EconLever";
 import InflationDecomposer from "@/pages/tools/InflationDecomposer";
 import NaturalExperiments from "@/pages/tools/NaturalExperiments";
 import CounterfactualEngine from "@/pages/tools/CounterfactualEngine";
-import GraphGrader from "@/pages/tools/GraphGrader";
 
 import { useLocation } from "wouter";
 
@@ -48,7 +47,6 @@ const KNOWN_ROUTES = new Set<string>([
   "/inflation-decomposer",
   "/natural-experiments",
   "/counterfactual-engine",
-  "/graph-grader",
   "/extemp-engine",
   "/colorado-econ",
   "/lever",
@@ -129,7 +127,6 @@ function AppRouter() {
         <Route path="/inflation-decomposer" component={InflationDecomposer} />
         <Route path="/natural-experiments" component={NaturalExperiments} />
         <Route path="/counterfactual-engine" component={CounterfactualEngine} />
-        <Route path="/graph-grader" component={GraphGrader} />
 
         {/* Legacy redirects, old routes now point to their replacements */}
         <Route path="/extemp-engine" component={NewsTranslator} />
