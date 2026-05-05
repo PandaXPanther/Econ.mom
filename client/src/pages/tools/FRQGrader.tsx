@@ -6,7 +6,8 @@ import { ToolExplainer } from "@/components/brand/ToolExplainer";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { FRQ_LIBRARY, gradeFRQ, GradeResult, type FRQ } from "@/lib/frq-rubrics";
 import { SEO } from "@/components/brand/SEO";
-import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle, Wand2, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle, Wand2, Loader2, PencilRuler } from "lucide-react";
+import { Link } from "wouter";
 import { GeminiProgress } from "@/components/GeminiProgress";
 import { apiRequest } from "@/lib/queryClient";
 
@@ -271,9 +272,29 @@ export default function FRQGrader() {
                 </div>
               </div>
 
-              <div className="mt-6 rounded-md border border-dashed border-border p-4 text-[0.78rem] text-muted-foreground">
+              <Link
+                href="/graph-grader"
+                data-testid="link-graph-grader"
+                className="group mt-6 block rounded-lg border border-primary/40 bg-primary/5 p-5 transition hover:border-primary hover:bg-primary/10"
+              >
+                <div className="flex items-center gap-2">
+                  <PencilRuler size={14} className="text-primary" />
+                  <span className="label-cap text-primary">New · Graph Grader</span>
+                </div>
+                <div className="mt-2 font-display text-[1.05rem] font-medium text-foreground">
+                  Draw the diagram, let Gemini score the sketch.
+                </div>
+                <div className="prose-serif mt-1 text-[0.85rem] text-muted-foreground">
+                  AS-AD, money market, monopoly, externalities, and more. Gemini reads your actual graph (axes, curves, equilibria) against the AP rubric.
+                </div>
+                <div className="mt-3 inline-flex items-center gap-1 text-[0.78rem] font-medium text-primary group-hover:gap-2 transition-all">
+                  Open Graph Grader <ArrowRight size={12} />
+                </div>
+              </Link>
+
+              <div className="mt-4 rounded-md border border-dashed border-border p-4 text-[0.78rem] text-muted-foreground">
                 <div className="label-cap mb-2 text-foreground">Tip</div>
-                Describe diagrams in words: "I labeled the y-axis Price Level, x-axis Real GDP, drew downward-sloping AD…", the grader checks for required graph elements by name.
+                For text-only parts, describe diagrams in words: "y-axis Price Level, x-axis Real GDP, downward-sloping AD…" the grader checks for required graph elements by name. For full graphs, use the Graph Grader above.
               </div>
             </div>
           </aside>

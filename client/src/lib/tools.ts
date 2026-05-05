@@ -53,10 +53,11 @@ export const TOOLS: Tool[] = [
     whoItsFor: "AP Macro and AP Micro students prepping for the May exam.",
     tryThis: "Paste a 2024 released FRQ response (or your own attempt at one) and watch the grader call out missing rubric points line by line.",
     howItWorks: [
-      "You paste your FRQ response into the box.",
-      "The grader compares your answer to the official College Board rubric for that exact question, checking for axis labels, named curves, direction of shift, and equilibrium markers.",
+      "You paste your FRQ response into the box (or generate a brand-new custom FRQ on any AP topic with the 'Generate a custom FRQ' panel: pick the topic, exam (Macro / Micro), length, and difficulty, and Gemini writes you an exam-style question complete with rubric).",
+      "The grader compares your answer to the official College Board rubric for that exact question (or the AI-built rubric for generated FRQs), checking for axis labels, named curves, direction of shift, and equilibrium markers.",
       "You get a point-by-point breakdown showing which rubric points you earned and which you missed.",
       "A 5/5 model rewrite is generated using the precise terminology AP graders are trained to reward.",
+      "Graph-heavy question? Draw the diagram in the new Graph Grader (link inside the tool) and Gemini scores the actual sketch, not your description of it.",
     ],
   },
   {
