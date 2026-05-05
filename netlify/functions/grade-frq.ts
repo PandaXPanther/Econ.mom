@@ -112,7 +112,7 @@ ${responsesBlock}
 
 Return ONLY the JSON object. Do not wrap in markdown code fences. Do not add commentary.`;
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     const geminiResp = await fetch(geminiUrl, {

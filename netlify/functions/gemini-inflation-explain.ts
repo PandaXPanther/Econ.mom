@@ -39,7 +39,7 @@ Return ONLY JSON, no markdown:
 
 Cite real Fed papers / NBER work. Numbers must sum approximately to headlineCpi. Be concrete (name actual goods, services, shocks). Keep total response under 1200 tokens.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const controller = new AbortController();

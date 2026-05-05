@@ -91,7 +91,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       {
         title: "FRQ generator (companion)",
         body:
-          "The FRQ generator inverts the grader: given a topic and exam, Gemini 2.5 Flash returns a fully scaffolded FRQ matching the same rubric grammar. Generated questions ship with idealAnswer and keywords for each rubric point, so they can be graded by the same scoring engine. Output is constrained by responseMimeType: application/json and validated against the FRQ schema before display.",
+          "The FRQ generator inverts the grader: given a topic and exam, Gemini 3 Flash Preview returns a fully scaffolded FRQ matching the same rubric grammar. Generated questions ship with idealAnswer and keywords for each rubric point, so they can be graded by the same scoring engine. Output is constrained by responseMimeType: application/json and validated against the FRQ schema before display.",
       },
     ],
     validation:
@@ -204,7 +204,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       {
         title: "Live (Gemini-fetched) sectors",
         body:
-          "When the user types a custom sector, a Netlify function calls Gemini 2.5 Flash with a structured prompt that demands USITC TPIS or Kee-Nicita-Olarreaga calibrated values plus a 24-month world-price index. The returned JSON is validated against the Sector schema before insertion. This widens TariffLab's coverage from the eight curated sectors to anything HS-classified, with the trade-off that elasticities are LLM-estimated rather than peer-reviewed.",
+          "When the user types a custom sector, a Netlify function calls Gemini 3 Flash Preview with a structured prompt that demands USITC TPIS or Kee-Nicita-Olarreaga calibrated values plus a 24-month world-price index. The returned JSON is validated against the Sector schema before insertion. This widens TariffLab's coverage from the eight curated sectors to anything HS-classified, with the trade-off that elasticities are LLM-estimated rather than peer-reviewed.",
       },
     ],
     validation:
