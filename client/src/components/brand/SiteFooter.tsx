@@ -89,7 +89,7 @@ export function SiteFooter() {
               className="mt-5 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-2 font-mono text-[0.72rem] uppercase tracking-widest text-primary transition-colors hover:border-primary hover:bg-primary/10"
             >
               <Coffee size={13} />
-              If this helped, buy me a coffee
+              If this helped, leave a tip
             </a>
             <p className="mt-4 font-mono text-[0.78rem] text-muted-foreground">
               Press, partnerships, classroom use:{" "}
@@ -157,7 +157,7 @@ export function SiteFooter() {
               href="https://www.buymeacoffee.com/sarast1"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Buy Saras a coffee"
+              aria-label="Leave Saras a tip"
               className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
               data-testid="link-social-buymeacoffee"
             >
