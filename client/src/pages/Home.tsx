@@ -153,7 +153,11 @@ function HeroCathedral() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const y1 = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const y2 = useTransform(scrollYProgress, [0, 1], [0, -60]);
-  const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
+  // Fade only once the hero has scrolled past the CTAs. On mobile especially
+  // the hero is short, so fading from progress 0 to 0.7 made the "Explore the
+  // twelve" button fade out while it was still on screen. Push the fade range
+  // to the tail end of the hero so the button stays fully opaque while visible.
+  const opacity = useTransform(scrollYProgress, [0.85, 1], [1, 0]);
 
   return (
     <section ref={ref} className="relative grain overflow-hidden border-b border-border">
