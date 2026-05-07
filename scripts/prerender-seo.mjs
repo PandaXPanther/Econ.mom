@@ -240,6 +240,43 @@ function escapeHtml(s) {
     .replace(/"/g, "&quot;");
 }
 
+// Per-route static body content. The SPA hydrates over this once JS loads, but
+// before hydration, Googlebot/Bingbot/PerplexityBot see real route-specific
+// HTML (h1, intro paragraph, and a link list back to other tools). Without
+// this, every prerendered page shipped the SAME noscript block, which Google
+// treats as a near-duplicate and demotes to "Crawled, currently not indexed."
+const CRAWLABLE_LINKS = [
+  { slug: "", label: "Home" },
+  { slug: "tools", label: "All twelve tools" },
+  { slug: "frq-grader", label: "AP FRQ Grader" },
+  { slug: "tarifflab", label: "TariffLab" },
+  { slug: "textbook-atlas", label: "Textbook Atlas" },
+  { slug: "shock-sim", label: "Shock Simulator" },
+  { slug: "shadow-fed", label: "Shadow Fed" },
+  { slug: "paper-decoder", label: "Paper Decoder" },
+  { slug: "news-translator", label: "News Translator" },
+  { slug: "us-econ", label: "US Econ Dashboard" },
+  { slug: "econlever", label: "EconLever" },
+  { slug: "inflation-decomposer", label: "Inflation Decomposer" },
+  { slug: "natural-experiments", label: "Natural Experiment Finder" },
+  { slug: "counterfactual-engine", label: "Counterfactual Engine" },
+  { slug: "methodology", label: "Methodology" },
+  { slug: "founder", label: "Founder" },
+];
+
+function renderCrawlableNav(currentSlug) {
+  const items = CRAWLABLE_LINKS
+    .filter((l) => l.slug !== currentSlug)
+    .map(
+      (l) =>
+        `<li style="display:inline-block;margin:0 14px 8px 0;"><a href="${
+          l.slug ? `/${l.slug}` : "/"
+        }" style="color:#3b1612;text-decoration:underline;">${escapeHtml(l.label)}</a></li>`
+    )
+    .join("");
+  return `<nav aria-label="Site navigation"><ul style="list-style:none;padding:0;margin:24px 0;font-size:0.9rem;">${items}</ul></nav>`;
+}
+
 function buildPage(route) {
   const url = route.slug ? `${SITE}/${route.slug}` : `${SITE}/`;
   const title = route.title;
@@ -353,6 +390,31 @@ function buildPage(route) {
     const tag = `<script type="application/ld+json" id="page-founder-jsonld">${JSON.stringify(founderLd)}</script>`;
     html = html.replace("</head>", `    ${tag}\n  </head>`);
   }
+
+  // Inject per-route crawlable body content inside a <noscript> block. Two
+  // wins from this:
+  //   1. Each prerendered page now ships UNIQUE body HTML, not the same
+  //      generic stub. Google was treating identical bodies as duplicates.
+  //   2. The internal nav inside the noscript gives Googlebot crawlable
+  //      same-origin links to every other route, so /frq-grader is no longer
+  //      orphaned by the hash-routed SPA.
+  // <noscript> is invisible to JS-enabled browsers, so real users never see it.
+  // Crawlers (including Googlebot's static fetch and AI bots without JS) do.
+  const heading = route.app?.name || (route.slug === "founder" ? "Saras Totey" : route.slug === "methodology" ? "Methodology & Citations" : route.slug === "tools" ? "The Twelve" : "The Mother Of Econ");
+  const subline = route.app?.description || description;
+  const crawlBody = `
+        <main style="font-family: 'Fraunces', Georgia, serif; max-width: 760px; margin: 60px auto; padding: 0 24px; line-height: 1.55; color: #1a1310;">
+          <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:#6b5853;margin:0 0 12px;">econ.mom · Saras Totey · Boulder, CO</p>
+          <h1 style="font-size:2.4rem;margin:0 0 16px;line-height:1.1;">${escapeHtml(heading)}</h1>
+          <p style="font-size:1.05rem;margin:0 0 12px;">${escapeHtml(subline)}</p>
+          <p style="font-size:0.95rem;color:#4a3d39;margin:0 0 24px;">${escapeHtml(description)}</p>
+          ${renderCrawlableNav(route.slug)}
+          <p style="font-size:0.8rem;color:#6b5853;margin:24px 0 0;">JavaScript loads the interactive version of this tool. The full library lives at <a href="/" style="color:#3b1612;">econ.mom</a>.</p>
+        </main>`;
+  html = html.replace(
+    /<noscript>[\s\S]*?<\/noscript>/,
+    `<noscript>${crawlBody}</noscript>`
+  );
 
   return html;
 }

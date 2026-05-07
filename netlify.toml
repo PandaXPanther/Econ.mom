@@ -86,6 +86,83 @@
   status = 200
   force  = true
 
+# 301 redirects for legacy / friendly slug aliases. These shipped as in-app
+# routes that re-render the canonical tool page, but to crawlers they look
+# like duplicates of the canonical URL. Returning 301 consolidates the
+# signal onto the canonical slug.
+[[redirects]]
+  from = "/extemp-engine"
+  to   = "/news-translator"
+  status = 301
+[[redirects]]
+  from = "/colorado-econ"
+  to   = "/us-econ"
+  status = 301
+[[redirects]]
+  from = "/lever"
+  to   = "/econlever"
+  status = 301
+[[redirects]]
+  from = "/el"
+  to   = "/econlever"
+  status = 301
+[[redirects]]
+  from = "/econ-dashboard"
+  to   = "/us-econ"
+  status = 301
+[[redirects]]
+  from = "/dashboard"
+  to   = "/us-econ"
+  status = 301
+[[redirects]]
+  from = "/tariff-lab"
+  to   = "/tarifflab"
+  status = 301
+[[redirects]]
+  from = "/tariff"
+  to   = "/tarifflab"
+  status = 301
+[[redirects]]
+  from = "/atlas"
+  to   = "/textbook-atlas"
+  status = 301
+[[redirects]]
+  from = "/shock"
+  to   = "/shock-sim"
+  status = 301
+[[redirects]]
+  from = "/fed"
+  to   = "/shadow-fed"
+  status = 301
+[[redirects]]
+  from = "/paper"
+  to   = "/paper-decoder"
+  status = 301
+[[redirects]]
+  from = "/news"
+  to   = "/news-translator"
+  status = 301
+[[redirects]]
+  from = "/inflation"
+  to   = "/inflation-decomposer"
+  status = 301
+[[redirects]]
+  from = "/counterfactual"
+  to   = "/counterfactual-engine"
+  status = 301
+[[redirects]]
+  from = "/natural-experiment"
+  to   = "/natural-experiments"
+  status = 301
+[[redirects]]
+  from = "/grader"
+  to   = "/frq-grader"
+  status = 301
+[[redirects]]
+  from = "/frq"
+  to   = "/frq-grader"
+  status = 301
+
 # SPA fallback for hash-routed React app.
 [[redirects]]
   from = "/*"
