@@ -472,7 +472,7 @@ function Pillar2({ title, body }: { title: string; body: string }) {
 function StatusPill({ status }: { status: "live" | "beta" | "soon" }) {
   const map = {
     live: { label: "Live", cls: "bg-foreground/5 text-foreground border-foreground/20" },
-    beta: { label: "Beta", cls: "bg-accent/15 text-accent-foreground border-accent/40" },
+    beta: { label: "Beta", cls: "bg-accent text-white border-accent" },
     soon: { label: "Soon", cls: "bg-muted text-muted-foreground border-border" },
   } as const;
   const it = map[status];
