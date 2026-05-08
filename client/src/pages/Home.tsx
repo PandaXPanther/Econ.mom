@@ -214,9 +214,9 @@ function HeroCathedral() {
             >
               Twelve free, citation-rigorous tools for the students, debaters, and
               policy desks the textbooks forgot. From{" "}
-              <span className="italic text-foreground">AP free-response grading</span> to{" "}
-              <span className="italic text-foreground">live tariff modeling</span> to a{" "}
-              <span className="italic text-foreground">Shadow Fed</span> with a public track record, every formula shown, every dataset cited.
+              <span className="font-semibold text-foreground decoration-primary/60 underline underline-offset-4 decoration-[1.5px]">AP free-response grading</span> to{" "}
+              <span className="font-semibold text-foreground decoration-primary/60 underline underline-offset-4 decoration-[1.5px]">live tariff modeling</span> to a{" "}
+              <span className="font-semibold text-foreground decoration-primary/60 underline underline-offset-4 decoration-[1.5px]">Shadow Fed</span> with a public track record, every formula shown, every dataset cited.
             </motion.p>
 
             {/* Editor counter card with animated metrics */}
@@ -231,7 +231,7 @@ function HeroCathedral() {
                   Author's Note
                 </div>
                 <p className="prose-serif mt-2 text-[0.98rem] text-foreground/85">
-                  Twelve instruments. Built for the reader who refuses to memorize what they could simply <span className="italic">model</span>. Every formula shown, every source cited, every paywall absent.
+                  Twelve instruments. Built for the reader who refuses to memorize what they could simply <span className="font-semibold text-foreground decoration-primary/60 underline underline-offset-4 decoration-[1.5px]">model</span>. Every formula shown, every source cited, every paywall absent.
                 </p>
                 <div className="mt-4 flex items-center justify-end font-mono text-[0.65rem] uppercase tracking-[0.18em] text-muted-foreground" data-testid="text-author-byline">
                   <span className="mr-2 text-primary">/</span> Saras Totey, Founder
@@ -436,7 +436,7 @@ function ThesisBand() {
           className="text-editorial text-[2.25rem] sm:text-[3.5rem] lg:text-[5rem] leading-[0.98] max-w-5xl"
         >
           Economics is too important to lock behind a{" "}
-          <span className="italic text-primary">Bloomberg terminal</span>.
+          <span className="italic font-semibold text-primary">Bloomberg terminal</span>.
         </motion.h2>
         <div className="mt-16 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <Pillar2
