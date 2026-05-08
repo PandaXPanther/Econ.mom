@@ -403,7 +403,7 @@ function buildPage(route) {
   const heading = route.app?.name || (route.slug === "founder" ? "Saras Totey" : route.slug === "methodology" ? "Methodology & Citations" : route.slug === "tools" ? "The Twelve" : "The Mother Of Econ");
   const subline = route.app?.description || description;
   const crawlBody = `
-        <main style="font-family: 'Fraunces', Georgia, serif; max-width: 760px; margin: 60px auto; padding: 0 24px; line-height: 1.55; color: #1a1310;">
+        <main style="font-family: 'Playfair Display', Georgia, serif; max-width: 760px; margin: 60px auto; padding: 0 24px; line-height: 1.55; color: #1a1310;">
           <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:#6b5853;margin:0 0 12px;">econ.mom · Saras Totey · Boulder, CO</p>
           <h1 style="font-size:2.4rem;margin:0 0 16px;line-height:1.1;">${escapeHtml(heading)}</h1>
           <p style="font-size:1.05rem;margin:0 0 12px;">${escapeHtml(subline)}</p>
