@@ -56,7 +56,7 @@ const ROUTES = [
     slug: "founder",
     title: "Saras Totey — Founder of econ.mom & EconLever · Boulder, Colorado",
     description:
-      "Saras Totey is a high-school economics researcher in Boulder, Colorado, attending Fairview High School. Founder of econ.mom and EconLever. National Economics Challenge competitor and AP Economics student.",
+      "Saras Totey is a high-school economics researcher in Boulder, Colorado, attending Fairview High School. Founder of econ.mom and EconLever, co-founder of ATT Agency (a Boulder marketing studio). National Economics Challenge competitor and AP Economics student.",
     keywords:
       "Saras Totey, Saras Totey Boulder, Saras Totey Fairview, Saras Totey EconLever, Saras Totey econ.mom, Saras Totey National Economics Challenge",
   },
@@ -481,12 +481,22 @@ function buildPage(route) {
         url,
         sameAs: [
           "https://econlever.org",
+          "https://attagency.co",
           "https://thedividendcollective.com/saras-totey",
           "https://thedividendcollective.com/",
           "https://www.linkedin.com/in/saras-totey-64a777334/",
           "https://www.instagram.com/sarastotey_/",
           "https://github.com/PandaXPanther",
           "https://www.buymeacoffee.com/sarast1",
+        ],
+        affiliation: [
+          {
+            "@type": "Organization",
+            name: "ATT Agency",
+            url: "https://attagency.co",
+            description:
+              "A Boulder, Colorado marketing and brand studio co-founded by Saras Totey.",
+          },
         ],
       },
     };

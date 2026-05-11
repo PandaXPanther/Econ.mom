@@ -30,6 +30,13 @@ const FOUNDER_JSONLD = {
       "@type": "EducationalOrganization",
       name: "Fairview High School",
     },
+    {
+      "@type": "Organization",
+      name: "ATT Agency",
+      url: "https://attagency.co",
+      description:
+        "A Boulder, Colorado marketing and brand studio co-founded by Saras Totey.",
+    },
   ],
   award: [
     "2x National Economics Challenge (NEC) Qualifier",
@@ -42,6 +49,7 @@ const FOUNDER_JSONLD = {
   },
   sameAs: [
     "https://econlever.org",
+    "https://attagency.co",
     "https://www.linkedin.com/in/saras-totey-64a777334/",
     "https://www.instagram.com/sarastotey_/",
     "https://thedividendcollective.com/",
@@ -55,7 +63,7 @@ export default function Founder() {
     <PageShell>
       <SEO
         title="The Founder · Saras Totey · econ.mom"
-        description="Saras Totey, student at Fairview High School in Boulder, Colorado. Research Analyst Assistant at Northeastern University and Head Economics Researcher at The Dividend Collective. Builder of EconLever and The Mother of Econ."
+        description="Saras Totey, student at Fairview High School in Boulder, Colorado. Research Analyst Assistant at Northeastern University and Head Economics Researcher at The Dividend Collective. Builder of EconLever and The Mother of Econ. Co-founder of ATT Agency."
         path="/founder"
         jsonLd={FOUNDER_JSONLD}
       />
@@ -120,7 +128,17 @@ export default function Founder() {
               >
                 EconLever
               </a>{" "}
-              and <span className="italic">The Mother of Econ</span>.
+              and <span className="italic">The Mother of Econ</span>. Co-founder of{" "}
+              <a
+                href="https://attagency.co"
+                target="_blank"
+                rel="noreferrer"
+                className="editorial-link italic"
+                data-testid="link-founder-attagency"
+              >
+                ATT Agency
+              </a>
+              .
             </motion.p>
 
             {/* Social links */}
@@ -158,6 +176,16 @@ export default function Founder() {
                 className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary"
               >
                 The Dividend Collective
+                <ArrowUpRight size={12} />
+              </a>
+              <a
+                href="https://attagency.co"
+                target="_blank"
+                rel="noreferrer"
+                data-testid="link-founder-attagency-pill"
+                className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+              >
+                ATT Agency
                 <ArrowUpRight size={12} />
               </a>
             </motion.div>
@@ -220,6 +248,22 @@ export default function Founder() {
             growing collection of twelve purpose-built instruments for AP and
             policy economics. Each one answers a question that, until now, had
             no public answer (or whose answer was paywalled, stale, or wrong).
+          </p>
+          <p>
+            Alongside the research work, Saras co-founded{" "}
+            <a
+              href="https://attagency.co"
+              target="_blank"
+              rel="noreferrer"
+              className="editorial-link italic"
+              data-testid="link-note-attagency"
+            >
+              ATT Agency
+            </a>
+            , a Boulder, Colorado marketing and brand studio. It is the design
+            voice behind The Mother of Econ and the proving ground for the
+            visual systems, typography, and editorial sensibility that show up
+            on every page of this site.
           </p>
           <p>
             Every tool is free. Every formula is shown. Every dataset is cited.
