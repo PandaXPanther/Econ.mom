@@ -110,7 +110,7 @@ export function SiteFooter() {
             </div>
             <span className="hidden sm:inline text-muted-foreground/40">·</span>
             <div className="font-mono">
-              Created by{" "}
+              Built by{" "}
               <a
                 href="https://www.linkedin.com/in/saras-totey-64a777334/"
                 target="_blank"
@@ -119,11 +119,8 @@ export function SiteFooter() {
                 data-testid="link-creator-linkedin"
               >
                 Saras Totey
-              </a>
-            </div>
-            <span className="hidden sm:inline text-muted-foreground/40">·</span>
-            <div className="font-mono">
-              Design &amp; brand by{" "}
+              </a>{" "}
+              @{" "}
               <a
                 href="https://attagency.co"
                 target="_blank"
@@ -133,7 +130,6 @@ export function SiteFooter() {
               >
                 ATT Agency
               </a>
-              , a Boulder marketing studio
             </div>
           </div>
           <div className="flex items-center gap-3">

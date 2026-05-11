@@ -250,7 +250,11 @@ export default function Founder() {
             no public answer (or whose answer was paywalled, stale, or wrong).
           </p>
           <p>
-            Alongside the research work, Saras co-founded{" "}
+            The Mother of Econ was built independently long before any of this,
+            in a bedroom in Boulder with no team and no budget. The lessons from
+            shipping it (how to make a free tool feel like a serious one, how to
+            earn trust without a brand behind you) eventually became the
+            foundation for{" "}
             <a
               href="https://attagency.co"
               target="_blank"
@@ -260,10 +264,9 @@ export default function Founder() {
             >
               ATT Agency
             </a>
-            , a Boulder, Colorado marketing and brand studio. It is the design
-            voice behind The Mother of Econ and the proving ground for the
-            visual systems, typography, and editorial sensibility that show up
-            on every page of this site.
+            , a Boulder, Colorado marketing and brand studio Saras went on to
+            co-found. Different work, same idea: build things worth taking
+            seriously.
           </p>
           <p>
             Every tool is free. Every formula is shown. Every dataset is cited.
