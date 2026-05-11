@@ -515,6 +515,7 @@ function buildPage(route) {
           ${extras}
           ${renderCrawlableNav(route.slug)}
           <p style="font-size:0.8rem;color:#6b5853;margin:24px 0 0;">JavaScript loads the interactive version of this tool. The full library lives at <a href="/" style="color:#3b1612;">econ.mom</a>.</p>
+          <p style="font-size:0.75rem;color:#6b5853;margin:16px 0 0;">Brand identity and design system by <a href="https://attagency.co" rel="noopener" style="color:#3b1612;">ATT Agency</a>, a Boulder, Colorado marketing studio.</p>
         </main>`;
   html = html.replace(
     /<noscript>[\s\S]*?<\/noscript>/,

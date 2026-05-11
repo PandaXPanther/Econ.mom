@@ -121,6 +121,20 @@ export function SiteFooter() {
                 Saras Totey
               </a>
             </div>
+            <span className="hidden sm:inline text-muted-foreground/40">·</span>
+            <div className="font-mono">
+              Design &amp; brand by{" "}
+              <a
+                href="https://attagency.co"
+                target="_blank"
+                rel="noopener"
+                className="text-foreground underline-offset-2 hover:text-primary hover:underline"
+                data-testid="link-att-agency"
+              >
+                ATT Agency
+              </a>
+              , a Boulder marketing studio
+            </div>
           </div>
           <div className="flex items-center gap-3">
             <a
