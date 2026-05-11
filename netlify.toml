@@ -6,6 +6,16 @@
   publish = "dist/public"
   functions = "netlify/functions"
 
+# Disable Netlify's pretty URLs (which add trailing slashes) so canonical
+# tags like /us-econ match the served URL exactly. Fixes a canonical
+# mismatch flagged in Search Console where canonical was /slug but the
+# page was served at /slug/.
+[build.processing]
+  skip_processing = false
+
+[build.processing.html]
+  pretty_urls = false
+
 [functions]
   node_bundler = "esbuild"
 

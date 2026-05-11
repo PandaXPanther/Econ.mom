@@ -264,6 +264,109 @@ const CRAWLABLE_LINKS = [
   { slug: "founder", label: "Founder" },
 ];
 
+// Per-route "extras" block: substantive, entity-rich, keyword-rich HTML that
+// is unique to each tool page. This is what flips a page from "Crawled,
+// currently not indexed" to indexed: Googlebot needs distinctive named
+// entities (state names, data series IDs, dataset names) to differentiate
+// pages from one another in its quality model.
+const ROUTE_EXTRAS = {
+  "us-econ": `
+    <section>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Data coverage</h2>
+      <p>All 50 states and 3,000 plus counties. Click any state on the map to see unemployment rate (BLS Local Area Unemployment Statistics, LAUS), median hourly living wage (MIT Living Wage Calculator, single adult, no children), bachelor's degree attainment (NCES Common Core of Data, ACS 5-year), and an industry employment mix from the Quarterly Census of Employment and Wages (QCEW).</p>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Sample state snapshots</h2>
+      <ul>
+        <li><strong>Colorado</strong>: unemployment 3.2%, living wage $25.02/hr, bachelor's attainment 44%</li>
+        <li><strong>California</strong>: unemployment 5.1%, living wage $27.81/hr, bachelor's attainment 36%</li>
+        <li><strong>Texas</strong>: unemployment 4.0%, living wage $20.95/hr, bachelor's attainment 32%</li>
+        <li><strong>New York</strong>: unemployment 4.3%, living wage $26.48/hr, bachelor's attainment 39%</li>
+        <li><strong>Florida</strong>: unemployment 3.6%, living wage $22.10/hr, bachelor's attainment 33%</li>
+        <li><strong>Mississippi</strong>: unemployment 5.8%, living wage $18.34/hr, bachelor's attainment 22%</li>
+        <li><strong>Massachusetts</strong>: unemployment 3.8%, living wage $26.40/hr, bachelor's attainment 47%</li>
+        <li><strong>Ohio</strong>: unemployment 4.2%, living wage $19.78/hr, bachelor's attainment 30%</li>
+        <li><strong>Georgia</strong>: unemployment 3.7%, living wage $20.42/hr, bachelor's attainment 33%</li>
+        <li><strong>Washington</strong>: unemployment 4.1%, living wage $25.93/hr, bachelor's attainment 38%</li>
+      </ul>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Primary data sources</h2>
+      <ul>
+        <li>BLS Local Area Unemployment Statistics (LAUS), series prefix LASST</li>
+        <li>BLS Quarterly Census of Employment and Wages (QCEW)</li>
+        <li>MIT Living Wage Calculator, annualized, single adult, no children</li>
+        <li>NCES Common Core of Data (CCD), educational attainment by state</li>
+        <li>Census ACS 5-year estimates for cross-validation</li>
+      </ul>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">How to use</h2>
+      <ol>
+        <li>Click a state on the choropleth map to load its dashboard.</li>
+        <li>Switch the visible metric (unemployment, wage, education).</li>
+        <li>Drill into county-level data with the search box.</li>
+        <li>Export the underlying CSV from the data panel.</li>
+      </ol>
+    </section>`,
+  "textbook-atlas": `
+    <section>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">What this maps</h2>
+      <p>Every AP Economics concept (AP Macroeconomics Units 1 through 6 and AP Microeconomics Units 1 through 6) cross-referenced with the FRED time series that most directly reflects it. Click a concept to see its definition, the canonical AP rubric language, the FRED series IDs, the textbook chapter mapping for Mankiw, Krugman, and Parkin, and a live chart of the data series.</p>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Concept to data examples</h2>
+      <ul>
+        <li><strong>Real GDP</strong>: FRED series GDPC1, quarterly, 2017 dollars (BEA)</li>
+        <li><strong>Unemployment rate</strong>: FRED series UNRATE, monthly (BLS Current Population Survey)</li>
+        <li><strong>Core CPI</strong>: FRED series CPILFESL, monthly (BLS, all urban consumers, excluding food and energy)</li>
+        <li><strong>10-year Treasury</strong>: FRED series DGS10, daily (Board of Governors H.15)</li>
+        <li><strong>Trade-weighted dollar</strong>: FRED series DTWEXBGS</li>
+        <li><strong>Phillips Curve</strong>: cross of UNRATE and CPILFESL year-over-year change</li>
+      </ul>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Textbook crosswalk</h2>
+      <p>Mappings to Mankiw Principles of Economics (10e), Krugman and Wells Economics (6e), and Parkin Economics (14e), chapter and section level.</p>
+    </section>`,
+  "inflation-decomposer": `
+    <section>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Decomposition basket</h2>
+      <p>Splits monthly headline CPI inflation into the eight major BLS expenditure categories with their actual relative importance weights from the most recent annual reweighting. The chart shows percentage-point contribution to headline CPI year-over-year change, so the stacked bars sum to the headline rate.</p>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">CPI components tracked</h2>
+      <ul>
+        <li><strong>Food</strong>: 13.4% weight (FRED CPIFABSL)</li>
+        <li><strong>Energy</strong>: 6.7% weight (FRED CPIENGSL)</li>
+        <li><strong>Shelter</strong>: 36.2% weight (FRED CUSR0000SAH1)</li>
+        <li><strong>Apparel</strong>: 2.5% weight (FRED CPIAPPSL)</li>
+        <li><strong>Transportation services</strong>: 5.9% weight (FRED CUSR0000SAS4)</li>
+        <li><strong>Medical care services</strong>: 6.6% weight (FRED CUSR0000SAM2)</li>
+        <li><strong>Recreation</strong>: 5.4% weight (FRED CPIRECSL)</li>
+        <li><strong>Education and communication</strong>: 6.4% weight (FRED CPIEDUSL)</li>
+      </ul>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Why it matters for AP Macro</h2>
+      <p>The 2022 to 2024 inflation episode was 70 percent driven by shelter and energy. The decomposition makes that visible and shows why the Fed's preferred measure (core PCE) gave a different signal than headline CPI.</p>
+    </section>`,
+  "counterfactual-engine": `
+    <section>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">What this models</h2>
+      <p>Re-runs a chosen real-world economic event with one parameter changed and shows the divergence. Built on a small system of stochastic difference equations calibrated to FRED data. The engine integrates Gemini and FRED data to narrate the counterfactual path in plain English while the parametric model runs the actual simulation.</p>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Available scenarios</h2>
+      <ul>
+        <li>What if the Fed had cut 50 bp instead of 25 bp at the September 2024 FOMC meeting</li>
+        <li>What if the 2022 American Rescue Plan had been half its actual size</li>
+        <li>What if oil prices had stayed at $30 through 2022 (no Russia invasion shock)</li>
+        <li>What if the China tariffs of 2018 had been reciprocal-only</li>
+        <li>What if the 2008 TARP had not passed</li>
+      </ul>
+    </section>`,
+  "natural-experiments": `
+    <section>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">What this finds</h2>
+      <p>Searches for difference-in-differences candidates in US state-level economic data. You pick a policy change (minimum wage hike, Medicaid expansion, marijuana legalization, sports betting legalization) and the tool finds the treatment state, suggests valid control states using synthetic control matching, and visualizes the pre and post trends.</p>
+      <h2 style="font-size:1.25rem;margin:24px 0 8px;">Sample experiments</h2>
+      <ul>
+        <li>Seattle 2014 minimum wage to $15, control: Portland and Spokane</li>
+        <li>California 2017 marijuana legalization, control: synthetic from Texas, Florida, North Carolina</li>
+        <li>Wisconsin Act 10 (2011), control: Minnesota and Illinois</li>
+        <li>Massachusetts Romneycare (2006), control: Connecticut and New Hampshire</li>
+      </ul>
+    </section>`,
+};
+function renderRouteExtras(slug) {
+  return ROUTE_EXTRAS[slug] || "";
+}
+
 function renderCrawlableNav(currentSlug) {
   const items = CRAWLABLE_LINKS
     .filter((l) => l.slug !== currentSlug)
@@ -402,12 +505,14 @@ function buildPage(route) {
   // Crawlers (including Googlebot's static fetch and AI bots without JS) do.
   const heading = route.app?.name || (route.slug === "founder" ? "Saras Totey" : route.slug === "methodology" ? "Methodology & Citations" : route.slug === "tools" ? "The Twelve" : "The Mother Of Econ");
   const subline = route.app?.description || description;
+  const extras = renderRouteExtras(route.slug);
   const crawlBody = `
         <main style="font-family: 'Playfair Display', Georgia, serif; max-width: 760px; margin: 60px auto; padding: 0 24px; line-height: 1.55; color: #1a1310;">
           <p style="font-family:'JetBrains Mono',monospace;font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:#6b5853;margin:0 0 12px;">econ.mom · Saras Totey · Boulder, CO</p>
           <h1 style="font-size:2.4rem;margin:0 0 16px;line-height:1.1;">${escapeHtml(heading)}</h1>
           <p style="font-size:1.05rem;margin:0 0 12px;">${escapeHtml(subline)}</p>
           <p style="font-size:0.95rem;color:#4a3d39;margin:0 0 24px;">${escapeHtml(description)}</p>
+          ${extras}
           ${renderCrawlableNav(route.slug)}
           <p style="font-size:0.8rem;color:#6b5853;margin:24px 0 0;">JavaScript loads the interactive version of this tool. The full library lives at <a href="/" style="color:#3b1612;">econ.mom</a>.</p>
         </main>`;
