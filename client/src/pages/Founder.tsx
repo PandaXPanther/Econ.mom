@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { SEO } from "@/components/brand/SEO";
-import { ArrowUpRight, Linkedin, Instagram, Coffee } from "lucide-react";
+import { ArrowUpRight, Linkedin, Instagram, Coffee, Youtube } from "lucide-react";
 
 const FOUNDER_JSONLD = {
   "@context": "https://schema.org",
@@ -52,6 +52,7 @@ const FOUNDER_JSONLD = {
     "https://attagency.co",
     "https://www.linkedin.com/in/saras-totey-64a777334/",
     "https://www.instagram.com/sarastotey_/",
+    "https://www.youtube.com/@themotherofeconomics",
     "https://thedividendcollective.com/",
     "https://thedividendcollective.com/saras-totey",
     "https://www.buymeacoffee.com/sarast1",
@@ -167,6 +168,16 @@ export default function Founder() {
               >
                 <Instagram size={14} />
                 Instagram
+              </a>
+              <a
+                href="https://www.youtube.com/@themotherofeconomics"
+                target="_blank"
+                rel="noreferrer"
+                data-testid="link-founder-youtube"
+                className="group inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+              >
+                <Youtube size={14} />
+                YouTube
               </a>
               <a
                 href="https://thedividendcollective.com/saras-totey"

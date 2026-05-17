@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { Logo } from "./Logo";
 import { TOOLS } from "@/lib/tools";
 import { FOUNDED_YEAR, copyrightYears } from "@/lib/site-meta";
-import { Linkedin, Instagram, Github, Coffee } from "lucide-react";
+import { Linkedin, Instagram, Github, Coffee, Youtube } from "lucide-react";
 
 export function SiteFooter() {
   return (
@@ -162,6 +162,16 @@ export function SiteFooter() {
               data-testid="link-social-github"
             >
               <Github size={14} />
+            </a>
+            <a
+              href="https://www.youtube.com/@themotherofeconomics"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="econ.mom on YouTube"
+              className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+              data-testid="link-social-youtube"
+            >
+              <Youtube size={14} />
             </a>
             <a
               href="https://www.buymeacoffee.com/sarast1"

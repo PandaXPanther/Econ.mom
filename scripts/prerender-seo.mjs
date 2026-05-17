@@ -445,6 +445,7 @@ function buildPage(route) {
           "https://thedividendcollective.com/saras-totey",
           "https://econlever.org",
           "https://www.linkedin.com/in/saras-totey-64a777334/",
+          "https://www.youtube.com/@themotherofeconomics",
         ],
       },
       publisher: { "@type": "Organization", name: "The Mother Of Econ", url: SITE },
@@ -487,6 +488,7 @@ function buildPage(route) {
           "https://www.linkedin.com/in/saras-totey-64a777334/",
           "https://www.instagram.com/sarastotey_/",
           "https://github.com/PandaXPanther",
+          "https://www.youtube.com/@themotherofeconomics",
           "https://www.buymeacoffee.com/sarast1",
         ],
         affiliation: [
