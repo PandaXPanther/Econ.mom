@@ -283,20 +283,24 @@ function IndustryPanel() {
       </ChartFrame>
 
       <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="grid grid-cols-12 gap-4 border-b border-border bg-muted/30 px-5 py-3 font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground">
-          <div className="col-span-6">Industry</div>
-          <div className="col-span-3 text-right">Employment (thousands)</div>
-          <div className="col-span-3 text-right">YoY change</div>
-        </div>
-        {INDUSTRY.map((row) => (
-          <div key={row.name} className="grid grid-cols-12 gap-4 border-b border-border/50 px-5 py-3 text-sm last:border-0">
-            <div className="col-span-6">{row.name}</div>
-            <div className="col-span-3 text-right font-mono">{row.emp.toLocaleString()}</div>
-            <div className={`col-span-3 text-right font-mono ${row.ya >= 0 ? "text-foreground" : "text-destructive"}`}>
-              {row.ya >= 0 ? "+" : ""}{row.ya.toFixed(1)}%
+        <div className="overflow-x-auto">
+          <div className="min-w-[480px]">
+            <div className="grid grid-cols-12 gap-4 border-b border-border bg-muted/30 px-5 py-3 font-mono text-[0.7rem] uppercase tracking-widest text-muted-foreground">
+              <div className="col-span-6">Industry</div>
+              <div className="col-span-3 text-right">Employment (thousands)</div>
+              <div className="col-span-3 text-right">YoY change</div>
             </div>
+            {INDUSTRY.map((row) => (
+              <div key={row.name} className="grid grid-cols-12 gap-4 border-b border-border/50 px-5 py-3 text-sm last:border-0">
+                <div className="col-span-6">{row.name}</div>
+                <div className="col-span-3 text-right font-mono">{row.emp.toLocaleString()}</div>
+                <div className={`col-span-3 text-right font-mono ${row.ya >= 0 ? "text-foreground" : "text-destructive"}`}>
+                  {row.ya >= 0 ? "+" : ""}{row.ya.toFixed(1)}%
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
@@ -305,27 +309,32 @@ function IndustryPanel() {
 function CountyTable() {
   return (
     <div className="rounded-lg border border-border bg-card overflow-hidden">
-      <div className="grid grid-cols-12 gap-4 border-b border-border bg-muted/30 px-5 py-3 font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">
-        <div className="col-span-3">County</div>
-        <div className="col-span-2 text-right">Pop. (k)</div>
-        <div className="col-span-2 text-right">Unemployment</div>
-        <div className="col-span-2 text-right">Living wage / hr</div>
-        <div className="col-span-2 text-right">Median rent</div>
-        <div className="col-span-1 text-right">Grad %</div>
-      </div>
-      {COUNTY_DATA.map((row) => (
-        <div key={row.county} className="grid grid-cols-12 gap-4 border-b border-border/50 px-5 py-3 text-sm last:border-0 hover:bg-muted/20">
-          <div className="col-span-3 flex items-center gap-2">
-            <MapPin size={11} className="text-muted-foreground" />
-            {row.county}
+      <div className="sm:hidden border-b border-border/40 bg-muted/10 px-5 py-1.5 font-mono text-[0.55rem] uppercase tracking-widest text-muted-foreground">↔ swipe to see more columns</div>
+      <div className="overflow-x-auto">
+        <div className="min-w-[640px]">
+          <div className="grid grid-cols-12 gap-4 border-b border-border bg-muted/30 px-5 py-3 font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">
+            <div className="col-span-3">County</div>
+            <div className="col-span-2 text-right">Pop. (k)</div>
+            <div className="col-span-2 text-right">Unemployment</div>
+            <div className="col-span-2 text-right">Living wage / hr</div>
+            <div className="col-span-2 text-right">Median rent</div>
+            <div className="col-span-1 text-right">Grad %</div>
           </div>
-          <div className="col-span-2 text-right font-mono">{row.popK.toLocaleString()}</div>
-          <div className="col-span-2 text-right font-mono">{row.unemployment.toFixed(1)}%</div>
-          <div className="col-span-2 text-right font-mono">${row.livingWage.toFixed(2)}</div>
-          <div className="col-span-2 text-right font-mono">${row.medianRent.toLocaleString()}</div>
-          <div className="col-span-1 text-right font-mono">{row.gradRate.toFixed(1)}</div>
+          {COUNTY_DATA.map((row) => (
+            <div key={row.county} className="grid grid-cols-12 gap-4 border-b border-border/50 px-5 py-3 text-sm last:border-0 hover:bg-muted/20">
+              <div className="col-span-3 flex items-center gap-2">
+                <MapPin size={11} className="text-muted-foreground" />
+                {row.county}
+              </div>
+              <div className="col-span-2 text-right font-mono">{row.popK.toLocaleString()}</div>
+              <div className="col-span-2 text-right font-mono">{row.unemployment.toFixed(1)}%</div>
+              <div className="col-span-2 text-right font-mono">${row.livingWage.toFixed(2)}</div>
+              <div className="col-span-2 text-right font-mono">${row.medianRent.toLocaleString()}</div>
+              <div className="col-span-1 text-right font-mono">{row.gradRate.toFixed(1)}</div>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </div>
   );
 }

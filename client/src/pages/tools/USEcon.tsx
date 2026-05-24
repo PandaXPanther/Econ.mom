@@ -402,36 +402,41 @@ export default function USEcon() {
                   <h3 className="font-display text-[1.05rem] font-medium">Pick a state to drill into county data</h3>
                   <div className="font-mono text-[0.65rem] uppercase tracking-widest text-muted-foreground">{filtered.length} of 50 states</div>
                 </div>
-                <div className="grid grid-cols-12 gap-3 border-b border-border bg-muted/30 px-5 py-3 font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground">
-                  <SortHead label="State" k="name" col="col-span-3" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                  <SortHead label="Pop. (M)" k="popM" col="col-span-1 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                  <SortHead label="Unemp." k="unemp" col="col-span-2 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                  <SortHead label="Mean wage" k="meanWage" col="col-span-2 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                  <SortHead label="Living wage" k="livingWage" col="col-span-2 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                  <SortHead label="Grad %" k="gradRate" col="col-span-1 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                  <SortHead label="Home value" k="zhvi" col="col-span-1 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
-                </div>
-                <div className="max-h-[640px] overflow-y-auto">
-                  {filtered.map((s) => (
-                    <button
-                      key={s.abbr}
-                      data-testid={`row-state-${s.abbr}`}
-                      onClick={() => setSelected(s.abbr)}
-                      className="grid w-full grid-cols-12 gap-3 border-b border-border/50 px-5 py-3 text-left text-sm transition-colors last:border-0 hover:bg-primary/5"
-                    >
-                      <div className="col-span-3 flex items-center gap-2">
-                        <span className="inline-flex h-6 w-7 items-center justify-center rounded bg-primary/10 font-mono text-[0.65rem] font-medium text-primary">{s.abbr}</span>
-                        <span className="font-medium">{s.name}</span>
-                        {COUNTIES[s.abbr] && <span className="ml-1 inline-block rounded-full bg-foreground/10 px-1.5 py-0.5 font-mono text-[0.55rem] uppercase tracking-widest text-muted-foreground">counties</span>}
-                      </div>
-                      <div className="col-span-1 text-right font-mono text-muted-foreground">{s.popM.toFixed(2)}</div>
-                      <div className={`col-span-2 text-right font-mono ${s.unemp <= 3.5 ? "text-foreground" : s.unemp >= 5 ? "text-destructive" : ""}`}>{s.unemp.toFixed(1)}%</div>
-                      <div className="col-span-2 text-right font-mono">${s.meanWage.toFixed(2)}</div>
-                      <div className="col-span-2 text-right font-mono">${s.livingWage.toFixed(2)}</div>
-                      <div className="col-span-1 text-right font-mono">{s.gradRate.toFixed(1)}</div>
-                      <div className="col-span-1 text-right font-mono">${(s.zhvi/1000).toFixed(0)}k</div>
-                    </button>
-                  ))}
+                <div className="sm:hidden border-b border-border/40 bg-muted/10 px-5 py-1.5 font-mono text-[0.55rem] uppercase tracking-widest text-muted-foreground">↔ swipe to see more columns</div>
+                <div className="overflow-x-auto">
+                  <div className="min-w-[760px]">
+                    <div className="grid grid-cols-12 gap-3 border-b border-border bg-muted/30 px-5 py-3 font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground">
+                      <SortHead label="State" k="name" col="col-span-3" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                      <SortHead label="Pop. (M)" k="popM" col="col-span-1 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                      <SortHead label="Unemp." k="unemp" col="col-span-2 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                      <SortHead label="Mean wage" k="meanWage" col="col-span-2 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                      <SortHead label="Living wage" k="livingWage" col="col-span-2 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                      <SortHead label="Grad %" k="gradRate" col="col-span-1 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                      <SortHead label="Home value" k="zhvi" col="col-span-1 text-right" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                    </div>
+                    <div className="max-h-[640px] overflow-y-auto">
+                      {filtered.map((s) => (
+                        <button
+                          key={s.abbr}
+                          data-testid={`row-state-${s.abbr}`}
+                          onClick={() => setSelected(s.abbr)}
+                          className="grid w-full grid-cols-12 gap-3 border-b border-border/50 px-5 py-3 text-left text-sm transition-colors last:border-0 hover:bg-primary/5"
+                        >
+                          <div className="col-span-3 flex items-center gap-2">
+                            <span className="inline-flex h-6 w-7 items-center justify-center rounded bg-primary/10 font-mono text-[0.65rem] font-medium text-primary">{s.abbr}</span>
+                            <span className="font-medium">{s.name}</span>
+                            {COUNTIES[s.abbr] && <span className="ml-1 inline-block rounded-full bg-foreground/10 px-1.5 py-0.5 font-mono text-[0.55rem] uppercase tracking-widest text-muted-foreground">counties</span>}
+                          </div>
+                          <div className="col-span-1 text-right font-mono text-muted-foreground">{s.popM.toFixed(2)}</div>
+                          <div className={`col-span-2 text-right font-mono ${s.unemp <= 3.5 ? "text-foreground" : s.unemp >= 5 ? "text-destructive" : ""}`}>{s.unemp.toFixed(1)}%</div>
+                          <div className="col-span-2 text-right font-mono">${s.meanWage.toFixed(2)}</div>
+                          <div className="col-span-2 text-right font-mono">${s.livingWage.toFixed(2)}</div>
+                          <div className="col-span-1 text-right font-mono">{s.gradRate.toFixed(1)}</div>
+                          <div className="col-span-1 text-right font-mono">${(s.zhvi/1000).toFixed(0)}k</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -574,27 +579,32 @@ function CountySection({ counties, stateName }: { counties: CountyRow[]; stateNa
       </div>
 
       <div className="rounded-lg border border-border bg-card overflow-hidden">
-        <div className="grid grid-cols-12 gap-3 border-b border-border bg-muted/30 px-5 py-3 font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground">
-          <div className="col-span-3">County</div>
-          <div className="col-span-2 text-right">Pop. (k)</div>
-          <div className="col-span-2 text-right">Unemployment</div>
-          <div className="col-span-2 text-right">Living wage / hr</div>
-          <div className="col-span-2 text-right">Median rent</div>
-          <div className="col-span-1 text-right">Grad %</div>
-        </div>
-        {counties.map((row) => (
-          <div key={row.county} className="grid grid-cols-12 gap-3 border-b border-border/50 px-5 py-3 text-sm last:border-0 hover:bg-muted/20">
-            <div className="col-span-3 flex items-center gap-2">
-              <MapPin size={11} className="text-muted-foreground" />
-              {row.county}
+        <div className="sm:hidden border-b border-border/40 bg-muted/10 px-5 py-1.5 font-mono text-[0.55rem] uppercase tracking-widest text-muted-foreground">↔ swipe to see more columns</div>
+        <div className="overflow-x-auto">
+          <div className="min-w-[640px]">
+            <div className="grid grid-cols-12 gap-3 border-b border-border bg-muted/30 px-5 py-3 font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground">
+              <div className="col-span-3">County</div>
+              <div className="col-span-2 text-right">Pop. (k)</div>
+              <div className="col-span-2 text-right">Unemployment</div>
+              <div className="col-span-2 text-right">Living wage / hr</div>
+              <div className="col-span-2 text-right">Median rent</div>
+              <div className="col-span-1 text-right">Grad %</div>
             </div>
-            <div className="col-span-2 text-right font-mono">{row.popK.toLocaleString()}</div>
-            <div className="col-span-2 text-right font-mono">{row.unemp.toFixed(1)}%</div>
-            <div className="col-span-2 text-right font-mono">${row.livingWage.toFixed(2)}</div>
-            <div className="col-span-2 text-right font-mono">${row.medianRent.toLocaleString()}</div>
-            <div className="col-span-1 text-right font-mono">{row.gradRate.toFixed(1)}</div>
+            {counties.map((row) => (
+              <div key={row.county} className="grid grid-cols-12 gap-3 border-b border-border/50 px-5 py-3 text-sm last:border-0 hover:bg-muted/20">
+                <div className="col-span-3 flex items-center gap-2">
+                  <MapPin size={11} className="text-muted-foreground" />
+                  {row.county}
+                </div>
+                <div className="col-span-2 text-right font-mono">{row.popK.toLocaleString()}</div>
+                <div className="col-span-2 text-right font-mono">{row.unemp.toFixed(1)}%</div>
+                <div className="col-span-2 text-right font-mono">${row.livingWage.toFixed(2)}</div>
+                <div className="col-span-2 text-right font-mono">${row.medianRent.toLocaleString()}</div>
+                <div className="col-span-1 text-right font-mono">{row.gradRate.toFixed(1)}</div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
 
       <div className="rounded-lg border border-dashed border-primary/30 bg-primary/5 p-5">
