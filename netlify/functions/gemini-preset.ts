@@ -1,9 +1,12 @@
 // Netlify Function: Gemini-powered EconLever preset suggester.
+// Rate-limited via shared limits.ts and 12h-cached by description hash.
 
 import type { Handler } from "@netlify/functions";
+import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") return jsonResp(405, { error: "Method not allowed" });
+  const blocked = await enforce(event, { service: "gemini-text", perMin: 4, perHour: 15, perDay: 30, perDayGlobal: 400, maxBodyBytes: 4096 });
+  if (blocked) return blocked;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
 
@@ -11,6 +14,10 @@ export const handler: Handler = async (event) => {
   try { body = JSON.parse(event.body || "{}"); } catch { return jsonResp(400, { error: "Invalid JSON body" }); }
   const description = String(body.description || "").slice(0, 400).trim();
   if (!description) return jsonResp(400, { error: "Missing description." });
+
+  const cacheKey = `gemini:preset:${hashStable(description.toLowerCase())}`;
+  const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 12);
+  if (cached) return jsonResp(200, { ...cached, cached: true });
 
   const prompt = `You are a fiscal-monetary policy designer. Translate this scenario description into the four EconLever sliders.
 
@@ -63,7 +70,8 @@ Return ONLY the JSON object.`;
     parsed.corporateTax = clamp(Number(parsed.corporateTax) || 21, 5, 45);
     parsed.welfareSpending = clamp(Number(parsed.welfareSpending) || 14, 5, 30);
     parsed.fedFundsRate = clamp(Number(parsed.fedFundsRate) || 4.5, 0, 10);
-    return jsonResp(200, parsed);
+    await setCachedJSON(cacheKey, parsed, 60 * 60 * 12);
+    return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
     return jsonResp(500, { error: err?.message || "Gemini call failed" });
   }

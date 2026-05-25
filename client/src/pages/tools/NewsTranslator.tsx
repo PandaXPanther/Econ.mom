@@ -5,7 +5,7 @@ import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
-import { Newspaper, Sparkles, ArrowDown, ExternalLink, TrendingUp, History, Telescope } from "lucide-react";
+import { Newspaper, Sparkles, ArrowDown, ExternalLink, TrendingUp, History, Telescope, Globe2, BookOpen } from "lucide-react";
 import { GeminiProgress } from "@/components/GeminiProgress";
 
 const COMP = TOOL_BY_SLUG["news-translator"];
@@ -302,6 +302,20 @@ function classify(headline: string): Translation | null {
   return null;
 }
 
+interface PerplexityCitation { title?: string; url: string }
+
+interface PerplexityTranslation {
+  modelLabel: string;
+  curve: string;
+  direction: "left" | "right" | "rotate" | "none";
+  shortRun: string;
+  longRun: string;
+  magnitude: "small" | "moderate" | "large";
+  confidence: "low" | "medium" | "high";
+  citations: PerplexityCitation[];
+  cached?: boolean;
+}
+
 interface GeminiNewsEnrichment {
   model?: string;
   curve?: string;
@@ -327,7 +341,40 @@ export default function NewsTranslator() {
   const [enrichLoading, setEnrichLoading] = useState(false);
   const [enrichError, setEnrichError] = useState<string | null>(null);
 
+  const [live, setLive] = useState<PerplexityTranslation | null>(null);
+  const [liveLoading, setLiveLoading] = useState(false);
+  const [liveError, setLiveError] = useState<string | null>(null);
+
   const result = useMemo(() => classify(submitted), [submitted]);
+
+  // Reset live AI result whenever the headline changes
+  useEffect(() => {
+    setLive(null);
+    setLiveError(null);
+  }, [submitted]);
+
+  async function runLiveTranslate() {
+    if (!submitted || liveLoading) return;
+    setLive(null);
+    setLiveError(null);
+    setLiveLoading(true);
+    try {
+      const r = await fetch("/api/news-translate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ headline: submitted }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        throw new Error(j?.error || `HTTP ${r.status}`);
+      }
+      setLive(j);
+    } catch (e: any) {
+      setLiveError(e?.message || "Live translation failed.");
+    } finally {
+      setLiveLoading(false);
+    }
+  }
 
   // Whenever a headline is submitted, fire Gemini for numbers + analog + forecast.
   useEffect(() => {
@@ -462,6 +509,12 @@ export default function NewsTranslator() {
                   {enrichment && (
                     <GeminiBlock e={enrichment} />
                   )}
+                  <LiveAIPanel
+                    onRun={runLiveTranslate}
+                    loading={liveLoading}
+                    error={liveError}
+                    data={live}
+                  />
                 </motion.div>
               ) : (
                 <motion.div
@@ -547,6 +600,12 @@ export default function NewsTranslator() {
                     </div>
                   )}
                   {enrichment && <GeminiBlock e={enrichment} />}
+                  <LiveAIPanel
+                    onRun={runLiveTranslate}
+                    loading={liveLoading}
+                    error={liveError}
+                    data={live}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
@@ -752,6 +811,104 @@ function GeminiBlock({ e }: { e: GeminiNewsEnrichment }) {
       )}
     </div>
   );
+}
+
+function LiveAIPanel({
+  onRun,
+  loading,
+  error,
+  data,
+}: {
+  onRun: () => void;
+  loading: boolean;
+  error: string | null;
+  data: PerplexityTranslation | null;
+}) {
+  return (
+    <div className="rounded-xl border border-accent/40 bg-accent/5 p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <Globe2 size={14} className="text-accent" />
+          <div className="label-cap text-accent">Live AI translation, cited</div>
+        </div>
+        <button
+          onClick={onRun}
+          disabled={loading}
+          data-testid="button-live-translate"
+          className="inline-flex items-center gap-2 rounded-full border border-accent/50 bg-background px-4 py-1.5 text-[0.8rem] font-medium text-foreground transition-all hover:border-accent hover:bg-accent/10 disabled:opacity-50"
+        >
+          {loading ? "Running…" : data ? "Run again" : "Run live AI translation"}
+        </button>
+      </div>
+      <p className="prose-serif mt-2 text-[0.85rem] text-foreground/70">
+        Pulls from credible economics sources (Fed, BLS, BEA, NBER, Reuters, FT, Bloomberg, WSJ) and returns a cited textbook mapping. Aggressively rate-limited.
+      </p>
+
+      {error && (
+        <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-[0.85rem] text-destructive">
+          {error}
+        </div>
+      )}
+
+      {data && (
+        <div className="mt-4 space-y-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <div>
+              <div className="label-cap text-[0.6rem]">Model</div>
+              <div className="font-display text-[1.1rem] font-medium">{data.modelLabel}</div>
+            </div>
+            <div className="font-mono text-[0.6rem] uppercase tracking-widest text-muted-foreground">
+              {data.curve} · {data.magnitude} · confidence {data.confidence}
+              {data.cached ? " · cached" : ""}
+            </div>
+          </div>
+          {data.shortRun && (
+            <div>
+              <div className="label-cap mb-1 text-[0.6rem]">Short run</div>
+              <p className="prose-serif text-[0.92rem] leading-[1.55] text-foreground/85">{data.shortRun}</p>
+            </div>
+          )}
+          {data.longRun && (
+            <div>
+              <div className="label-cap mb-1 text-[0.6rem]">Long run</div>
+              <p className="prose-serif text-[0.92rem] leading-[1.55] text-foreground/85">{data.longRun}</p>
+            </div>
+          )}
+          {data.citations && data.citations.length > 0 && (
+            <div>
+              <div className="label-cap mb-2 flex items-center gap-1.5 text-[0.6rem]">
+                <BookOpen size={11} /> Sources
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {data.citations.map((c, i) => (
+                  <a
+                    key={`${c.url}-${i}`}
+                    href={c.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-testid={`citation-${i}`}
+                    className="inline-flex max-w-full items-center gap-1.5 truncate rounded-full border border-border bg-background px-3 py-1 font-mono text-[0.72rem] text-foreground/85 transition-colors hover:border-accent hover:text-accent"
+                    title={c.url}
+                  >
+                    <span className="truncate">{c.title || hostFrom(c.url)}</span>
+                    <ExternalLink size={10} className="flex-shrink-0" />
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function hostFrom(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, "");
+  } catch {
+    return url;
+  }
 }
 
 function NumStat({ label, value }: { label: string; value: string }) {

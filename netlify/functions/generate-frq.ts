@@ -3,11 +3,11 @@
 // matching the FRQ_LIBRARY shape used by the AP FRQ Grader.
 
 import type { Handler } from "@netlify/functions";
+import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return jsonResp(405, { error: "Method not allowed" });
-  }
+  const blocked = await enforce(event, { service: "gemini-frq-gen", perMin: 3, perHour: 12, perDay: 25, perDayGlobal: 250, maxBodyBytes: 2048 });
+  if (blocked) return blocked;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -31,6 +31,10 @@ export const handler: Handler = async (event) => {
   const style = (body.style === "long" ? "long" : "short") as "short" | "long";
 
   if (!topic) return jsonResp(400, { error: "Missing topic." });
+
+  const cacheKey = `gemini:frq-gen:${hashStable({ t: topic.toLowerCase(), e: exam, d: difficulty, s: style })}`;
+  const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 12);
+  if (cached) return jsonResp(200, { ...cached, cached: true });
 
   const examLabel = exam === "macro" ? "AP Macroeconomics" : "AP Microeconomics";
   const partsCount = style === "long" ? "5-7 parts (Long FRQ #1)" : "3-4 parts (Short FRQ)";
@@ -125,7 +129,8 @@ Return ONLY the JSON object.`;
     parsed.exam = exam;
     parsed.generated = true;
 
-    return jsonResp(200, parsed);
+    await setCachedJSON(cacheKey, parsed, 60 * 60 * 12);
+    return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
     return jsonResp(500, { error: err?.message || "Generation failed" });
   }

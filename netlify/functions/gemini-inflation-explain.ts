@@ -4,11 +4,13 @@
 // (with a fallback narrative) instead of a generic gateway timeout.
 
 import type { Handler } from "@netlify/functions";
+import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 const GEMINI_TIMEOUT_MS = 8500; // leave ~1.5s headroom for Netlify's 10s cap
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") return jsonResp(405, { error: "Method not allowed" });
+  const blocked = await enforce(event, { service: "gemini-text", perMin: 4, perHour: 15, perDay: 30, perDayGlobal: 400, maxBodyBytes: 4096 });
+  if (blocked) return blocked;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
 
@@ -19,6 +21,10 @@ export const handler: Handler = async (event) => {
   if (!isFinite(headlineCpi) || !components || typeof components !== "object") {
     return jsonResp(400, { error: "Provide headlineCpi and components." });
   }
+
+  const cacheKey = `gemini:inflation:${hashStable({ headlineCpi: Math.round(headlineCpi * 100) / 100, components })}`;
+  const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 12);
+  if (cached) return jsonResp(200, { ...cached, cached: true });
 
   // Trimmed prompt for faster model latency. Anything longer than ~1.5KB pushes
   // p99 latency over Netlify's 10s ceiling.
@@ -86,7 +92,8 @@ Cite real Fed papers / NBER work. Numbers must sum approximately to headlineCpi.
       }
     }
     parsed.fetchedAt = new Date().toISOString();
-    return jsonResp(200, parsed);
+    await setCachedJSON(cacheKey, parsed, 60 * 60 * 12);
+    return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
     clearTimeout(timer);
     const aborted = err?.name === "AbortError";

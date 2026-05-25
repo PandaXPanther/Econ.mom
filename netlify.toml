@@ -96,6 +96,13 @@
   status = 200
   force  = true
 
+# Perplexity Sonar live news translator (cited).
+[[redirects]]
+  from = "/api/news-translate"
+  to   = "/.netlify/functions/news-translate"
+  status = 200
+  force  = true
+
 # 301 redirects for legacy / friendly slug aliases. These shipped as in-app
 # routes that re-render the canonical tool page, but to crawlers they look
 # like duplicates of the canonical URL. Returning 301 consolidates the

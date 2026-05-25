@@ -1,17 +1,24 @@
 // Netlify Function: AI-powered AP FRQ grader.
 // Called from the React app at /api/grade-frq (rewritten by netlify.toml).
 // Requires the GEMINI_API_KEY environment variable in Netlify site settings.
+//
+// Rate-limited via shared limits.ts. Hard guardrails since this is the most
+// expensive endpoint (multimodal Gemini calls with image attachments).
+// NOT cached: responses are per-student.
 
 import type { Handler } from "@netlify/functions";
+import { enforce } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return {
-      statusCode: 405,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ error: "Method not allowed" }),
-    };
-  }
+  const blocked = await enforce(event, {
+    service: "gemini-frq-grade",
+    perMin: 2,
+    perHour: 8,
+    perDay: 15,
+    perDayGlobal: 200,
+    maxBodyBytes: 350 * 1024,
+  });
+  if (blocked) return blocked;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {

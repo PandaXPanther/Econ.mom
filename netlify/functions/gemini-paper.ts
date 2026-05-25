@@ -1,9 +1,13 @@
 // Netlify Function: Gemini-powered paper decoder. Accepts URL or pasted text.
+// Rate-limited via shared limits.ts and 24h-cached by url/text hash.
+// Body cap is larger (80KB) because users paste full paper text.
 
 import type { Handler } from "@netlify/functions";
+import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") return jsonResp(405, { error: "Method not allowed" });
+  const blocked = await enforce(event, { service: "gemini-paper", perMin: 2, perHour: 8, perDay: 15, perDayGlobal: 150, maxBodyBytes: 80 * 1024 });
+  if (blocked) return blocked;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
 
@@ -12,6 +16,10 @@ export const handler: Handler = async (event) => {
   const url = String(body.url || "").slice(0, 1000).trim();
   const text = String(body.text || "").slice(0, 50000).trim();
   if (!url && !text) return jsonResp(400, { error: "Provide url or text." });
+
+  const cacheKey = `gemini:paper:${hashStable({ url, text: text.slice(0, 4000) })}`;
+  const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 24);
+  if (cached) return jsonResp(200, { ...cached, cached: true });
 
   let extractedText = text;
   if (url && !text) {
@@ -85,7 +93,8 @@ Return ONLY the JSON object.`;
     }
     parsed.fetchedAt = new Date().toISOString();
     parsed.sourceUrl = url || null;
-    return jsonResp(200, parsed);
+    await setCachedJSON(cacheKey, parsed, 60 * 60 * 24);
+    return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
     return jsonResp(500, { error: err?.message || "Gemini call failed" });
   }

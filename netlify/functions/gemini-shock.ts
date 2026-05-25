@@ -1,10 +1,13 @@
 // Netlify Function: Gemini-powered shock interpreter for ShockSim.
 // Takes a free-form headline and returns S/D shock parameters with numbers.
+// Rate-limited via shared limits.ts and 12h-cached by headline hash.
 
 import type { Handler } from "@netlify/functions";
+import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") return jsonResp(405, { error: "Method not allowed" });
+  const blocked = await enforce(event, { service: "gemini-text", perMin: 4, perHour: 15, perDay: 30, perDayGlobal: 400, maxBodyBytes: 4096 });
+  if (blocked) return blocked;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
 
@@ -12,6 +15,10 @@ export const handler: Handler = async (event) => {
   try { body = JSON.parse(event.body || "{}"); } catch { return jsonResp(400, { error: "Invalid JSON body" }); }
   const headline = String(body.headline || "").slice(0, 400).trim();
   if (!headline) return jsonResp(400, { error: "Missing headline." });
+
+  const cacheKey = `gemini:shock:${hashStable(headline.toLowerCase())}`;
+  const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 12);
+  if (cached) return jsonResp(200, { ...cached, cached: true });
 
   const prompt = `You are an AP-level microeconomics professor. Classify this real-world headline as an S/D shock and quantify it.
 
@@ -105,7 +112,8 @@ async function callGemini(apiKey: string, prompt: string) {
     }
     parsed.watchVariables = sanitizeWatchVariables(parsed.watchVariables);
     parsed.fetchedAt = new Date().toISOString();
-    return jsonResp(200, parsed);
+    await setCachedJSON(cacheKey, parsed, 60 * 60 * 12);
+    return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
     return jsonResp(500, { error: err?.message || "Gemini call failed" });
   }
