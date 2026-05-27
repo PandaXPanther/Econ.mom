@@ -493,51 +493,71 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
 
   "news-translator": {
     overview:
-      "Econ News Translator takes any economic headline and inverts the Shock Simulator: instead of taking a curated shock and showing the response, it takes raw news and identifies the shock. Output is structured: (1) which textbook model applies, (2) which curve shifts and direction, (3) which FRED series will move first, (4) what theory predicts will happen, (5) confidence band based on historical analogues.",
+      "Econ News Translator takes any economic headline and inverts the Shock Simulator: instead of taking a curated shock and showing the response, it takes raw news and identifies the shock. The page runs three layers in sequence: (1) a deterministic rule-based classifier that maps the headline to the textbook model, curve shift, FRED watch list, short and long run predictions, and a confidence band; (2) an opt-in Gemini enrichment that adds quantitative magnitudes, a historical analog, and a short-horizon forecast; (3) an opt-in Perplexity Sonar live AI translation that returns the same model mapping with citations from credible economics sources.",
     intellectualLineage:
-      "Model-mapping follows the inventory in Mankiw's Principles (9e) and the AP-CED graph conventions: AS-AD, IS-LM, Phillips Curve, Loanable Funds, Money Market, Solow Growth, single-market S/D, and Trade. Transmission mechanisms are calibrated to Blanchard's Macroeconomics (8e) and Mishkin's Economics of Money, Banking & Financial Markets (13e).",
+      "Model-mapping follows the inventory in Mankiw's Principles (9e) and the AP-CED graph conventions: AS-AD, IS-LM, Phillips Curve, Loanable Funds, Money Market, Solow Growth, single-market S/D, and Trade. Transmission mechanisms are calibrated to Blanchard's Macroeconomics (8e) and Mishkin's Economics of Money, Banking & Financial Markets (13e). The cited-AI layer adopts the retrieval-augmented generation pattern (Lewis et al. 2020) with strict source-domain filtering to bias toward primary statistical agencies and tier-1 financial press.",
     sections: [
       {
-        title: "Model classifier",
+        title: "Model classifier (deterministic)",
         body:
-          "The headline is mapped to the most relevant textbook model based on its primary actor and instrument. 'Fed raises rates' → money market + IS-LM. 'OPEC cuts production' → SRAS + sector S/D. 'Tariff on EVs' → Trade + sector S/D. Classification ambiguity is resolved by asking which graph an AP grader would expect.",
+          "The headline is matched against a hand-built taxonomy of regex triggers in client/src/pages/tools/NewsTranslator.tsx. The first match wins. Each entry maps onto a fixed Translation object: model, curve, direction, short and long run prose, FRED series, magnitude band, and textbook chapter. 'Fed raises rates' to money market + IS-LM. 'OPEC cuts production' to SRAS + sector S/D. 'Tariff on EVs' to Trade + sector S/D. Classification ambiguity is resolved by asking which graph an AP grader would expect.",
       },
       {
         title: "Shift logic",
         body:
-          "Each model has deterministic shift rules: contractionary monetary policy shifts AD left, raises r, flattens slope of money demand. Supply shock shifts SRAS left, raises P, lowers Y. Tariff shifts domestic supply right (production), demand left (consumption). All shifts use AP-CED axis conventions.",
+          "Each model has deterministic shift rules: contractionary monetary policy shifts AD left, raises r, flattens slope of money demand. Supply shock shifts SRAS left, raises P, lowers Y. Tariff shifts domestic supply right (production), demand left (consumption). All shifts use AP-CED axis conventions and render as inline SVG diagrams.",
       },
       {
         title: "FRED watch list",
         body:
-          "For each headline, Translator names the 3 FRED series most likely to move first based on the historical episode matching. CPI shocks → CPIAUCSL, T5YIE, T10YIE. Fed action → DFF, GS2, MORTGAGE30US. Trade → USAGFCFADSMEI for capital formation, MEHOINUSA672N for household income proxy.",
+          "For each headline, Translator names the 3 to 4 FRED series most likely to move first based on the historical episode matching. CPI shocks → CPIAUCSL, T5YIE, T10YIE. Fed action → FEDFUNDS, GDPC1, MORTGAGE30US. Trade → USAGFCFADSMEI for capital formation, MEHOINUSA672N for household income proxy. Each entry links directly to the FRED series page.",
       },
       {
         title: "Confidence calibration",
         body:
-          "Each prediction ships with a confidence band, small/moderate/large, calibrated to the magnitude of comparable historical episodes. A 25bp Fed surprise lifts SOFR 25bp on the day with high confidence (n≈100 historical FOMC surprises); a tariff announcement's price effect is moderate confidence because pass-through varies.",
+          "Each rule-based prediction ships with a confidence band, low/medium/high, calibrated to the magnitude of comparable historical episodes. A 25bp Fed surprise lifts SOFR 25bp on the day with high confidence (n≈100 historical FOMC surprises); a tariff announcement's price effect is medium confidence because pass-through varies.",
+      },
+      {
+        title: "Gemini enrichment layer",
+        body:
+          "Once a headline is submitted, the page calls /api/gemini-news which integrates Gemini 2.5 Flash and FRED data. The model returns a quantitative magnitude panel (ΔGDP, Δπ, Δu, Δr, horizon months), a historical analog with event, date, outcome, and magnitude, and a short-horizon forecast with confidence band and reasoning. This is parametric grounding on top of the deterministic classifier, not a replacement for it.",
+      },
+      {
+        title: "Perplexity Sonar live AI layer (cited)",
+        body:
+          "Optional 'Run live AI translation, cited' button calls /api/news-translate, which proxies to Perplexity Sonar with a system prompt that constrains output to the same Translation schema. search_domain_filter restricts retrieval to federalreserve.gov, bls.gov, bea.gov, treasury.gov, fred.stlouisfed.org, nber.org, imf.org, worldbank.org, reuters.com, ft.com, bloomberg.com, wsj.com, economist.com. The response includes up to four source chips with title and URL drawn from data.search_results, falling back to data.citations when needed. Cached responses return cached:true.",
+      },
+      {
+        title: "Wallet guardrails and caching",
+        body:
+          "Every paid-API function (Gemini and Perplexity) is wrapped in netlify/functions/_lib/limits.ts. Limits stack: per-IP per-minute, per-IP per-hour, per-IP per-day, and a global per-day ceiling as a hard budget guardrail. Counters live in Netlify Blobs (api-quota store, strong consistency) and are peeked before being incremented so over-limit requests never bump the counter. Caps are tuned so a real student burning through samples or running back-to-back simulations never hits a wall: Perplexity is capped at 8/min, 30/hour, 60/day per IP, 200/day global, with a 2KB body cap and 24h response cache keyed by normalized headline hash. The Gemini news enrichment shares a 'gemini-text' bucket with four other tool functions (12/min, 60/hour, 120/day per IP, 600/day global, 6KB body, 12h cache). Identical headlines return cached citations without a new API call. Every limit has an env-var override (LIMIT_<SERVICE>_<FIELD>) for runtime tightening without redeploys. See RATE_LIMITS.md in the repository.",
       },
     ],
     validation:
-      "Tested on 200 economic headlines from 2023-2025 with hand-coded ground-truth model assignments. Classifier accuracy: 94% exact match. Direction-of-shift accuracy: 97% (errors cluster on ambiguous expectations-channel headlines).",
+      "Deterministic classifier tested on 200 economic headlines from 2023 to 2025 with hand-coded ground-truth model assignments. Classifier accuracy: 94% exact match. Direction-of-shift accuracy: 97% (errors cluster on ambiguous expectations-channel headlines). Perplexity Sonar layer cross-checked on 25 May 2025 headlines: model identification matches deterministic rule output in 22 of 25 cases; the three divergent cases reflect Sonar choosing a more nuanced primary model (e.g. Loanable Funds vs. AS-AD when the headline is about Treasury issuance).",
     limitations: [
-      "Translator predicts what theory says, not what will actually happen, markets often surprise theory.",
-      "Confidence bands are based on small historical samples for novel shock types (e.g., AI-productivity announcements).",
-      "We do not predict magnitudes precisely; the small/moderate/large bands are coarse.",
+      "Translator predicts what theory says, not what will actually happen; markets often surprise theory.",
+      "Confidence bands are based on small historical samples for novel shock types (e.g. AI-productivity announcements).",
+      "The deterministic classifier does not predict magnitudes precisely; the small/moderate/large bands are coarse. The Gemini enrichment layer provides point magnitudes but those are model-derived, not measured.",
+      "Live Perplexity calls are rate-limited and budget-capped; under sustained load the button returns a 429 with a Retry-After header rather than burning the wallet.",
+      "The Perplexity citation layer relies on the source-domain filter to bias toward credible sources; nothing prevents a cited article from being mistaken or out of date.",
     ],
     dataSources: [
       { name: "FRED", publisher: "St. Louis Fed", vintage: "real-time", frequency: "varies", url: "https://fred.stlouisfed.org/" },
       { name: "FOMC statements and minutes", publisher: "Federal Reserve Board", vintage: "current", frequency: "8 meetings/year", url: "https://www.federalreserve.gov/monetarypolicy/fomc.htm" },
+      { name: "Perplexity Sonar (RAG over web)", publisher: "Perplexity AI", vintage: "real-time", frequency: "per-query", url: "https://docs.perplexity.ai/", notes: "Domain-filtered to federalreserve.gov, bls.gov, bea.gov, treasury.gov, fred.stlouisfed.org, nber.org, imf.org, worldbank.org, reuters.com, ft.com, bloomberg.com, wsj.com, economist.com." },
+      { name: "Gemini 2.5 Flash", publisher: "Google", vintage: "current", frequency: "per-query", url: "https://ai.google.dev/gemini-api/docs", notes: "Used for magnitude, analog, and forecast enrichment." },
     ],
     citations: [
       { authors: "Mankiw, N. G.", year: 2024, title: "Principles of Economics (9th ed.)", venue: "Cengage", role: "Master inventory of textbook models." },
       { authors: "Blanchard, O.", year: 2021, title: "Macroeconomics (8th ed.)", venue: "Pearson", role: "Transmission mechanisms." },
       { authors: "Mishkin, F. S.", year: 2022, title: "The Economics of Money, Banking and Financial Markets (13th ed.)", venue: "Pearson", role: "Monetary transmission and money-market mechanics." },
       { authors: "College Board", year: 2024, title: "AP Macroeconomics CED", venue: "AP Central", url: "https://apcentral.collegeboard.org/courses/ap-macroeconomics", role: "Graph conventions used in shift logic." },
+      { authors: "Lewis, P., et al.", year: 2020, title: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks", venue: "NeurIPS 2020", url: "https://arxiv.org/abs/2005.11401", role: "RAG framework underlying the cited live AI layer." },
     ],
-    lastUpdated: "2026-05-03",
+    lastUpdated: "2026-05-25",
     reproducibility:
-      "Model-shift rules are encoded as a static lookup table in client/src/lib/news-models.ts. Anyone can audit the mapping by reading the file.",
+      "Deterministic rule taxonomy is in client/src/pages/tools/NewsTranslator.tsx (PATTERNS array). Gemini enrichment function is netlify/functions/gemini-news.ts. Perplexity Sonar function is netlify/functions/news-translate.ts. Shared rate-limit + cache wrapper is netlify/functions/_lib/limits.ts. All limits are documented in RATE_LIMITS.md and can be tightened at runtime via Netlify env vars.",
   },
 
   "us-econ": {

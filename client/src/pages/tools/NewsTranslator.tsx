@@ -612,10 +612,19 @@ export default function NewsTranslator() {
           </div>
         </div>
 
-        <div className="mt-16 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6">
+        <div className="mt-16 rounded-lg border border-dashed border-primary/30 bg-primary/5 p-6 space-y-4">
           <div className="label-cap mb-2 text-primary">How the translator works</div>
           <p className="prose-serif text-[0.95rem] text-foreground/85">
-            Headlines are matched against a hand-built taxonomy of canonical economic models, AS-AD, IS-LM, Phillips, Loanable Funds, Money Market, Solow Growth, Sectoral S/D, and Trade. Each match returns a deterministic graph treatment using AP-CED conventions, plus a short- and long-run prediction grounded in the textbook chapter cited. FRED series are chosen as the variables most likely to move first under the predicted shift. The Translator is the inverse of Shock Simulator: Shock Sim takes a curated shock and shows the response; Translator takes raw news and identifies the shock.
+            <strong>Layer 1, deterministic taxonomy.</strong> Headlines are matched against a hand-built taxonomy of canonical economic models, AS-AD, IS-LM, Phillips, Loanable Funds, Money Market, Solow Growth, Sectoral S/D, and Trade. Each match returns a deterministic graph treatment using AP-CED conventions, plus a short- and long-run prediction grounded in the textbook chapter cited. FRED series are chosen as the variables most likely to move first under the predicted shift. The Translator is the inverse of Shock Simulator: Shock Sim takes a curated shock and shows the response; Translator takes raw news and identifies the shock.
+          </p>
+          <p className="prose-serif text-[0.95rem] text-foreground/85">
+            <strong>Layer 2, Gemini enrichment.</strong> Once the rule layer locks in the model, Gemini 2.5 Flash adds the soft context the taxonomy cannot: rough magnitudes (basis points, percent of GDP), a historical analog (Volcker 1981, 2008 GFC, 2020 COVID, 2022 tightening cycle), and a one-line forecast pinned to the textbook channel. This runs only after a successful rule match, so the deterministic spine stays intact even if Gemini is slow or skipped.
+          </p>
+          <p className="prose-serif text-[0.95rem] text-foreground/85">
+            <strong>Layer 3, live AI translation with citations.</strong> The optional “Run live AI translation, cited” button calls Perplexity Sonar with a domain filter restricted to Federal Reserve, BLS, BEA, NBER, Reuters, FT, Bloomberg, WSJ, and The Economist. It returns a short structured translation plus inline citation chips you can click straight through to the primary source. Use it when a headline is so fresh the taxonomy has not seen it yet, or when you want a sanity check from real-time reporting.
+          </p>
+          <p className="prose-serif text-[0.95rem] text-foreground/85">
+            <strong>Guardrails and caching.</strong> Identical requests inside a short window are served from a Netlify Blobs cache, so reloading a translation costs nothing. Per-IP and global daily quotas exist to stop scripted abuse (think: bots hammering the endpoint), but they are sized well above realistic human study patterns. A student grinding FRQs, replaying scenarios, or doom-scrolling the morning news will not hit them.
           </p>
         </div>
       </section>
