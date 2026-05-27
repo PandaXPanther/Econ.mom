@@ -64,6 +64,17 @@ export function SiteFooter() {
               </li>
               <li>
                 <a
+                  href="https://github.com/PandaXPanther/the-mother-of-econ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  data-testid="link-source-code"
+                >
+                  Source code
+                </a>
+              </li>
+              <li>
+                <a
                   href="mailto:motherofeconomics@gmail.com"
                   className="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground"
                   data-testid="link-contact-email"
@@ -154,10 +165,10 @@ export function SiteFooter() {
               <Instagram size={14} />
             </a>
             <a
-              href="https://github.com/PandaXPanther"
+              href="https://github.com/PandaXPanther/the-mother-of-econ"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Saras Totey on GitHub"
+              aria-label="econ.mom source code on GitHub"
               className="flex h-8 w-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary hover:text-primary"
               data-testid="link-social-github"
             >
