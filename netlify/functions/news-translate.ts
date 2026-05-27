@@ -5,12 +5,13 @@
 //
 // Requires PERPLEXITY_API_KEY in Netlify site env.
 //
-// Default caps (override with LIMIT_PERPLEXITY_* env vars):
-//   2 / minute / IP
-//   6 / hour   / IP
-//   15 / day  / IP
-//   150 / day global (budget guardrail)
-//   1024 byte max body
+// Default caps (override with LIMIT_PERPLEXITY_* env vars). Tuned so a real
+// student burning through samples never hits a wall; abusive scripts do:
+//   8 / minute / IP
+//   30 / hour  / IP
+//   60 / day   / IP
+//   200 / day global (budget guardrail)
+//   2048 byte max body
 //
 // Cache: 24 hours by normalized headline. Identical headlines return cached
 // citations + analysis without burning the wallet.
@@ -64,11 +65,11 @@ function normalizeHeadline(h: string): string {
 export const handler: Handler = async (event) => {
   const blocked = await enforce(event, {
     service: "perplexity",
-    perMin: 2,
-    perHour: 6,
-    perDay: 15,
-    perDayGlobal: 150,
-    maxBodyBytes: 1024,
+    perMin: 8,
+    perHour: 30,
+    perDay: 60,
+    perDayGlobal: 200,
+    maxBodyBytes: 2048,
   });
   if (blocked) return blocked;
 

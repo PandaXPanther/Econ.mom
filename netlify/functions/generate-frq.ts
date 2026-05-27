@@ -6,7 +6,7 @@ import type { Handler } from "@netlify/functions";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  const blocked = await enforce(event, { service: "gemini-frq-gen", perMin: 3, perHour: 12, perDay: 25, perDayGlobal: 250, maxBodyBytes: 2048 });
+  const blocked = await enforce(event, { service: "gemini-frq-gen", perMin: 8, perHour: 30, perDay: 60, perDayGlobal: 350, maxBodyBytes: 2048 });
   if (blocked) return blocked;
 
   const apiKey = process.env.GEMINI_API_KEY;

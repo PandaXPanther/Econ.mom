@@ -7,7 +7,7 @@
 // Usage in a function:
 //
 //   import { enforce, getCachedJSON, setCachedJSON, hashStable, json } from "./_lib/limits";
-//   const blocked = await enforce(event, { service: "perplexity", perMin: 2, perHour: 6, perDay: 15, perDayGlobal: 150, maxBodyBytes: 1024 });
+//   const blocked = await enforce(event, { service: "perplexity", perMin: 8, perHour: 30, perDay: 60, perDayGlobal: 200, maxBodyBytes: 2048 });
 //   if (blocked) return blocked;
 //   ...
 //

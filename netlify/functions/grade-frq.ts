@@ -12,10 +12,10 @@ import { enforce } from "./_lib/limits";
 export const handler: Handler = async (event) => {
   const blocked = await enforce(event, {
     service: "gemini-frq-grade",
-    perMin: 2,
-    perHour: 8,
-    perDay: 15,
-    perDayGlobal: 200,
+    perMin: 6,
+    perHour: 25,
+    perDay: 60,
+    perDayGlobal: 300,
     maxBodyBytes: 350 * 1024,
   });
   if (blocked) return blocked;
