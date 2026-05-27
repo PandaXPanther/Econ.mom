@@ -60,7 +60,7 @@ async function buildAll() {
   });
 
   console.log("prerendering SEO pages...");
-  const r = spawnSync("node", ["scripts/prerender-seo.mjs"], { stdio: "inherit" });
+  const r = spawnSync("node", ["script/prerender-seo.mjs"], { stdio: "inherit" });
   if (r.status !== 0) throw new Error("prerender-seo failed");
 }
 

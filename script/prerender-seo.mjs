@@ -30,7 +30,7 @@ const OG_IMAGE = `${SITE}/og.png`;
 const ROUTES = [
   {
     slug: "",
-    title: "Saras Totey · The Mother Of Econ — twelve free, citation-rigorous economics tools",
+    title: "Saras Totey · The Mother Of Econ, twelve free, citation-rigorous economics tools",
     description:
       "Saras Totey (Boulder, Colorado · Fairview High School) built econ.mom: twelve free, citation-rigorous economics tools for AP students, debaters, and policy desks. AP FRQ Grader, TariffLab, Shadow Fed, Textbook Atlas, Shock Simulator, Paper Decoder, Econ News Translator, US Econ Dashboard, EconLever, Inflation Decomposer, Natural Experiment Finder, Counterfactual Engine.",
     keywords:
@@ -46,7 +46,7 @@ const ROUTES = [
   },
   {
     slug: "methodology",
-    title: "Methodology & Citations — every formula, every primary source · econ.mom",
+    title: "Methodology & Citations, every formula, every primary source · econ.mom",
     description:
       "Full methodology and primary sources behind each of The Mother Of Econ's twelve tools. College Board rubrics, USITC elasticities, FRED series, Taylor rule variants, NBER papers, Romer-Romer narrative shocks, Bernanke-Blanchard inflation decomposition, and Colorado state data.",
     keywords:
@@ -54,7 +54,7 @@ const ROUTES = [
   },
   {
     slug: "founder",
-    title: "Saras Totey — Founder of econ.mom & EconLever · Boulder, Colorado",
+    title: "Saras Totey, Founder of econ.mom & EconLever · Boulder, Colorado",
     description:
       "Saras Totey is a high-school economics researcher in Boulder, Colorado, attending Fairview High School. Founder of econ.mom and EconLever, co-founder of ATT Agency (a Boulder marketing studio). National Economics Challenge competitor and AP Economics student.",
     keywords:
@@ -64,7 +64,7 @@ const ROUTES = [
   // The twelve tools, each with its own SoftwareApplication JSON-LD.
   {
     slug: "frq-grader",
-    title: "AP FRQ Grader — College Board rubric scoring for AP Macro & Micro · econ.mom",
+    title: "AP FRQ Grader, College Board rubric scoring for AP Macro & Micro · econ.mom",
     description:
       "Paste any AP Macro or Micro free-response answer. The AP FRQ Grader scores it against the official College Board rubric, point by point, with line-level feedback and a 5/5 model rewrite. Calibrated against every released rubric 2018 to 2025.",
     keywords:
@@ -78,7 +78,7 @@ const ROUTES = [
   },
   {
     slug: "tarifflab",
-    title: "TariffLab — deadweight loss, CS/PS, revenue, employment for any tariff · econ.mom",
+    title: "TariffLab, deadweight loss, CS/PS, revenue, employment for any tariff · econ.mom",
     description:
       "Compute the welfare effects of any tariff: deadweight loss, consumer surplus, producer surplus, government revenue, and employment effects. Uses USITC, Fajgelbaum-Goldberg-Kennedy-Khandelwal (2020), and Amiti-Redding-Weinstein elasticities. Built by Saras Totey.",
     keywords:
@@ -92,7 +92,7 @@ const ROUTES = [
   },
   {
     slug: "textbook-atlas",
-    title: "Textbook Atlas — every AP Econ concept with a live FRED chart · econ.mom",
+    title: "Textbook Atlas, every AP Econ concept with a live FRED chart · econ.mom",
     description:
       "Every AP Macroeconomics and AP Microeconomics concept in one searchable atlas, paired with a live FRED chart that makes the abstract real. Definitions, formulas in LaTeX, and primary citations.",
     keywords:
@@ -106,7 +106,7 @@ const ROUTES = [
   },
   {
     slug: "shock-sim",
-    title: "Shock Simulator — paste a headline, see the S/D graph shift correctly · econ.mom",
+    title: "Shock Simulator, paste a headline, see the S/D graph shift correctly · econ.mom",
     description:
       "Paste any economics news headline. Shock Simulator classifies it as a supply or demand shock, quantifies the price and quantity effects with realistic elasticities, and renders the correct S/D graph shift. Watch variables link to the official FRED, BLS, EIA, BEA, and USDA series.",
     keywords:
@@ -120,7 +120,7 @@ const ROUTES = [
   },
   {
     slug: "shadow-fed",
-    title: "Shadow Fed — what the Fed should do, with a public track record · econ.mom",
+    title: "Shadow Fed, what the Fed should do, with a public track record · econ.mom",
     description:
       "Weekly Taylor-rule-derived federal funds rate recommendation, published with a permanent public track record vs. actual FOMC decisions. Inputs auto-update from FRED. Original Taylor (1993), FAIT, and inertial variants supported.",
     keywords:
@@ -134,7 +134,7 @@ const ROUTES = [
   },
   {
     slug: "paper-decoder",
-    title: "Econ Paper Decoder — turn any NBER, JEP, AER paper into a citation block · econ.mom",
+    title: "Econ Paper Decoder, turn any NBER, JEP, AER paper into a citation block · econ.mom",
     description:
       "Upload a PDF or paste a URL. Paper Decoder extracts the research question, identification strategy, headline finding, sample, and a ready-to-cite block in 60 seconds. Works on NBER working papers, JEP, AER, QJE, and more.",
     keywords:
@@ -148,7 +148,7 @@ const ROUTES = [
   },
   {
     slug: "news-translator",
-    title: "Econ News Translator — headline to model, graph, and prediction · econ.mom",
+    title: "Econ News Translator, headline to model, graph, and prediction · econ.mom",
     description:
       "Paste any economics news. News Translator identifies the textbook model, draws the predicted graph shift, names the FRED series to watch, and tells you what theory says happens next. The reverse of Shock Simulator.",
     keywords:
@@ -162,7 +162,7 @@ const ROUTES = [
   },
   {
     slug: "us-econ",
-    title: "US Econ Dashboard — every state, every county, real data · econ.mom",
+    title: "US Econ Dashboard, every state, every county, real data · econ.mom",
     description:
       "Click any state to see its labor, cost-of-living, and education metrics, then drill to county-level data. Sourced from BLS LAUS, state QCEW filings, MIT Living Wage Calculator, and NCES.",
     keywords:
@@ -176,7 +176,7 @@ const ROUTES = [
   },
   {
     slug: "econlever",
-    title: "EconLever — four policy levers, ten years of growth, deficit, inequality · econ.mom",
+    title: "EconLever, four policy levers, ten years of growth, deficit, inequality · econ.mom",
     description:
       "Move four policy levers (top marginal tax rate, corporate tax, social spending, federal funds rate) and watch a ten-year projection of US real GDP growth, federal deficit, and the Gini coefficient. Coefficients calibrated to Romer-Romer (2010), Auerbach-Gorodnichenko (2012), and Piketty-Saez-Zucman (2018).",
     keywords:
@@ -190,7 +190,7 @@ const ROUTES = [
   },
   {
     slug: "inflation-decomposer",
-    title: "Inflation Decomposer — split CPI into supply, demand, expectations, policy · econ.mom",
+    title: "Inflation Decomposer, split CPI into supply, demand, expectations, policy · econ.mom",
     description:
       "Decompose headline CPI into supply, demand, expectations, and policy components using the Bernanke-Blanchard (2024) framework with Hazell-Herreño-Nakamura-Steinsson expectations weighting. Live FRED inputs.",
     keywords:
@@ -204,7 +204,7 @@ const ROUTES = [
   },
   {
     slug: "natural-experiments",
-    title: "Natural Experiment Finder — match research questions to identification strategies · econ.mom",
+    title: "Natural Experiment Finder, match research questions to identification strategies · econ.mom",
     description:
       "Searchable library of 60+ canonical natural experiments: Card-Krueger NJ minimum wage, Mariel boatlift, Vietnam draft lottery, Oregon Medicaid, China Shock, Volcker disinflation, MTO, RAND HIE. Filter by method (DiD, RDD, IV, RCT, synthetic control) and AP-CED concept.",
     keywords:
@@ -218,7 +218,7 @@ const ROUTES = [
   },
   {
     slug: "counterfactual-engine",
-    title: "Counterfactual Engine — edit the past, simulate the road not taken · econ.mom",
+    title: "Counterfactual Engine, edit the past, simulate the road not taken · econ.mom",
     description:
       "Five canonical macro counterfactuals (Volcker 1979, Lehman 2008, ARP 2021, UK austerity 2010, Greenspan-era housing) with adjustable parameters and side-by-side actual-vs-counterfactual time series. Each calibrated to a peer-reviewed paper.",
     keywords:
