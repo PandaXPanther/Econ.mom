@@ -92,6 +92,9 @@ export default function Home() {
       {/* THESIS, Editorial pull-quote */}
       <ThesisBand />
 
+      {/* RECOGNITION strip */}
+      <RecognitionBand />
+
       {/* CTA strip */}
       <section className="mx-auto max-w-7xl px-6 py-24 lg:px-10 lg:py-32">
         <div className="grain relative overflow-hidden rounded-2xl border border-border bg-foreground p-12 text-background lg:p-16">
@@ -460,6 +463,54 @@ function ThesisBand() {
     </section>
   );
 }
+function RecognitionBand() {
+  return (
+    <section className="relative border-b border-border bg-background">
+      <div className="mx-auto max-w-5xl px-6 py-20 lg:px-10 lg:py-24">
+        <div className="label-cap mb-6 text-muted-foreground">§ Recognition</div>
+        <motion.figure
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          className="relative"
+          data-testid="figure-endorsement-rivera"
+        >
+          <div
+            aria-hidden
+            className="absolute -left-2 -top-6 select-none font-display text-[6rem] leading-none text-primary/15 lg:text-[8rem]"
+          >
+            “
+          </div>
+          <blockquote className="relative text-editorial text-[1.6rem] leading-[1.25] sm:text-[2rem] lg:text-[2.35rem]">
+            Reviewed and praised by{" "}
+            <span className="italic font-semibold text-primary">Ruben Rivera, PhD</span>, who
+            leads academic programs at the Council for Economic Education and directs the
+            National Economics Challenge.
+          </blockquote>
+          <figcaption className="mt-8 flex flex-col gap-1 border-t border-border pt-5 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <span>
+              <span className="font-display font-medium text-foreground">
+                Ruben A. Rivera, PhD
+              </span>
+              , Senior Director of Academic Programs
+            </span>
+            <a
+              href="https://www.councilforeconed.org/about/leadership/ruben-a-rivera-phd/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+              data-testid="link-rivera-bio"
+            >
+              Council for Economic Education →
+            </a>
+          </figcaption>
+        </motion.figure>
+      </div>
+    </section>
+  );
+}
+
 function Pillar2({ title, body }: { title: string; body: string }) {
   return (
     <div className="border-t border-background/20 pt-5">
