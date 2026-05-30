@@ -3,6 +3,7 @@ import { Logo } from "./Logo";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { AccessibilityMenu } from "./AccessibilityMenu";
 
 const NAV_LINKS = [
   { href: "/", label: "Home" },
@@ -45,6 +46,7 @@ export function SiteHeader() {
               </Link>
             );
           })}
+          <AccessibilityMenu />
           <ThemeToggle />
         </nav>
 
@@ -71,7 +73,8 @@ export function SiteHeader() {
                 </a>
               </Link>
             ))}
-            <div className="pt-2">
+            <div className="flex items-center gap-2 pt-2">
+              <AccessibilityMenu />
               <ThemeToggle />
             </div>
           </div>

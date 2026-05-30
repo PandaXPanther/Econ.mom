@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { CausalChain } from "@/components/brand/CausalChain";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from "recharts";
 import { SEO } from "@/components/brand/SEO";
@@ -114,6 +115,18 @@ export default function ShadowFed() {
         path="/shadow-fed"
       />
       <ToolPageHeader tool={tool} />
+      <CausalChain
+        caption="Taylor rule logic, what the Fed should set the policy rate to."
+        nodes={[
+          { label: "Inflation gap", direction: "up" },
+          { label: "Output gap", direction: "up" },
+          { label: "Taylor rule rate", direction: "up" },
+          { label: "Federal funds rate", direction: "up" },
+          { label: "Borrowing cost", direction: "up" },
+          { label: "Aggregate demand", direction: "down" },
+        ]}
+        testId="chain-shadow-fed"
+      />
       <ToolExplainer tool={tool} />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">

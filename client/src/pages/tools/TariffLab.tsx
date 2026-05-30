@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { CausalChain } from "@/components/brand/CausalChain";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SECTORS, computeTariffImpact, Sector, TariffResult } from "@/lib/tariff-sectors";
 import { SEO } from "@/components/brand/SEO";
@@ -91,6 +92,18 @@ export default function TariffLab() {
         path="/tarifflab"
       />
       <ToolPageHeader tool={tool} />
+      <CausalChain
+        caption="Tariff on imports, follow the dominoes."
+        nodes={[
+          { label: "Tariff rate", direction: "up" },
+          { label: "Import price", direction: "up" },
+          { label: "Domestic CPI", direction: "up" },
+          { label: "Consumer surplus", direction: "down" },
+          { label: "Producer surplus", direction: "up" },
+          { label: "Deadweight loss", direction: "up" },
+        ]}
+        testId="chain-tarifflab"
+      />
       <ToolExplainer tool={tool} />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">

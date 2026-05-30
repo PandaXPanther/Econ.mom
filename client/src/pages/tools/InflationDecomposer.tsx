@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { CausalChain } from "@/components/brand/CausalChain";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -141,6 +142,17 @@ export default function InflationDecomposer() {
   return (
     <div>
       <ToolPageHeader tool={tool} />
+      <CausalChain
+        caption="Headline CPI, broken into the four drivers that argue on cable news."
+        nodes={[
+          { label: "Demand pull", direction: "up" },
+          { label: "Supply shock", direction: "up" },
+          { label: "Wage / labor cost", direction: "up" },
+          { label: "Expectations", direction: "up" },
+          { label: "Headline CPI", direction: "up" },
+        ]}
+        testId="chain-inflation-decomposer"
+      />
       <ToolExplainer tool={tool} />
 
       <section className="mx-auto max-w-6xl px-6 lg:px-10 pb-24">

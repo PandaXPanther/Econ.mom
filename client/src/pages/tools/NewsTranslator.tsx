@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { CausalChain } from "@/components/brand/CausalChain";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Newspaper, Sparkles, ArrowDown, ExternalLink, TrendingUp, History, Telescope, Globe2, BookOpen } from "lucide-react";
@@ -409,6 +410,17 @@ export default function NewsTranslator() {
         path="/news-translator"
       />
       <ToolPageHeader tool={COMP} />
+      <CausalChain
+        caption="From plain-English headline to the AP-CED concept you should reach for."
+        nodes={[
+          { label: "News headline" },
+          { label: "Rule taxonomy match" },
+          { label: "Gemini concept tag" },
+          { label: "Perplexity live context" },
+          { label: "AP concept + graph", direction: "up" },
+        ]}
+        testId="chain-news-translator"
+      />
       <ToolExplainer tool={COMP} />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10">

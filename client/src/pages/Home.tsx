@@ -506,6 +506,38 @@ function RecognitionBand() {
             </a>
           </figcaption>
         </motion.figure>
+
+        {/* Press strip, sub-recognition with the MR feature. */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-12 flex flex-col gap-3 rounded-lg border border-border bg-card/40 p-6 sm:flex-row sm:items-center sm:justify-between"
+          data-testid="press-mr"
+        >
+          <div className="flex items-center gap-4">
+            <span className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-primary">
+              In the press
+            </span>
+            <span className="prose-serif text-[1rem] text-foreground/85">
+              Featured by{" "}
+              <span className="font-display font-medium text-foreground">Tyler Cowen</span>{" "}
+              on{" "}
+              <span className="italic">Marginal Revolution</span>, one of the most-read economics
+              blogs in the world.
+            </span>
+          </div>
+          <a
+            href="https://marginalrevolution.com/marginalrevolution/2026/05/monday-assorted-links-558.html#:~:text=6.-,%E2%80%9CTwelve%20free,every%20dataset%20cited.%E2%80%9D"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="whitespace-nowrap text-sm text-primary hover:underline"
+            data-testid="link-marginal-revolution"
+          >
+            Read the entry →
+          </a>
+        </motion.div>
       </div>
     </section>
   );

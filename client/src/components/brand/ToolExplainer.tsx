@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Tool } from "@/lib/tools";
 import { ChevronDown } from "lucide-react";
+import { AudioCompanion } from "./AudioCompanion";
 
 /**
  * ToolExplainer
@@ -27,7 +28,14 @@ export function ToolExplainer({ tool }: { tool: Tool }) {
         <div className="grid gap-10 lg:grid-cols-12">
           {/* LEFT: What this teaches */}
           <div className="lg:col-span-7">
-            <div className="label-cap mb-4">What this teaches</div>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div className="label-cap">What this teaches</div>
+              <AudioCompanion
+                text={`What this teaches. ${tool.whatThisTeaches} Try this. ${tool.tryThis}`}
+                label="Listen"
+                testId={`audio-explainer-${tool.slug}`}
+              />
+            </div>
             <p
               className="prose-serif text-[1.1rem] text-foreground/90"
               data-testid={`explainer-teaches-${tool.slug}`}

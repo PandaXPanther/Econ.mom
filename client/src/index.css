@@ -296,3 +296,51 @@
 
   ::selection { background: hsl(var(--primary) / 0.22); color: hsl(var(--foreground)); }
 }
+
+/* =================================================================
+ * Accessibility overrides, toggled by classes on <html> from a11y.ts.
+ * Helps multi-modal learners: dyslexia-friendly font, larger text,
+ * boosted contrast. Persisted to localStorage.
+ * ================================================================= */
+@layer utilities {
+  /* Larger text, gentle global bump, keeps layout sane. */
+  html.a11y-larger-text {
+    font-size: 112.5%;
+  }
+
+  /* Dyslexia-friendly font, Atkinson Hyperlegible across body + display. */
+  html.a11y-dyslexia-friendly,
+  html.a11y-dyslexia-friendly body,
+  html.a11y-dyslexia-friendly .prose-serif,
+  html.a11y-dyslexia-friendly .text-editorial,
+  html.a11y-dyslexia-friendly .font-display {
+    font-family: 'Atkinson Hyperlegible', 'Inter', system-ui, sans-serif !important;
+    font-style: normal !important;
+  }
+
+  /* High contrast, boosts foreground + borders, in both light and dark. */
+  html.a11y-high-contrast {
+    --foreground: 0 0% 0%;
+    --background: 0 0% 100%;
+    --border: 0 0% 12%;
+    --muted-foreground: 0 0% 18%;
+    --primary: 268 80% 28%;
+    --card: 0 0% 100%;
+    --card-border: 0 0% 12%;
+  }
+  html.a11y-high-contrast.dark {
+    --foreground: 0 0% 100%;
+    --background: 0 0% 0%;
+    --border: 0 0% 88%;
+    --muted-foreground: 0 0% 86%;
+    --primary: 320 90% 70%;
+    --card: 0 0% 4%;
+    --card-border: 0 0% 88%;
+  }
+  html.a11y-high-contrast .text-muted-foreground {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  html.a11y-high-contrast a {
+    text-decoration: underline;
+  }
+}
