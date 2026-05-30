@@ -4,56 +4,60 @@ import { Headphones, Pause, Play, Square } from "lucide-react";
 /**
  * AudioCompanion
  *
- * Press-to-listen button that reads a block of text aloud using the browser's
- * built-in SpeechSynthesis API. No backend, no cost, no signup. Works in every
- * modern browser. Auditory learners, ESL readers, dyslexic readers, and folks
- * who just want to multitask all benefit.
+ * Press-to-listen button. When an `audioSrc` is provided (a pre-rendered
+ * Gemini TTS MP3 saved under /audio/<slug>.mp3) we play that through a real
+ * <audio> element, which sounds dramatically better than browsers' built-in
+ * Web Speech voices. If the MP3 fails to load (404, network, autoplay block)
+ * we fall back to SpeechSynthesis so nobody is left stranded.
  *
- * Hidden gracefully when the browser doesn't support TTS (looking at you,
- * older Linux Firefox without speech-dispatcher).
+ * Auditory learners, ESL readers, dyslexic readers, and anyone who just
+ * wants to multitask while learning AP Econ benefit from this.
  */
 export function AudioCompanion({
   text,
+  audioSrc,
   label = "Listen",
   testId = "audio-companion",
 }: {
   text: string;
+  audioSrc?: string;
   label?: string;
   testId?: string;
 }) {
   const [supported, setSupported] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [useFallback, setUseFallback] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  // Decide what's available. We always render the button if either MP3 src
+  // exists or speechSynthesis is available.
   useEffect(() => {
-    // We show the button whenever the API exists. Voices populate async on
-    // most browsers, so gating on voices.length leads to false negatives.
-    // If the user clicks and the engine truly has nothing, we just no-op.
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      setSupported(true);
-      return () => {
+    const hasSpeech =
+      typeof window !== "undefined" && "speechSynthesis" in window;
+    setSupported(Boolean(audioSrc) || hasSpeech);
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
+      if (typeof window !== "undefined" && "speechSynthesis" in window) {
         window.speechSynthesis.cancel();
-      };
-    }
-  }, []);
+      }
+    };
+  }, [audioSrc]);
 
-  function pickVoice(): SpeechSynthesisVoice | undefined {
+  function startSpeechFallback() {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
     const voices = window.speechSynthesis.getVoices();
-    // Prefer a natural-sounding English voice; fall back to anything English.
-    return (
+    const voice =
       voices.find((v) => /en[-_]US/i.test(v.lang) && /natural|neural|samantha|aria/i.test(v.name)) ||
       voices.find((v) => /en[-_]US/i.test(v.lang)) ||
       voices.find((v) => /^en/i.test(v.lang)) ||
-      voices[0]
-    );
-  }
-
-  function speak() {
-    if (!supported) return;
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    const voice = pickVoice();
+      voices[0];
     if (voice) u.voice = voice;
     u.rate = 1;
     u.pitch = 1;
@@ -69,21 +73,70 @@ export function AudioCompanion({
     window.speechSynthesis.speak(u);
     setPlaying(true);
     setPaused(false);
+    setUseFallback(true);
+  }
+
+  function play() {
+    if (audioSrc) {
+      // Use a real MP3 (Gemini TTS).
+      if (!audioRef.current) {
+        const a = new Audio(audioSrc);
+        a.preload = "auto";
+        a.onended = () => {
+          setPlaying(false);
+          setPaused(false);
+        };
+        a.onerror = () => {
+          // MP3 failed; fall back to speech synthesis.
+          startSpeechFallback();
+        };
+        audioRef.current = a;
+      }
+      const a = audioRef.current;
+      a.currentTime = a.currentTime || 0;
+      const p = a.play();
+      if (p && typeof p.catch === "function") {
+        p.catch(() => startSpeechFallback());
+      }
+      setPlaying(true);
+      setPaused(false);
+      setUseFallback(false);
+      return;
+    }
+    // No MP3 provided: use SpeechSynthesis directly.
+    startSpeechFallback();
   }
 
   function togglePause() {
     if (!playing) return;
+    if (useFallback) {
+      if (paused) {
+        window.speechSynthesis.resume();
+        setPaused(false);
+      } else {
+        window.speechSynthesis.pause();
+        setPaused(true);
+      }
+      return;
+    }
+    const a = audioRef.current;
+    if (!a) return;
     if (paused) {
-      window.speechSynthesis.resume();
+      a.play();
       setPaused(false);
     } else {
-      window.speechSynthesis.pause();
+      a.pause();
       setPaused(true);
     }
   }
 
   function stop() {
-    window.speechSynthesis.cancel();
+    if (useFallback) {
+      window.speechSynthesis.cancel();
+    } else if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setPlaying(false);
     setPaused(false);
   }
@@ -95,7 +148,7 @@ export function AudioCompanion({
       {!playing ? (
         <button
           type="button"
-          onClick={speak}
+          onClick={play}
           aria-label={label}
           data-testid={`${testId}-play`}
           className="group inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3.5 py-1.5 text-[0.78rem] font-medium text-foreground/80 transition-all hover:border-primary/40 hover:bg-card hover:text-foreground"

@@ -302,12 +302,17 @@
  * Helps multi-modal learners: dyslexia-friendly font, larger text,
  * boosted contrast. Persisted to localStorage.
  * ================================================================= */
-@layer utilities {
-  /* Larger text, gentle global bump, keeps layout sane. */
-  html.a11y-larger-text {
-    font-size: 112.5%;
-  }
+/* Larger text. Kept outside @layer utilities so the minifier can't drop the
+   percentage rule, and applied with !important on both html + body so nothing
+   downstream wins. */
+html.a11y-larger-text {
+  font-size: 18px !important;
+}
+html.a11y-larger-text body {
+  font-size: 1.125rem !important;
+}
 
+@layer utilities {
   /* Dyslexia-friendly font, Atkinson Hyperlegible across body + display. */
   html.a11y-dyslexia-friendly,
   html.a11y-dyslexia-friendly body,

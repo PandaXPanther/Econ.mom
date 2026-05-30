@@ -32,6 +32,7 @@ export function ToolExplainer({ tool }: { tool: Tool }) {
               <div className="label-cap">What this teaches</div>
               <AudioCompanion
                 text={`What this teaches. ${tool.whatThisTeaches} Try this. ${tool.tryThis}`}
+                audioSrc={`/audio/${tool.slug}.mp3`}
                 label="Listen"
                 testId={`audio-explainer-${tool.slug}`}
               />
