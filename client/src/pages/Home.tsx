@@ -466,31 +466,81 @@ function ThesisBand() {
 function RecognitionBand() {
   return (
     <section className="relative border-b border-border bg-background">
-      <div className="mx-auto max-w-5xl px-6 py-20 lg:px-10 lg:py-24">
-        <div className="label-cap mb-6 text-muted-foreground">§ Recognition</div>
+      <div className="mx-auto max-w-6xl px-6 py-28 lg:px-10 lg:py-36">
+        <div className="mb-12 flex items-baseline justify-between gap-6 lg:mb-16">
+          <div className="label-cap text-muted-foreground">§ Recognition</div>
+          <div className="hidden font-mono text-[0.65rem] uppercase tracking-[0.2em] text-muted-foreground sm:block">
+            Reviewed by working economists
+          </div>
+        </div>
+
+        {/* Endorsement 1: Greg Mankiw (Harvard, Principles of Economics author). */}
         <motion.figure
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className="relative"
+          data-testid="figure-endorsement-mankiw"
+        >
+          <div
+            aria-hidden
+            className="absolute -left-2 -top-10 select-none font-display text-[7rem] leading-none text-primary/15 lg:text-[10rem]"
+          >
+            “
+          </div>
+          <blockquote className="relative text-editorial text-[1.75rem] leading-[1.2] sm:text-[2.25rem] lg:text-[2.85rem]">
+            Thanks. I looked at the website, and I think you need to add more
+            explanations about what each tool does.
+          </blockquote>
+          <figcaption className="mt-10 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+            <span>
+              <span className="font-display text-base font-medium text-foreground">
+                N. Gregory Mankiw
+              </span>
+              , Robert M. Beren Professor of Economics, Harvard. Author of
+              {" "}
+              <span className="italic">Principles of Economics</span>; former Chairman of the
+              Council of Economic Advisers.
+            </span>
+            <a
+              href="https://gregmankiw.blogspot.com/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="whitespace-nowrap text-primary hover:underline"
+              data-testid="link-mankiw-blog"
+            >
+              Greg Mankiw's Blog →
+            </a>
+          </figcaption>
+        </motion.figure>
+
+        <div className="my-16 h-px w-full bg-border lg:my-20" aria-hidden />
+
+        {/* Endorsement 2: Ruben Rivera (CEE / NEC). */}
+        <motion.figure
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.9, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
           className="relative"
           data-testid="figure-endorsement-rivera"
         >
           <div
             aria-hidden
-            className="absolute -left-2 -top-6 select-none font-display text-[6rem] leading-none text-primary/15 lg:text-[8rem]"
+            className="absolute -left-2 -top-10 select-none font-display text-[7rem] leading-none text-primary/15 lg:text-[10rem]"
           >
             “
           </div>
-          <blockquote className="relative text-editorial text-[1.6rem] leading-[1.25] sm:text-[2rem] lg:text-[2.35rem]">
+          <blockquote className="relative text-editorial text-[1.6rem] leading-[1.25] sm:text-[2rem] lg:text-[2.45rem]">
             Reviewed and praised by{" "}
             <span className="italic font-semibold text-primary">Ruben Rivera, PhD</span>, who
             leads academic programs at the Council for Economic Education and directs the
             National Economics Challenge.
           </blockquote>
-          <figcaption className="mt-8 flex flex-col gap-1 border-t border-border pt-5 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+          <figcaption className="mt-10 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <span>
-              <span className="font-display font-medium text-foreground">
+              <span className="font-display text-base font-medium text-foreground">
                 Ruben A. Rivera, PhD
               </span>
               , Senior Director of Academic Programs
@@ -499,7 +549,7 @@ function RecognitionBand() {
               href="https://www.councilforeconed.org/about/leadership/ruben-a-rivera-phd/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary hover:underline"
+              className="whitespace-nowrap text-primary hover:underline"
               data-testid="link-rivera-bio"
             >
               Council for Economic Education →
@@ -507,36 +557,41 @@ function RecognitionBand() {
           </figcaption>
         </motion.figure>
 
-        {/* Press strip, sub-recognition with the MR feature. */}
+        {/* Press strip: Tyler Cowen / Marginal Revolution, bigger and more prominent. */}
         <motion.div
-          initial={{ opacity: 0, y: 8 }}
+          initial={{ opacity: 0, y: 10 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-          className="mt-12 flex flex-col gap-3 rounded-lg border border-border bg-card/40 p-6 sm:flex-row sm:items-center sm:justify-between"
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-20 overflow-hidden rounded-xl border border-primary/30 bg-card/50 lg:mt-24"
           data-testid="press-mr"
         >
-          <div className="flex items-center gap-4">
-            <span className="font-mono text-[0.65rem] uppercase tracking-[0.2em] text-primary">
-              In the press
-            </span>
-            <span className="prose-serif text-[1rem] text-foreground/85">
-              Featured by{" "}
-              <span className="font-display font-medium text-foreground">Tyler Cowen</span>{" "}
-              on{" "}
-              <span className="italic">Marginal Revolution</span>, one of the most-read economics
-              blogs in the world.
-            </span>
+          <div className="flex flex-col gap-5 px-8 py-10 sm:px-10 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
+            <div className="flex flex-col gap-3">
+              <span className="font-mono text-[0.7rem] uppercase tracking-[0.22em] text-primary">
+                ★ In the press
+              </span>
+              <div className="prose-serif text-[1.25rem] leading-snug text-foreground sm:text-[1.55rem] lg:text-[1.75rem]">
+                Featured by{" "}
+                <span className="font-display font-medium text-foreground">Tyler Cowen</span>{" "}
+                on{" "}
+                <span className="italic">Marginal Revolution</span>, one of the most-read
+                economics blogs in the world.
+              </div>
+              <div className="prose-serif text-[0.95rem] italic text-muted-foreground">
+                “Twelve free, interactive AP-Econ tools with every dataset cited.”
+              </div>
+            </div>
+            <a
+              href="https://marginalrevolution.com/marginalrevolution/2026/05/monday-assorted-links-558.html#:~:text=6.-,%E2%80%9CTwelve%20free,every%20dataset%20cited.%E2%80%9D"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-full border border-primary/40 bg-primary/10 px-5 py-3 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+              data-testid="link-marginal-revolution"
+            >
+              Read the entry →
+            </a>
           </div>
-          <a
-            href="https://marginalrevolution.com/marginalrevolution/2026/05/monday-assorted-links-558.html#:~:text=6.-,%E2%80%9CTwelve%20free,every%20dataset%20cited.%E2%80%9D"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="whitespace-nowrap text-sm text-primary hover:underline"
-            data-testid="link-marginal-revolution"
-          >
-            Read the entry →
-          </a>
         </motion.div>
       </div>
     </section>
