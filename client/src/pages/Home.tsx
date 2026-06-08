@@ -495,6 +495,9 @@ function RecognitionBand() {
           <blockquote className="relative text-editorial text-[1.75rem] leading-[1.2] sm:text-[2.25rem] lg:text-[2.85rem]">
             Twelve free, interactive AP-Econ tools with every dataset cited.
           </blockquote>
+          <div className="mt-6 font-display italic font-semibold text-primary text-[1.6rem] leading-[1.2] sm:text-[2rem] lg:text-[2.45rem]">
+            Marginal Revolution
+          </div>
           <figcaption className="mt-10 flex flex-col gap-2 border-t border-border pt-6 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <span>
               <span className="font-display text-base font-medium text-foreground">
