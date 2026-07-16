@@ -130,16 +130,6 @@ export function SiteFooter() {
                 data-testid="link-creator-linkedin"
               >
                 Saras Totey
-              </a>{" "}
-              @{" "}
-              <a
-                href="https://attagency.co"
-                target="_blank"
-                rel="noopener"
-                className="text-foreground underline-offset-2 hover:text-primary hover:underline"
-                data-testid="link-att-agency"
-              >
-                ATT Agency
               </a>
             </div>
           </div>
