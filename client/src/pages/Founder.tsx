@@ -139,6 +139,16 @@ export default function Founder() {
               >
                 ATT Agency
               </a>
+              . See more of Saras&apos;s work at{" "}
+              <a
+                href="https://sarastotey.com"
+                target="_blank"
+                rel="noreferrer"
+                className="editorial-link italic"
+                data-testid="link-founder-personal-site"
+              >
+                his personal site
+              </a>
               .
             </motion.p>
 
