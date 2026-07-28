@@ -179,6 +179,8 @@ If you want to add a new tool, start by opening an issue describing the model, t
 
 Built by **[Saras Totey](https://www.linkedin.com/in/saras-totey-64a777334/)** in Boulder, Colorado. Previous project: [EconLever](https://econlever.org).
 
+Portfolio: [Saras Totey](https://sarastotey.com)
+
 Sister channel on YouTube: [@themotherofeconomics](https://www.youtube.com/@themotherofeconomics).
 
 If econ.mom helped you on a test, [leave a tip](https://www.buymeacoffee.com/sarast1) so the API bills keep getting paid.
