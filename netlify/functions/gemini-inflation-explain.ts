@@ -9,7 +9,11 @@ import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits
 const GEMINI_TIMEOUT_MS = 8500; // leave ~1.5s headroom for Netlify's 10s cap
 
 export const handler: Handler = async (event) => {
-  const blocked = await enforce(event, { service: "gemini-text", perMin: 12, perHour: 60, perDay: 120, perDayGlobal: 600, maxBodyBytes: 6144 });
+  if (process.env.AI_DISABLED === "1") {
+    return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
+  }
+
+  const blocked = await enforce(event, { service: "gemini-text", perMin: 6, perHour: 25, perDay: 60, perDayGlobal: 200, maxBodyBytes: 6144 });
   if (blocked) return blocked;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
@@ -45,7 +49,7 @@ Return ONLY JSON, no markdown:
 
 Cite real Fed papers / NBER work. Numbers must sum approximately to headlineCpi. Be concrete (name actual goods, services, shocks). Keep total response under 1200 tokens.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
+  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   const controller = new AbortController();

@@ -63,12 +63,16 @@ function normalizeHeadline(h: string): string {
 }
 
 export const handler: Handler = async (event) => {
+  if (process.env.AI_DISABLED === "1") {
+    return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
+  }
+
   const blocked = await enforce(event, {
     service: "perplexity",
-    perMin: 8,
-    perHour: 30,
-    perDay: 60,
-    perDayGlobal: 200,
+    perMin: 4,
+    perHour: 15,
+    perDay: 30,
+    perDayGlobal: 80,
     maxBodyBytes: 2048,
   });
   if (blocked) return blocked;

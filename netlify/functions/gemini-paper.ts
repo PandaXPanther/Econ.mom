@@ -6,7 +6,11 @@ import type { Handler } from "@netlify/functions";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  const blocked = await enforce(event, { service: "gemini-paper", perMin: 4, perHour: 15, perDay: 25, perDayGlobal: 200, maxBodyBytes: 80 * 1024 });
+  if (process.env.AI_DISABLED === "1") {
+    return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
+  }
+
+  const blocked = await enforce(event, { service: "gemini-paper", perMin: 2, perHour: 8, perDay: 15, perDayGlobal: 40, maxBodyBytes: 80 * 1024 });
   if (blocked) return blocked;
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
@@ -70,7 +74,7 @@ Rules:
 
 Return ONLY the JSON object.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
+  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   try {
     const r = await fetch(apiUrl, {

@@ -6,7 +6,11 @@ import type { Handler } from "@netlify/functions";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  const blocked = await enforce(event, { service: "gemini-frq-gen", perMin: 8, perHour: 30, perDay: 60, perDayGlobal: 350, maxBodyBytes: 2048 });
+  if (process.env.AI_DISABLED === "1") {
+    return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
+  }
+
+  const blocked = await enforce(event, { service: "gemini-frq-gen", perMin: 4, perHour: 15, perDay: 30, perDayGlobal: 60, maxBodyBytes: 2048 });
   if (blocked) return blocked;
 
   const apiKey = process.env.GEMINI_API_KEY;
@@ -83,7 +87,7 @@ Topic to write the FRQ about: ${topic}
 
 Return ONLY the JSON object.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
+  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   try {

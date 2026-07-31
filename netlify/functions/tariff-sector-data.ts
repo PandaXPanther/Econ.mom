@@ -4,11 +4,22 @@
 // plus a 24-month world-price index time series for graphing.
 
 import type { Handler } from "@netlify/functions";
+import { enforce } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return jsonResp(405, { error: "Method not allowed" });
+  if (process.env.AI_DISABLED === "1") {
+    return jsonResp(503, { error: "AI features temporarily disabled. Try again later." });
   }
+
+  const blocked = await enforce(event, {
+    service: "gemini-tariff",
+    perMin: 3,
+    perHour: 12,
+    perDay: 25,
+    perDayGlobal: 60,
+    maxBodyBytes: 4096,
+  });
+  if (blocked) return blocked;
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
@@ -65,7 +76,7 @@ Quality bar:
 
 Return ONLY the JSON object.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
+  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
   try {

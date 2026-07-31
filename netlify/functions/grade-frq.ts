@@ -10,12 +10,16 @@ import type { Handler } from "@netlify/functions";
 import { enforce } from "./_lib/limits";
 
 export const handler: Handler = async (event) => {
+  if (process.env.AI_DISABLED === "1") {
+    return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
+  }
+
   const blocked = await enforce(event, {
     service: "gemini-frq-grade",
-    perMin: 6,
-    perHour: 25,
-    perDay: 60,
-    perDayGlobal: 300,
+    perMin: 3,
+    perHour: 12,
+    perDay: 25,
+    perDayGlobal: 50,
     maxBodyBytes: 350 * 1024,
   });
   if (blocked) return blocked;
@@ -120,7 +124,7 @@ ${responsesBlock}
 
 Return ONLY the JSON object. Do not wrap in markdown code fences. Do not add commentary.`;
 
-    const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
 
     // Build the multimodal payload. Text prompt first, then any per-part graph images.
