@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -126,6 +127,7 @@ export default function CounterfactualEngine() {
     <div>
       <ToolPageHeader tool={tool} />
       <ToolExplainer tool={tool} />
+      <AIDisabledBanner />
 
       <section className="mx-auto max-w-7xl px-6 lg:px-10 pb-24">
         <div className="rounded-2xl border border-border bg-card p-5 mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -173,10 +175,10 @@ export default function CounterfactualEngine() {
                 className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
-            <Button onClick={generateScenario} disabled={aiLoading || !aiPrompt.trim()} data-testid="button-generate-scenario">
+            <AIGate silent><Button onClick={generateScenario} disabled={aiLoading || !aiPrompt.trim()} data-testid="button-generate-scenario">
               {aiLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
               {aiLoading ? "Calibrating…" : "Generate scenario"}
-            </Button>
+            </Button></AIGate>
           </div>
           {aiError && <div className="mt-2 text-xs text-destructive">{aiError}</div>}
           <div className="mt-3">

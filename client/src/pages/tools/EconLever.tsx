@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Sliders, ArrowUpRight, RotateCcw, Download, Sparkles, Loader2 } from "lucide-react";
@@ -110,6 +111,7 @@ export default function EconLever() {
       />
       <ToolPageHeader tool={COMP} />
       <ToolExplainer tool={COMP} />
+      <AIDisabledBanner />
 
       {/* Off-screen, byte-for-byte upstream Policy Brief */}
       <PolicyBriefDocument ref={briefRef} levers={L} result={result} />
@@ -259,7 +261,7 @@ export default function EconLever() {
                 rows={3}
                 className="w-full resize-none rounded-md border border-border bg-background px-3 py-2 font-mono text-[0.78rem] text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
               />
-              <button
+              <AIGate silent><button
                 onClick={suggestPreset}
                 disabled={aiLoading || !aiPrompt.trim()}
                 data-testid="button-suggest-preset"
@@ -267,7 +269,7 @@ export default function EconLever() {
               >
                 {aiLoading ? <Loader2 size={11} className="animate-spin" /> : <Sparkles size={11} />}
                 {aiLoading ? "Calibrating…" : "Suggest preset"}
-              </button>
+              </button></AIGate>
               {aiError && (
                 <div className="mt-2 font-mono text-[0.62rem] text-destructive">{aiError}</div>
               )}

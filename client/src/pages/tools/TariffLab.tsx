@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { CausalChain } from "@/components/brand/CausalChain";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SECTORS, computeTariffImpact, Sector, TariffResult } from "@/lib/tariff-sectors";
@@ -105,6 +106,7 @@ export default function TariffLab() {
         testId="chain-tarifflab"
       />
       <ToolExplainer tool={tool} />
+      <AIDisabledBanner />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">
         <div className="grid gap-8 lg:grid-cols-12">
@@ -164,7 +166,7 @@ export default function TariffLab() {
                     data-testid="input-sector-query"
                     className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
                   />
-                  <button
+                  <AIGate silent><button
                     onClick={handleFetchLiveSector}
                     disabled={fetchState === "loading" || !sectorQuery.trim()}
                     data-testid="button-fetch-sector"
@@ -176,7 +178,7 @@ export default function TariffLab() {
                       <Sparkles size={14} />
                     )}
                     Fetch
-                  </button>
+                  </button></AIGate>
                 </div>
                 {fetchError && (
                   <div className="mt-2 rounded-md border border-destructive/40 bg-destructive/5 p-2 text-[0.75rem] text-destructive">

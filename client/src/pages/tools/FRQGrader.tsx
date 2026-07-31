@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { FRQ_LIBRARY, gradeFRQ, GradeResult, type FRQ } from "@/lib/frq-rubrics";
 import { SEO } from "@/components/brand/SEO";
@@ -201,6 +202,7 @@ export default function FRQGrader() {
       />
       <ToolPageHeader tool={tool} />
       <ToolExplainer tool={tool} />
+      <AIDisabledBanner />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-12">
@@ -250,7 +252,7 @@ export default function FRQGrader() {
                         <option value="hard">Hard</option>
                       </select>
                     </div>
-                    <button
+                    <AIGate silent><button
                       onClick={onGenerate}
                       disabled={generating || !genTopic.trim()}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-50"
@@ -258,7 +260,7 @@ export default function FRQGrader() {
                     >
                       {generating ? <Loader2 size={14} className="animate-spin" /> : <Sparkles size={14} />}
                       {generating ? "Writing FRQ\u2026" : "Generate FRQ"}
-                    </button>
+                    </button></AIGate>
                     {genErr && <div className="text-[10px] text-destructive">{genErr}</div>}
                     <GeminiProgress
                       active={generating}
@@ -396,7 +398,7 @@ export default function FRQGrader() {
             </div>
 
             <div className="mt-10 flex flex-wrap items-center gap-4">
-              <button
+              <AIGate silent><button
                 onClick={onGrade}
                 disabled={grading}
                 data-testid="button-grade"
@@ -412,7 +414,7 @@ export default function FRQGrader() {
                     Grade my response <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" />
                   </>
                 )}
-              </button>
+              </button></AIGate>
 
               <label
                 className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-medium hover:border-primary"

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { CausalChain } from "@/components/brand/CausalChain";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
@@ -422,6 +423,7 @@ export default function NewsTranslator() {
         testId="chain-news-translator"
       />
       <ToolExplainer tool={COMP} />
+      <AIDisabledBanner />
 
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10">
         <div className="grid gap-8 lg:grid-cols-12">
@@ -439,14 +441,14 @@ export default function NewsTranslator() {
                 data-testid="input-headline"
                 className="w-full resize-none rounded-lg border border-border bg-background p-3 font-sans text-[0.95rem] focus:border-primary focus:outline-none"
               />
-              <button
+              <AIGate silent><button
                 onClick={() => setSubmitted(headline)}
                 disabled={headline.trim().length < 4}
                 data-testid="button-translate"
                 className="mt-4 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-[0.9rem] font-medium text-background transition-transform hover:-translate-y-0.5 disabled:opacity-50"
               >
                 Translate <ArrowDown size={14} />
-              </button>
+              </button></AIGate>
             </div>
 
             <div className="mt-5">

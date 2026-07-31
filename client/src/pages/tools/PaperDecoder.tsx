@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { FileSearch, Sparkles, Quote, Link as LinkIcon, Upload, AlertTriangle } from "lucide-react";
@@ -156,6 +157,7 @@ export default function PaperDecoder() {
       />
       <ToolPageHeader tool={tool} />
       <ToolExplainer tool={tool} />
+      <AIDisabledBanner />
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-5">
@@ -199,14 +201,14 @@ export default function PaperDecoder() {
                     data-testid="input-paper-url"
                     className="flex-1 rounded-md border border-border bg-background px-3 py-2 text-sm focus:border-primary focus:outline-none"
                   />
-                  <button
+                  <AIGate silent><button
                     onClick={handleUrl}
                     disabled={!url.trim() || loading}
                     data-testid="button-decode-url"
                     className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:-translate-y-0.5 transition-transform disabled:opacity-60"
                   >
                     Decode
-                  </button>
+                  </button></AIGate>
                 </div>
               </div>
 

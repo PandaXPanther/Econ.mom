@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PageShell } from "@/components/brand/PageShell";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Newspaper, Sparkles, AlertTriangle, ExternalLink } from "lucide-react";
@@ -77,6 +78,7 @@ export default function ShockSim() {
       />
       <ToolPageHeader tool={tool} />
       <ToolExplainer tool={tool} />
+      <AIDisabledBanner />
       <section className="mx-auto max-w-7xl px-6 py-12 lg:px-10 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-7">
@@ -90,14 +92,14 @@ export default function ShockSim() {
                 rows={3}
                 className="w-full rounded-md border border-border bg-background p-4 text-[0.95rem] focus:border-primary focus:outline-none"
               />
-              <button
+              <AIGate silent><button
                 onClick={() => onAnalyze(headline)}
                 disabled={!headline || loading}
                 data-testid="button-analyze-headline"
                 className="mt-4 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 font-medium text-background hover:-translate-y-0.5 transition-transform disabled:opacity-60"
               >
                 {loading ? <><Sparkles size={14} className="animate-pulse" /> Gemini is classifying…</> : "Render the shift"}
-              </button>
+              </button></AIGate>
               {error && (
                 <div className="mt-4 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-[0.85rem] text-destructive">
                   <AlertTriangle size={14} className="mt-0.5 shrink-0" /> {error}

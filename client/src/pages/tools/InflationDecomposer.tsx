@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ToolPageHeader } from "@/components/brand/ToolPageHeader";
 import { ToolExplainer } from "@/components/brand/ToolExplainer";
+import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { CausalChain } from "@/components/brand/CausalChain";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { Button } from "@/components/ui/button";
@@ -154,6 +155,7 @@ export default function InflationDecomposer() {
         testId="chain-inflation-decomposer"
       />
       <ToolExplainer tool={tool} />
+      <AIDisabledBanner />
 
       <section className="mx-auto max-w-6xl px-6 lg:px-10 pb-24">
         {/* Status bar */}
@@ -297,10 +299,10 @@ export default function InflationDecomposer() {
               </div>
               <div className="text-xs text-muted-foreground">Read your decomposition like a chief economist would.</div>
             </div>
-            <Button onClick={explainWithGemini} disabled={aiLoading} variant="default" data-testid="button-deep-explain">
+            <AIGate silent><Button onClick={explainWithGemini} disabled={aiLoading} variant="default" data-testid="button-deep-explain">
               {aiLoading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
               {aiLoading ? "Reading the data\u2026" : aiData ? "Refresh explanation" : "Explain this decomposition"}
-            </Button>
+            </Button></AIGate>
           </div>
           {aiError && (
             <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-xs text-destructive">
