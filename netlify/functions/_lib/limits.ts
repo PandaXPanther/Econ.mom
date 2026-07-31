@@ -117,37 +117,58 @@ function readEnvOverrides(o: LimitOpts): Required<Omit<LimitOpts, "service" | "m
   };
 }
 
-function quotaStore() {
-  return getStore({ name: "api-quota", consistency: "strong" });
+// Blobs may be unavailable in some deploy environments (e.g. classic Netlify
+// Functions without the Blobs plugin enabled). We must fail-open cleanly in
+// that case: origin + body-size checks still run, counters and cache silently
+// degrade to no-ops so the endpoint keeps working.
+function quotaStore(): ReturnType<typeof getStore> | null {
+  try {
+    return getStore({ name: "api-quota", consistency: "strong" });
+  } catch {
+    return null;
+  }
 }
 
-function cacheStore() {
-  return getStore({ name: "api-cache", consistency: "eventual" });
+function cacheStore(): ReturnType<typeof getStore> | null {
+  try {
+    return getStore({ name: "api-cache", consistency: "eventual" });
+  } catch {
+    return null;
+  }
 }
 
 async function bumpCounter(key: string, ttlSec: number): Promise<number> {
   const store = quotaStore();
-  const raw = await store.get(key, { type: "json" }).catch(() => null) as
-    | { count: number; createdAt: number }
-    | null;
-  const now = Date.now();
-  // Expire stale entries (in case we ever change window math)
-  if (raw && now - raw.createdAt < ttlSec * 1000) {
-    const next = { count: raw.count + 1, createdAt: raw.createdAt };
+  if (!store) return 0; // Blobs unavailable — skip persistence, request continues.
+  try {
+    const raw = (await store.get(key, { type: "json" }).catch(() => null)) as
+      | { count: number; createdAt: number }
+      | null;
+    const now = Date.now();
+    if (raw && now - raw.createdAt < ttlSec * 1000) {
+      const next = { count: raw.count + 1, createdAt: raw.createdAt };
+      await store.setJSON(key, next, { metadata: { ttl: ttlSec } });
+      return next.count;
+    }
+    const next = { count: 1, createdAt: now };
     await store.setJSON(key, next, { metadata: { ttl: ttlSec } });
-    return next.count;
+    return 1;
+  } catch {
+    return 0;
   }
-  const next = { count: 1, createdAt: now };
-  await store.setJSON(key, next, { metadata: { ttl: ttlSec } });
-  return 1;
 }
 
 async function peekCounter(key: string): Promise<number> {
   const store = quotaStore();
-  const raw = await store.get(key, { type: "json" }).catch(() => null) as
-    | { count: number; createdAt: number }
-    | null;
-  return raw?.count ?? 0;
+  if (!store) return 0;
+  try {
+    const raw = (await store.get(key, { type: "json" }).catch(() => null)) as
+      | { count: number; createdAt: number }
+      | null;
+    return raw?.count ?? 0;
+  } catch {
+    return 0;
+  }
 }
 
 function windowKeys(ip: string, service: string): {
@@ -255,20 +276,30 @@ export async function enforce(event: any, opts: LimitOpts) {
 /** Read a cached JSON response by key, or null if missing/expired. */
 export async function getCachedJSON<T = unknown>(key: string, ttlSec: number): Promise<T | null> {
   const store = cacheStore();
-  const raw = await store
-    .get(`cache:${key}`, { type: "json" })
-    .catch(() => null) as { value: T; createdAt: number } | null;
-  if (!raw) return null;
-  if (Date.now() - raw.createdAt > ttlSec * 1000) return null;
-  return raw.value;
+  if (!store) return null; // No cache backend → always miss.
+  try {
+    const raw = (await store.get(`cache:${key}`, { type: "json" }).catch(() => null)) as
+      | { value: T; createdAt: number }
+      | null;
+    if (!raw) return null;
+    if (Date.now() - raw.createdAt > ttlSec * 1000) return null;
+    return raw.value;
+  } catch {
+    return null;
+  }
 }
 
 /** Write a cached JSON response under a key. */
 export async function setCachedJSON(key: string, value: unknown, ttlSec: number): Promise<void> {
   const store = cacheStore();
-  await store.setJSON(
-    `cache:${key}`,
-    { value, createdAt: Date.now() },
-    { metadata: { ttl: ttlSec } }
-  );
+  if (!store) return;
+  try {
+    await store.setJSON(
+      `cache:${key}`,
+      { value, createdAt: Date.now() },
+      { metadata: { ttl: ttlSec } }
+    );
+  } catch {
+    // swallow — cache is best-effort
+  }
 }
