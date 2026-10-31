@@ -340,7 +340,7 @@ const ROUTE_EXTRAS = {
   "counterfactual-engine": `
     <section>
       <h2 style="font-size:1.25rem;margin:24px 0 8px;">What this models</h2>
-      <p>Re-runs a chosen real-world economic event with one parameter changed and shows the divergence. Built on a small system of stochastic difference equations calibrated to FRED data. The engine integrates Gemini and FRED data to narrate the counterfactual path in plain English while the parametric model runs the actual simulation.</p>
+      <p>Re-runs a chosen real-world economic event with one parameter changed and shows the divergence. Built on a small system of stochastic difference equations calibrated to FRED data. The engine integrates OpenAI and FRED data to narrate the counterfactual path in plain English while the parametric model runs the actual simulation.</p>
       <h2 style="font-size:1.25rem;margin:24px 0 8px;">Available scenarios</h2>
       <ul>
         <li>What if the Fed had cut 50 bp instead of 25 bp at the September 2024 FOMC meeting</li>

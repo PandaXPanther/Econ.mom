@@ -1,6 +1,8 @@
-// Netlify Function: Gemini-powered shock interpreter for ShockSim.
+// Netlify Function: OpenAI-powered shock interpreter for ShockSim.
 // Takes a free-form headline and returns S/D shock parameters with numbers.
 // Rate-limited via shared limits.ts and 12h-cached by headline hash.
+
+import { requestOpenAI, aiCacheKey, OpenAIError } from "../../shared/openai";
 
 import type { Handler } from "@netlify/functions";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
@@ -12,15 +14,15 @@ export const handler: Handler = async (event) => {
 
   const blocked = await enforce(event, { service: "gemini-text", perMin: 6, perHour: 25, perDay: 60, perDayGlobal: 200, maxBodyBytes: 6144 });
   if (blocked) return blocked;
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return jsonResp(503, { error: "OPENAI_API_KEY not configured." });
 
   let body: any;
   try { body = JSON.parse(event.body || "{}"); } catch { return jsonResp(400, { error: "Invalid JSON body" }); }
   const headline = String(body.headline || "").slice(0, 400).trim();
   if (!headline) return jsonResp(400, { error: "Missing headline." });
 
-  const cacheKey = `gemini:shock:${hashStable(headline.toLowerCase())}`;
+  const cacheKey = aiCacheKey("shock", hashStable(headline.toLowerCase()));
   const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 12);
   if (cached) return jsonResp(200, { ...cached, cached: true });
 
@@ -89,37 +91,19 @@ Rules:
 
 Return ONLY the JSON object.`;
 
-  return await callGemini(apiKey, prompt);
+  return await callOpenAI(apiKey, prompt, cacheKey);
 };
 
-async function callGemini(apiKey: string, prompt: string) {
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+async function callOpenAI(apiKey: string, prompt: string, cacheKey: string) {
   try {
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.4, responseMimeType: "application/json" },
-      }),
-    });
-    if (!r.ok) return jsonResp(502, { error: `Gemini ${r.status}`, detail: (await r.text()).slice(0, 500) });
-    const data: any = await r.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
-    let parsed: any;
-    try { parsed = JSON.parse(text); }
-    catch {
-      const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-      parsed = JSON.parse(cleaned);
-    }
+    const result = await requestOpenAI(apiKey, "shock", prompt, { maxOutputTokens: 2400 });
+    const parsed = result;
     parsed.watchVariables = sanitizeWatchVariables(parsed.watchVariables);
     parsed.fetchedAt = new Date().toISOString();
     await setCachedJSON(cacheKey, parsed, 60 * 60 * 12);
     return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
-    return jsonResp(500, { error: err?.message || "Gemini call failed" });
+    return jsonResp(err instanceof OpenAIError ? err.statusCode : 500, { error: err?.message || "OpenAI call failed" });
   }
 }
 

@@ -8,7 +8,7 @@ import { CausalChain } from "@/components/brand/CausalChain";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Newspaper, Sparkles, ArrowDown, ExternalLink, TrendingUp, History, Telescope, Globe2, BookOpen } from "lucide-react";
-import { GeminiProgress } from "@/components/GeminiProgress";
+import { OpenAIProgress } from "@/components/OpenAIProgress";
 
 const COMP = TOOL_BY_SLUG["news-translator"];
 
@@ -318,7 +318,7 @@ interface PerplexityTranslation {
   cached?: boolean;
 }
 
-interface GeminiNewsEnrichment {
+interface OpenAINewsEnrichment {
   model?: string;
   curve?: string;
   direction?: string;
@@ -339,7 +339,7 @@ interface GeminiNewsEnrichment {
 export default function NewsTranslator() {
   const [headline, setHeadline] = useState("");
   const [submitted, setSubmitted] = useState("");
-  const [enrichment, setEnrichment] = useState<GeminiNewsEnrichment | null>(null);
+  const [enrichment, setEnrichment] = useState<OpenAINewsEnrichment | null>(null);
   const [enrichLoading, setEnrichLoading] = useState(false);
   const [enrichError, setEnrichError] = useState<string | null>(null);
 
@@ -378,7 +378,7 @@ export default function NewsTranslator() {
     }
   }
 
-  // Whenever a headline is submitted, fire Gemini for numbers + analog + forecast.
+  // Whenever a headline is submitted, fire OpenAI for numbers + analog + forecast.
   useEffect(() => {
     if (!submitted) { setEnrichment(null); setEnrichError(null); return; }
     let cancel = false;
@@ -416,7 +416,7 @@ export default function NewsTranslator() {
         nodes={[
           { label: "News headline" },
           { label: "Rule taxonomy match" },
-          { label: "Gemini concept tag" },
+          { label: "OpenAI concept tag" },
           { label: "Perplexity live context" },
           { label: "AP concept + graph", direction: "up" },
         ]}
@@ -497,16 +497,16 @@ export default function NewsTranslator() {
                   className="space-y-4"
                 >
                   <div className="rounded-xl border border-primary/40 bg-primary/5 p-6">
-                    <div className="label-cap mb-2 text-primary">Routed to Gemini</div>
+                    <div className="label-cap mb-2 text-primary">Routed to OpenAI</div>
                     <p className="prose-serif text-[0.95rem] text-foreground/85">
-                      No clean rule-based match. Gemini will decode this headline using AP Macro models, real elasticities, a historical analog, and a forecast.
+                      No clean rule-based match. OpenAI will decode this headline using AP Macro models, real elasticities, a historical analog, and a forecast.
                     </p>
                   </div>
                   {enrichLoading && (
                     <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6">
-                      <GeminiProgress
+                      <OpenAIProgress
                         active={enrichLoading}
-                        label="Gemini is decoding the headline"
+                        label="OpenAI is decoding the headline"
                         etaSeconds={12}
                         stages={[
                           "Identifying the model",
@@ -521,7 +521,7 @@ export default function NewsTranslator() {
                     <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 text-[0.9rem] text-destructive">{enrichError}</div>
                   )}
                   {enrichment && (
-                    <GeminiBlock e={enrichment} />
+                    <OpenAIBlock e={enrichment} />
                   )}
                   <LiveAIPanel
                     onRun={runLiveTranslate}
@@ -601,9 +601,9 @@ export default function NewsTranslator() {
 
                   {enrichLoading && (
                     <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6">
-                      <GeminiProgress
+                      <OpenAIProgress
                         active={enrichLoading}
-                        label="Gemini is layering on numbers and analogs"
+                        label="OpenAI is layering on numbers and analogs"
                         etaSeconds={12}
                         stages={[
                           "Layering on numbers",
@@ -613,7 +613,7 @@ export default function NewsTranslator() {
                       />
                     </div>
                   )}
-                  {enrichment && <GeminiBlock e={enrichment} />}
+                  {enrichment && <OpenAIBlock e={enrichment} />}
                   <LiveAIPanel
                     onRun={runLiveTranslate}
                     loading={liveLoading}
@@ -632,7 +632,7 @@ export default function NewsTranslator() {
             <strong>Layer 1, deterministic taxonomy.</strong> Headlines are matched against a hand-built taxonomy of canonical economic models, AS-AD, IS-LM, Phillips, Loanable Funds, Money Market, Solow Growth, Sectoral S/D, and Trade. Each match returns a deterministic graph treatment using AP-CED conventions, plus a short- and long-run prediction grounded in the textbook chapter cited. FRED series are chosen as the variables most likely to move first under the predicted shift. The Translator is the inverse of Shock Simulator: Shock Sim takes a curated shock and shows the response; Translator takes raw news and identifies the shock.
           </p>
           <p className="prose-serif text-[0.95rem] text-foreground/85">
-            <strong>Layer 2, Gemini enrichment.</strong> Once the rule layer locks in the model, Gemini 2.5 Flash adds the soft context the taxonomy cannot: rough magnitudes (basis points, percent of GDP), a historical analog (Volcker 1981, 2008 GFC, 2020 COVID, 2022 tightening cycle), and a one-line forecast pinned to the textbook channel. This runs only after a successful rule match, so the deterministic spine stays intact even if Gemini is slow or skipped.
+            <strong>Layer 2, OpenAI enrichment.</strong> Once the rule layer locks in the model, OpenAI GPT-6.1 Terra adds the soft context the taxonomy cannot: rough magnitudes (basis points, percent of GDP), a historical analog (Volcker 1981, 2008 GFC, 2020 COVID, 2022 tightening cycle), and a one-line forecast pinned to the textbook channel. This runs only after a successful rule match, so the deterministic spine stays intact even if OpenAI is slow or skipped.
           </p>
           <p className="prose-serif text-[0.95rem] text-foreground/85">
             <strong>Layer 3, live AI translation with citations.</strong> The optional “Run live AI translation, cited” button calls Perplexity Sonar with a domain filter restricted to Federal Reserve, BLS, BEA, NBER, Reuters, FT, Bloomberg, WSJ, and The Economist. It returns a short structured translation plus inline citation chips you can click straight through to the primary source. Use it when a headline is so fresh the taxonomy has not seen it yet, or when you want a sanity check from real-time reporting.
@@ -790,7 +790,7 @@ function renderModel(m: ModelKey, dir: Direction) {
   return null;
 }
 
-function GeminiBlock({ e }: { e: GeminiNewsEnrichment }) {
+function OpenAIBlock({ e }: { e: OpenAINewsEnrichment }) {
   const m = e.magnitudeNumbers;
   return (
     <div className="space-y-4">
@@ -798,7 +798,7 @@ function GeminiBlock({ e }: { e: GeminiNewsEnrichment }) {
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="mb-3 flex items-center gap-2">
             <TrendingUp size={14} className="text-primary" />
-            <div className="label-cap">Quantitative magnitude · Gemini</div>
+            <div className="label-cap">Quantitative magnitude · OpenAI</div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
             <NumStat label="ΔGDP" value={`${m.gdpEffectPct >= 0 ? "+" : ""}${m.gdpEffectPct?.toFixed(2)}%`} />

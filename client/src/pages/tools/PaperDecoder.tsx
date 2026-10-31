@@ -7,7 +7,7 @@ import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { FileSearch, Sparkles, Quote, Link as LinkIcon, Upload, AlertTriangle } from "lucide-react";
-import { GeminiProgress } from "@/components/GeminiProgress";
+import { OpenAIProgress } from "@/components/OpenAIProgress";
 
 interface Decoded {
   title: string;
@@ -85,7 +85,7 @@ export default function PaperDecoder() {
   const [url, setUrl] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
-  async function callGemini(payload: { url?: string; text?: string }) {
+  async function callOpenAI(payload: { url?: string; text?: string }) {
     const r = await fetch("/api/gemini-paper", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -118,7 +118,7 @@ export default function PaperDecoder() {
     setLoadingMessage("Fetching paper from URL…");
     setDecoded(null);
     try {
-      const data = await callGemini({ url: url.trim() });
+      const data = await callOpenAI({ url: url.trim() });
       setDecoded(data);
     } catch (e: any) {
       setError(e?.message || "Failed");
@@ -137,8 +137,8 @@ export default function PaperDecoder() {
     try {
       const text = await extractPdfText(file);
       if (!text.trim()) throw new Error("No text could be extracted from the PDF.");
-      setLoadingMessage("Decoding with Gemini…");
-      const data = await callGemini({ text });
+      setLoadingMessage("Decoding with OpenAI…");
+      const data = await callOpenAI({ text });
       setDecoded(data);
     } catch (err: any) {
       setError(err?.message || "Failed to decode PDF");
@@ -152,7 +152,7 @@ export default function PaperDecoder() {
     <PageShell>
       <SEO
         title="Econ Paper Decoder, turn any NBER, JEP, or AER paper into an extemp citation | The Mother Of Econ"
-        description="Upload a working paper PDF or paste any URL. Decoder returns plain-English abstract, identification strategy, headline numeric finding, FRED series to watch, and a debate-ready 30-second citation block, powered by Gemini."
+        description="Upload a working paper PDF or paste any URL. Decoder returns plain-English abstract, identification strategy, headline numeric finding, FRED series to watch, and a debate-ready 30-second citation block, powered by OpenAI."
         path="/paper-decoder"
       />
       <ToolPageHeader tool={tool} />
@@ -242,7 +242,7 @@ export default function PaperDecoder() {
             <AnimatePresence mode="wait">
               {loading && (
                 <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="rounded-xl border border-border bg-card p-6">
-                  <GeminiProgress
+                  <OpenAIProgress
                     active={loading}
                     label="Decoding the paper"
                     detail={loadingMessage}

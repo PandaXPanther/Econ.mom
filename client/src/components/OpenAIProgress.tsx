@@ -1,16 +1,16 @@
-// Reusable progress indicator for long-running Gemini calls.
+// Reusable progress indicator for long-running OpenAI calls.
 // Shows: animated spinner, what we're doing, elapsed time, ETA, and an
 // optional "details" line that updates over the course of the call.
 //
 // Why this exists: the critique flagged that several tools (ShockSim, TariffLab,
-// PaperDecoder, InflationDecomposer) call Gemini for 10-30 seconds with no
+// PaperDecoder, InflationDecomposer) call OpenAI for 10-30 seconds with no
 // feedback, leaving users uncertain whether to wait or retry.
 
 import { useEffect, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
 
-interface GeminiProgressProps {
-  /** True while the Gemini call is in flight. */
+interface OpenAIProgressProps {
+  /** True while the OpenAI call is in flight. */
   active: boolean;
   /** Human-readable name of the operation, e.g. "Calibrating elasticities". */
   label: string;
@@ -24,14 +24,14 @@ interface GeminiProgressProps {
   onCancel?: () => void;
 }
 
-export function GeminiProgress({
+export function OpenAIProgress({
   active,
   label,
   detail,
   etaSeconds = 12,
   stages,
   onCancel,
-}: GeminiProgressProps) {
+}: OpenAIProgressProps) {
   const [elapsed, setElapsed] = useState(0);
   const [stageIdx, setStageIdx] = useState(0);
 
@@ -86,7 +86,7 @@ export function GeminiProgress({
       <div className="mt-2 flex items-center justify-between text-[10px] text-muted-foreground">
         <span>
           {overTime
-            ? "Still working. Gemini is taking longer than usual."
+            ? "Still working. OpenAI is taking longer than usual."
             : `Typical: ~${etaSeconds}s`}
         </span>
         {onCancel && (

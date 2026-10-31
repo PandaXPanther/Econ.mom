@@ -16,7 +16,7 @@ export interface Sector {
 }
 
 // These numbers are illustrative starting points. They can be swapped for the
-// Gemini-generated dataset once you wish.
+// OpenAI-generated dataset once you wish.
 export const SECTORS: Sector[] = [
   {
     id: "steel",

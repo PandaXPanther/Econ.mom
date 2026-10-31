@@ -7,11 +7,11 @@ import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Newspaper, Sparkles, AlertTriangle, ExternalLink } from "lucide-react";
-import { GeminiProgress } from "@/components/GeminiProgress";
+import { OpenAIProgress } from "@/components/OpenAIProgress";
 
 type ShockType = "demand_increase" | "demand_decrease" | "supply_increase" | "supply_decrease";
 
-interface GeminiShockResp {
+interface OpenAIShockResp {
   type: ShockType;
   market: string;
   magnitude: "small" | "medium" | "large";
@@ -41,7 +41,7 @@ const HEADLINES = [
 export default function ShockSim() {
   const tool = TOOL_BY_SLUG["shock-sim"];
   const [headline, setHeadline] = useState("");
-  const [result, setResult] = useState<GeminiShockResp | null>(null);
+  const [result, setResult] = useState<OpenAIShockResp | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,7 +98,7 @@ export default function ShockSim() {
                 data-testid="button-analyze-headline"
                 className="mt-4 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 font-medium text-background hover:-translate-y-0.5 transition-transform disabled:opacity-60"
               >
-                {loading ? <><Sparkles size={14} className="animate-pulse" /> Gemini is classifying…</> : "Render the shift"}
+                {loading ? <><Sparkles size={14} className="animate-pulse" /> OpenAI is classifying…</> : "Render the shift"}
               </button></AIGate>
               {error && (
                 <div className="mt-4 flex items-start gap-2 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-[0.85rem] text-destructive">
@@ -136,7 +136,7 @@ export default function ShockSim() {
                   className="rounded-xl border border-border bg-card p-6 lg:p-8 sticky top-24"
                   data-testid="shock-result"
                 >
-                  <div className="label-cap mb-2 text-primary">Classification · Gemini</div>
+                  <div className="label-cap mb-2 text-primary">Classification · OpenAI</div>
                   <h3 className="text-editorial text-[1.75rem]">{shockTitle(result.type)}</h3>
                   <p className="prose-serif mt-3 text-[0.92rem] text-muted-foreground">in {result.market} · {result.magnitude}</p>
 
@@ -213,9 +213,9 @@ export default function ShockSim() {
               )}
               {loading && (
                 <div className="rounded-xl border border-dashed border-primary/30 bg-primary/5 p-6">
-                  <GeminiProgress
+                  <OpenAIProgress
                     active={loading}
-                    label="Gemini is calibrating elasticities"
+                    label="OpenAI is calibrating elasticities"
                     etaSeconds={10}
                     stages={[
                       "Classifying supply or demand",

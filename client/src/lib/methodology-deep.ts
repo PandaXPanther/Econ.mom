@@ -72,12 +72,12 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       {
         title: "Calibration against public samples",
         body:
-          "After encoding each rubric, the grader was tested against every College Board sample response published in the year's Chief Reader Report. The grader's score must match the human-anchor score within ±1 point on at least 95% of samples; rubric points where this fails are re-tightened until the threshold is met. This calibration step exists for the same reason ETS uses anchor papers in human grader training: human readers drift, so do LLMs, and only paper-by-paper calibration prevents both.",
+          "A full calibration would compare this model's scores with College Board sample-response scores, with a target of matching within ±1 point on at least 95% of samples. That evaluation has not been completed for the migrated OpenAI model. Point-by-point feedback is a study aid, and ambiguous answers or sketches may be scored differently by a human reader.",
       },
       {
         title: "Graph evaluation",
         body:
-          "When the part demands a diagram, the grader uses the OpenAI/Anthropic vision API to convert the uploaded photo or sketched diagram into a structured representation (axes, curves, intersection points). The structure is then checked against the rubric's diagram requirements. For text-only descriptions, a parser maps phrases like 'AD shifts right, price level rises, output rises' to the same structure.",
+          "When a part demands a diagram, the OpenAI vision model reads the uploaded sketch together with that part's rubric. It checks visible axes, curves, shifts and equilibrium markers. When no sketch is attached, it grades the student's text description instead. The response follows the same point-by-point grading schema in either case.",
         assumptions: [
           "User-uploaded graphs use the standard AP-CED axis conventions (P on Y, Q on X for S/D; r on Y, M on X for money market; etc.).",
           "Hand-drawn graphs with clearly readable axis labels are scoreable; ambiguous diagrams trigger a 'diagram unclear' partial-credit response.",
@@ -91,11 +91,11 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       {
         title: "FRQ generator (companion)",
         body:
-          "The FRQ generator inverts the grader: given a topic and exam, Gemini 3 Flash Preview returns a fully scaffolded FRQ matching the same rubric grammar. Generated questions ship with idealAnswer and keywords for each rubric point, so they can be graded by the same scoring engine. Output is constrained by responseMimeType: application/json and validated against the FRQ schema before display.",
+          "The FRQ generator inverts the grader: given a topic and exam, OpenAI GPT-6.1 Terra returns a fully scaffolded FRQ matching the same rubric grammar. Generated questions ship with idealAnswer and keywords for each rubric point, so they can be graded by the same scoring engine. Output is constrained by strict JSON schemas in the Responses API and validated against the FRQ schema before display.",
       },
     ],
     validation:
-      "Tested against the full College Board sample-response corpus (2018-2025): the grader's point allocation matches the human-anchor score within ±1 on 96.4% of samples and within ±2 on 100%. Failures cluster on questions where the chief reader's prose explicitly notes 'graders showed inconsistency' (e.g., 2022 Macro FRQ #3 part c).",
+      "The OpenAI integration is checked for response-schema compatibility, text grading and graph-image grading. This provider migration has not been evaluated against the full College Board sample-response corpus. AI scores are practice feedback and may differ from an official reader's score.",
     limitations: [
       "Graders cannot detect mathematical errors that produce the right answer for the wrong reason, College Board human readers can sometimes catch this; the LLM grader is more lenient.",
       "Vision OCR on phone photos taken at angle or in poor light may miss axis labels; the grader flags these as 'diagram unreadable' and grades the prose alone.",
@@ -148,7 +148,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
 
   "tarifflab": {
     overview:
-      "TariffLab is a partial-equilibrium incidence model for any US import sector. It computes the welfare consequences of an arbitrary ad-valorem tariff: deadweight loss, consumer-surplus loss, producer-surplus gain, government revenue, employment effects, and net national welfare. Inputs are the import-demand elasticity, the rest-of-world export-supply elasticity, baseline imports and domestic output, and the tariff rate. Elasticities for the eight curated sectors are calibrated to USITC's TPIS database and the Kee-Nicita-Olarreaga (2008) cross-country panel; live sectors fetched via Gemini are calibrated against the same ranges.",
+      "TariffLab is a partial-equilibrium incidence model for any US import sector. It computes the welfare consequences of an arbitrary ad-valorem tariff: deadweight loss, consumer-surplus loss, producer-surplus gain, government revenue, employment effects, and net national welfare. Inputs are the import-demand elasticity, the rest-of-world export-supply elasticity, baseline imports and domestic output, and the tariff rate. Elasticities for the eight curated sectors are calibrated to USITC's TPIS database and the Kee-Nicita-Olarreaga (2008) cross-country panel; live sectors fetched via OpenAI are calibrated against the same ranges.",
     intellectualLineage:
       "The model follows the canonical two-country, single-good treatment in Krugman, Obstfeld & Melitz Chapter 9, the same diagram every AP and undergraduate trade student learns, but uses contemporary elasticity estimates from Fajgelbaum, Goldberg, Kennedy & Khandelwal (2020) and Amiti, Redding & Weinstein (2019, 2020) for tariff pass-through. Where introductory texts assume infinite elasticity for the rest of the world, TariffLab uses finite εx so that pass-through is endogenous, matching the empirical finding that the 2018-19 US tariffs were borne almost entirely by US importers and consumers.",
     sections: [
@@ -202,9 +202,9 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
         ],
       },
       {
-        title: "Live (Gemini-fetched) sectors",
+        title: "Live (OpenAI-fetched) sectors",
         body:
-          "When the user types a custom sector, a Netlify function calls Gemini 3 Flash Preview with a structured prompt that demands USITC TPIS or Kee-Nicita-Olarreaga calibrated values plus a 24-month world-price index. The returned JSON is validated against the Sector schema before insertion. This widens TariffLab's coverage from the eight curated sectors to anything HS-classified, with the trade-off that elasticities are LLM-estimated rather than peer-reviewed.",
+          "When the user types a custom sector, a Netlify function calls OpenAI GPT-6.1 Terra with a structured prompt that demands USITC TPIS or Kee-Nicita-Olarreaga calibrated values plus a 24-month world-price index. The returned JSON is validated against the Sector schema before insertion. This widens TariffLab's coverage from the eight curated sectors to anything HS-classified, with the trade-off that elasticities are LLM-estimated rather than peer-reviewed.",
       },
     ],
     validation:
@@ -214,7 +214,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       "Single representative product assumption misses within-HS quality and variety effects (Broda-Weinstein 2006 documents these are large).",
       "Static analysis: the model has no firm entry/exit dynamics, no learning-by-doing on the protected industry, and no dynamic Ricardian comparative-advantage realignment.",
       "Linear approximation around the baseline is most accurate for tariffs ≤25%; at higher rates the true DWL is larger because demand curves are convex.",
-      "Live (Gemini-fetched) elasticities are not peer-reviewed; they are LLM-calibrated to the published ranges and should be treated as illustrative.",
+      "Live (OpenAI-fetched) elasticities are not peer-reviewed; they are LLM-calibrated to the published ranges and should be treated as illustrative.",
       "Retaliation-job-loss is a back-of-envelope estimate; actual retaliation choices are political and may target unrelated sectors.",
     ],
     dataSources: [
@@ -237,7 +237,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
     ],
     lastUpdated: "2026-05-03",
     reproducibility:
-      "All eight curated sectors and their elasticities are in client/src/lib/tariff-sectors.ts; the welfare math is in computeTariffImpact() in the same file (60 lines, no external dependencies). To replicate from scratch: pick a sector, look up η and εx in USITC TPIS, look up baseline imports in USA Trade Online, plug into the formulas above. The Gemini sector fetcher is in netlify/functions/tariff-sector-data.ts.",
+      "All eight curated sectors and their elasticities are in client/src/lib/tariff-sectors.ts; the welfare math is in computeTariffImpact() in the same file (60 lines, no external dependencies). To replicate from scratch: pick a sector, look up η and εx in USITC TPIS, look up baseline imports in USA Trade Online, plug into the formulas above. The OpenAI sector fetcher is in netlify/functions/tariff-sector-data.ts.",
   },
 
   "textbook-atlas": {
@@ -493,7 +493,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
 
   "news-translator": {
     overview:
-      "Econ News Translator takes any economic headline and inverts the Shock Simulator: instead of taking a curated shock and showing the response, it takes raw news and identifies the shock. The page runs three layers in sequence: (1) a deterministic rule-based classifier that maps the headline to the textbook model, curve shift, FRED watch list, short and long run predictions, and a confidence band; (2) an opt-in Gemini enrichment that adds quantitative magnitudes, a historical analog, and a short-horizon forecast; (3) an opt-in Perplexity Sonar live AI translation that returns the same model mapping with citations from credible economics sources.",
+      "Econ News Translator takes any economic headline and inverts the Shock Simulator: instead of taking a curated shock and showing the response, it takes raw news and identifies the shock. The page runs three layers in sequence: (1) a deterministic rule-based classifier that maps the headline to the textbook model, curve shift, FRED watch list, short and long run predictions, and a confidence band; (2) an opt-in OpenAI enrichment that adds quantitative magnitudes, a historical analog, and a short-horizon forecast; (3) an opt-in Perplexity Sonar live AI translation that returns the same model mapping with citations from credible economics sources.",
     intellectualLineage:
       "Model-mapping follows the inventory in Mankiw's Principles (9e) and the AP-CED graph conventions: AS-AD, IS-LM, Phillips Curve, Loanable Funds, Money Market, Solow Growth, single-market S/D, and Trade. Transmission mechanisms are calibrated to Blanchard's Macroeconomics (8e) and Mishkin's Economics of Money, Banking & Financial Markets (13e). The cited-AI layer adopts the retrieval-augmented generation pattern (Lewis et al. 2020) with strict source-domain filtering to bias toward primary statistical agencies and tier-1 financial press.",
     sections: [
@@ -518,9 +518,9 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
           "Each rule-based prediction ships with a confidence band, low/medium/high, calibrated to the magnitude of comparable historical episodes. A 25bp Fed surprise lifts SOFR 25bp on the day with high confidence (n≈100 historical FOMC surprises); a tariff announcement's price effect is medium confidence because pass-through varies.",
       },
       {
-        title: "Gemini enrichment layer",
+        title: "OpenAI enrichment layer",
         body:
-          "Once a headline is submitted, the page calls /api/gemini-news which integrates Gemini 2.5 Flash and FRED data. The model returns a quantitative magnitude panel (ΔGDP, Δπ, Δu, Δr, horizon months), a historical analog with event, date, outcome, and magnitude, and a short-horizon forecast with confidence band and reasoning. This is parametric grounding on top of the deterministic classifier, not a replacement for it.",
+          "Once a headline is submitted, OpenAI GPT-6.1 Terra returns illustrative quantitative magnitudes (ΔGDP, Δπ, Δu, Δr, horizon months), a historical analog, a short-horizon forecast and suggested FRED series to watch. This enrichment does not fetch live FRED observations or verify the estimates against current releases. It adds context to the deterministic classifier.",
       },
       {
         title: "Perplexity Sonar live AI layer (cited)",
@@ -530,7 +530,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       {
         title: "Wallet guardrails and caching",
         body:
-          "Every paid-API function (Gemini and Perplexity) is wrapped in netlify/functions/_lib/limits.ts. Limits stack: per-IP per-minute, per-IP per-hour, per-IP per-day, and a global per-day ceiling as a hard budget guardrail. Counters live in Netlify Blobs (api-quota store, strong consistency) and are peeked before being incremented so over-limit requests never bump the counter. Caps are tuned so a real student burning through samples or running back-to-back simulations never hits a wall: Perplexity is capped at 8/min, 30/hour, 60/day per IP, 200/day global, with a 2KB body cap and 24h response cache keyed by normalized headline hash. The Gemini news enrichment shares a 'gemini-text' bucket with four other tool functions (12/min, 60/hour, 120/day per IP, 600/day global, 6KB body, 12h cache). Identical headlines return cached citations without a new API call. Every limit has an env-var override (LIMIT_<SERVICE>_<FIELD>) for runtime tightening without redeploys. See RATE_LIMITS.md in the repository.",
+          "Paid API functions retain their existing request caps and response caches. OpenAI news enrichment shares a bucket with four other tools: 6/minute, 25/hour and 60/day per user, and 200/day globally. News responses are cached for 12 hours; student grades are never cached. These are best-effort safeguards and can be unavailable during a storage outage. Perplexity's separate limits and citation cache are unchanged.",
       },
     ],
     validation:
@@ -538,7 +538,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
     limitations: [
       "Translator predicts what theory says, not what will actually happen; markets often surprise theory.",
       "Confidence bands are based on small historical samples for novel shock types (e.g. AI-productivity announcements).",
-      "The deterministic classifier does not predict magnitudes precisely; the small/moderate/large bands are coarse. The Gemini enrichment layer provides point magnitudes but those are model-derived, not measured.",
+      "The deterministic classifier does not predict magnitudes precisely; the small/moderate/large bands are coarse. The OpenAI enrichment layer provides point magnitudes but those are model-derived, not measured.",
       "Live Perplexity calls are rate-limited and budget-capped; under sustained load the button returns a 429 with a Retry-After header rather than burning the wallet.",
       "The Perplexity citation layer relies on the source-domain filter to bias toward credible sources; nothing prevents a cited article from being mistaken or out of date.",
     ],
@@ -546,7 +546,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
       { name: "FRED", publisher: "St. Louis Fed", vintage: "real-time", frequency: "varies", url: "https://fred.stlouisfed.org/" },
       { name: "FOMC statements and minutes", publisher: "Federal Reserve Board", vintage: "current", frequency: "8 meetings/year", url: "https://www.federalreserve.gov/monetarypolicy/fomc.htm" },
       { name: "Perplexity Sonar (RAG over web)", publisher: "Perplexity AI", vintage: "real-time", frequency: "per-query", url: "https://docs.perplexity.ai/", notes: "Domain-filtered to federalreserve.gov, bls.gov, bea.gov, treasury.gov, fred.stlouisfed.org, nber.org, imf.org, worldbank.org, reuters.com, ft.com, bloomberg.com, wsj.com, economist.com." },
-      { name: "Gemini 2.5 Flash", publisher: "Google", vintage: "current", frequency: "per-query", url: "https://ai.google.dev/gemini-api/docs", notes: "Used for magnitude, analog, and forecast enrichment." },
+      { name: "OpenAI GPT-6.1 Terra", publisher: "OpenAI", vintage: "current", frequency: "per-query", url: "https://developers.openai.com/api/docs/models/gpt-6.1-terra", notes: "Used for magnitude, analog, and forecast enrichment." },
     ],
     citations: [
       { authors: "Mankiw, N. G.", year: 2024, title: "Principles of Economics (9th ed.)", venue: "Cengage", role: "Master inventory of textbook models." },
@@ -557,7 +557,7 @@ export const DEEP_METHODOLOGY: Record<string, DeepMethodology> = {
     ],
     lastUpdated: "2026-05-25",
     reproducibility:
-      "Deterministic rule taxonomy is in client/src/pages/tools/NewsTranslator.tsx (PATTERNS array). Gemini enrichment function is netlify/functions/gemini-news.ts. Perplexity Sonar function is netlify/functions/news-translate.ts. Shared rate-limit + cache wrapper is netlify/functions/_lib/limits.ts. All limits are documented in RATE_LIMITS.md and can be tightened at runtime via Netlify env vars.",
+      "Deterministic rule taxonomy is in client/src/pages/tools/NewsTranslator.tsx (PATTERNS array). OpenAI enrichment function is netlify/functions/gemini-news.ts. Perplexity Sonar function is netlify/functions/news-translate.ts. Shared rate-limit + cache wrapper is netlify/functions/_lib/limits.ts. All limits are documented in RATE_LIMITS.md and can be tightened at runtime via Netlify env vars.",
   },
 
   "us-econ": {

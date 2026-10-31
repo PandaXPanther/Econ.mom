@@ -43,7 +43,7 @@ export const TOOLS: Tool[] = [
     methodology: [
       "Rubric loaded directly from College Board's published scoring guidelines for every released exam (2018–2025) plus the current Course & Exam Description.",
       "Each FRQ part is graded against its specific rubric points (e.g., 'correctly labeled S/D graph with axes', 'identifies new equilibrium').",
-      "Graph parts include a built-in drawing canvas. Gemini's vision model reads the actual sketch and checks it for axis labels, curve names, shift direction, and equilibrium markers.",
+      "Graph parts include a built-in drawing canvas. OpenAI's vision model reads the actual sketch and checks it for axis labels, curve names, shift direction, and equilibrium markers.",
       "The 5/5 rewrite is generated to satisfy every rubric point with the exact terminology graders are trained to reward.",
       "Graders calibrated against College Board sample responses graded 0/5, 3/5, and 5/5 to ensure consistent point allocation.",
     ],
@@ -51,14 +51,14 @@ export const TOOLS: Tool[] = [
       "How College Board actually scores AP Macro and Micro free-response questions. Graders give points for hitting specific rubric language (correctly labeled axes, identified shifters, named direction of change), not for sounding smart. This tool shows you exactly which words earn which points so you can train your hand to write 5/5 responses on test day.",
     apUnit: "All AP Macro units (1 to 6) and all AP Micro units (1 to 6); rubric coverage spans every released exam 2018 to 2025.",
     whoItsFor: "AP Macro and AP Micro students prepping for the May exam.",
-    tryThis: "Pick a real released FRQ from the sidebar (every 2018 to 2024 AP Macro and Micro free-response is loaded with its official rubric) and write your answer in the boxes. Or hit 'Generate a custom FRQ', name any AP topic, and Gemini writes a fresh exam-style question with rubric in seconds. Either way you get a point-by-point breakdown plus the 5/5 rewrite.",
+    tryThis: "Pick a real released FRQ from the sidebar (every 2018 to 2024 AP Macro and Micro free-response is loaded with its official rubric) and write your answer in the boxes. Or hit 'Generate a custom FRQ', name any AP topic, and OpenAI writes a fresh exam-style question with rubric in seconds. Either way you get a point-by-point breakdown plus the 5/5 rewrite.",
     howItWorks: [
-      "Pick a real released FRQ from the sidebar (every 2018 to 2024 AP Macro and Micro FRQ is preloaded with its official College Board rubric), or hit 'Generate a custom FRQ' to have Gemini write a fresh exam-style question on any AP topic. Pick the topic, exam (Macro / Micro), length, and difficulty.",
+      "Pick a real released FRQ from the sidebar (every 2018 to 2024 AP Macro and Micro FRQ is preloaded with its official College Board rubric), or hit 'Generate a custom FRQ' to have OpenAI write a fresh exam-style question on any AP topic. Pick the topic, exam (Macro / Micro), length, and difficulty.",
       "Write your answers in the boxes for each part. Graph parts get an inline drawing canvas right next to the prompt.",
       "The grader compares your answer to the official College Board rubric for that exact question (or the AI-built rubric for generated FRQs), checking for axis labels, named curves, direction of shift, and equilibrium markers.",
       "You get a point-by-point breakdown showing which rubric points you earned and which you missed.",
       "A 5/5 model rewrite is generated using the precise terminology AP graders are trained to reward.",
-      "Any part that asks you to 'draw a correctly labeled graph' renders an inline drawing canvas, sketch the diagram (pen, eraser, color, label tool) and Gemini grades the actual image, not your description of it.",
+      "Any part that asks you to 'draw a correctly labeled graph' renders an inline drawing canvas, sketch the diagram (pen, eraser, color, label tool) and OpenAI grades the actual image, not your description of it.",
     ],
   },
   {

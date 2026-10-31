@@ -1,6 +1,6 @@
 // Wraps AI-powered UI so it hides when the AI_DISABLED kill-switch is on.
 // Use around buttons, panels, or entire tool sections that only work with the
-// Gemini/Perplexity backend.
+// OpenAI/Perplexity backend.
 
 import type { ReactNode } from "react";
 import { useAIEnabled } from "@/hooks/use-ai-enabled";
@@ -31,7 +31,7 @@ export function AIGate({ children, showFallback = true, fallback, silent }: Prop
       <div>
         <p className="font-medium text-foreground">AI features paused</p>
         <p className="mt-1">
-          The Gemini-powered explanations for this tool are temporarily off while we
+          The OpenAI-powered explanations for this tool are temporarily off while we
           watch cost usage. Everything parametric still works below.
         </p>
       </div>
@@ -60,7 +60,7 @@ export function AIDisabledBanner({ tone = "soft" }: { tone?: "soft" | "loud" }) 
       <div>
         <p className="font-medium text-foreground">AI features are paused</p>
         <p className="mt-1">
-          The Gemini-powered pieces of this tool are temporarily off while we
+          The OpenAI-powered pieces of this tool are temporarily off while we
           watch API spend. The parametric core still works. Check back soon.
         </p>
       </div>

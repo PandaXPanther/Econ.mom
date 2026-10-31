@@ -9,10 +9,13 @@ Sized so a real student grinding samples or FRQs never hits a wall. Only sustain
 | Bucket | Functions | /min | /hr | /day per IP | /day global | Body | Cache |
 |---|---|---|---|---|---|---|---|
 | `perplexity` | `news-translate` | 8 | 30 | 60 | 200 | 2 KB | 24 h |
-| `gemini-text` | `gemini-news`, `-shock`, `-preset`, `-scenario`, `-inflation-explain` | 12 | 60 | 120 | 600 | 6 KB | 12 to 24 h |
-| `gemini-paper` | `gemini-paper` | 4 | 15 | 25 | 200 | 80 KB | 24 h |
-| `gemini-frq-grade` | `grade-frq` | 6 | 25 | 60 | 300 | 350 KB | none |
-| `gemini-frq-gen` | `generate-frq` | 8 | 30 | 60 | 350 | 2 KB | 12 h |
+| `gemini-text` | `gemini-news`, `-shock`, `-preset`, `-scenario`, `-inflation-explain` | 6 | 25 | 60 | 200 | 6 KB | 12 to 24 h |
+| `gemini-paper` | `gemini-paper` | 2 | 8 | 15 | 40 | 80 KB | 24 h |
+| `gemini-frq-grade` | `grade-frq` | 3 | 12 | 25 | 50 | 350 KB | none |
+| `gemini-frq-gen` | `generate-frq` | 4 | 15 | 30 | 60 | 2 KB | 12 h |
+| `gemini-tariff` | `tariff-sector-data` | 3 | 12 | 25 | 60 | 4 KB | none |
+
+The `gemini-*` bucket names and endpoint URLs are retained for compatibility. These functions now call OpenAI. Existing `LIMIT_GEMINI_*` overrides and counters continue to apply. Cache entries use an OpenAI/schema-version/model namespace; changing `OPENAI_MODEL` does not reuse a previous model's responses. Student grades are never cached.
 
 Counters reset on UTC date boundaries.
 
@@ -22,11 +25,11 @@ Tweak any limit in the Netlify dashboard without a redeploy. Pattern: `LIMIT_<SE
 
 ## Secrets
 
-`GEMINI_API_KEY`, `PERPLEXITY_API_KEY`, `FRED_API_KEY`. Set in Netlify env, never commit.
+`OPENAI_API_KEY`, `PERPLEXITY_API_KEY`, `FRED_API_KEY`. Set in Netlify env, never commit. `OPENAI_API_KEY` is only needed by Functions; do not expose it to the frontend or put it in `netlify.toml`. Optional `OPENAI_MODEL` defaults to `gpt-6.1-terra`. `AI_DISABLED=1` still disables AI functions.
 
 ## Budget
 
-Perplexity Sonar at 200/day global caps spend around $30 to $40/month. The 24h cache means viral spikes on the same headline cost one API call. Gemini at 600/day stays well inside free-tier limits.
+Perplexity is unchanged. OpenAI is metered: daily request caps, bounded output tokens and response caching control usage; there is no assumption of a free tier. Reasoning is disabled for latency, provider calls are not automatically retried, and Responses storage is disabled. Default provider deadline is 20 seconds; grading/generation allow 35 seconds and inflation allows 15 seconds with its deterministic fallback. These budgets leave headroom within Netlify's 60-second synchronous execution limit for quota/cache operations. Request caps are best-effort read/write counters, not atomic spend limits, and fail open when Blobs is unavailable; configure project spending controls in OpenAI as well.
 
 ## Adding a new function
 

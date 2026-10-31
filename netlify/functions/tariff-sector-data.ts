@@ -1,7 +1,9 @@
-// Netlify Function: Gemini-powered live sector data fetcher for TariffLab.
+// Netlify Function: OpenAI-powered live sector data fetcher for TariffLab.
 // Takes a free-form sector name (e.g. "lithium batteries", "wine", "rare earths")
 // and returns a Sector object matching client/src/lib/tariff-sectors.ts schema,
 // plus a 24-month world-price index time series for graphing.
+
+import { requestOpenAI, aiCacheKey, OpenAIError } from "../../shared/openai";
 
 import type { Handler } from "@netlify/functions";
 import { enforce } from "./_lib/limits";
@@ -21,9 +23,9 @@ export const handler: Handler = async (event) => {
   });
   if (blocked) return blocked;
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
+    return jsonResp(503, { error: "OPENAI_API_KEY not configured." });
   }
 
   let body: any;
@@ -74,47 +76,12 @@ Quality bar:
 - priceSeries: 24 monthly observations ending this month, baselineWorldPrice=100.
 - description: one editorial sentence, Financial Times tone.
 
-Return ONLY the JSON object.`;
-
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+Wrap the response in { "result": <sector object or error object> } to match the schema. Return ONLY that JSON object.`;
 
   try {
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.4,
-          responseMimeType: "application/json",
-        },
-      }),
-    });
-
-    if (!r.ok) {
-      const errText = await r.text();
-      return jsonResp(502, {
-        error: `Gemini ${r.status}`,
-        detail: errText.slice(0, 500),
-      });
-    }
-
-    const data: any = await r.json();
-    const text =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ||
-      "";
-
-    let parsed: any;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-      parsed = JSON.parse(cleaned);
-    }
-
-    // Gemini explicitly signalled "unrecognized sector"
+    const result = await requestOpenAI(apiKey, "sector", prompt, { maxOutputTokens: 3000 });
+    const parsed = result.result;
+    // OpenAI explicitly signalled "unrecognized sector"
     if (parsed?.error && typeof parsed.error === "string") {
       return jsonResp(422, { error: parsed.error });
     }
@@ -125,7 +92,7 @@ Return ONLY the JSON object.`;
       typeof parsed?.exportSupplyElasticity !== "number" ||
       typeof parsed?.baselineImports !== "number"
     ) {
-      return jsonResp(502, { error: "Malformed sector data from Gemini.", raw: parsed });
+      return jsonResp(502, { error: "Malformed sector data from OpenAI.", raw: parsed });
     }
 
     // Sanity check: label should contain the user's query word (or an obvious
@@ -152,7 +119,7 @@ Return ONLY the JSON object.`;
 
     return jsonResp(200, parsed);
   } catch (err: any) {
-    return jsonResp(500, { error: err?.message || "Sector fetch failed" });
+    return jsonResp(err instanceof OpenAIError ? err.statusCode : 500, { error: err?.message || "Sector fetch failed" });
   }
 };
 

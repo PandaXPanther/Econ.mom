@@ -4,7 +4,7 @@
 // the forwarded canvasRef.
 //
 // Design intent: feel native to the FRQ Grader flow, not a separate page.
-// White canvas background so Gemini's vision model gets a clean image.
+// White canvas background so OpenAI's vision model gets a clean image.
 
 import { useEffect, useRef, useState, forwardRef } from "react";
 import {
@@ -331,7 +331,7 @@ export const GraphCanvas = forwardRef<HTMLCanvasElement, GraphCanvasProps>(
         </div>
 
         <p className="mt-2 text-[0.7rem] text-muted-foreground">
-          Tip: use the Label tool to drop text labels (AD1, SRAS, P1, Y*). Gemini reads the actual sketch.
+          Tip: use the Label tool to drop text labels (AD1, SRAS, P1, Y*). OpenAI reads the actual sketch.
         </p>
       </div>
     );

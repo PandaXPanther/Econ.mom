@@ -7,7 +7,7 @@ import { AIGate, AIDisabledBanner } from "@/components/AIGate";
 import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SEO } from "@/components/brand/SEO";
 import { Sliders, ArrowUpRight, RotateCcw, Download, Sparkles, Loader2 } from "lucide-react";
-import { GeminiProgress } from "@/components/GeminiProgress";
+import { OpenAIProgress } from "@/components/OpenAIProgress";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -274,9 +274,9 @@ export default function EconLever() {
                 <div className="mt-2 font-mono text-[0.62rem] text-destructive">{aiError}</div>
               )}
               <div className="mt-3">
-                <GeminiProgress
+                <OpenAIProgress
                   active={aiLoading}
-                  label="Gemini is calibrating your preset"
+                  label="OpenAI is calibrating your preset"
                   etaSeconds={10}
                   stages={[
                     "Reading your scenario",

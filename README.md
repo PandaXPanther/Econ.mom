@@ -80,7 +80,7 @@ Every tool follows the same rules:
 - Framer Motion for the editorial feel
 
 **Backend** (Netlify Functions)
-- Gemini 2.5 Flash for FRQ grading, paper decoding, scenario explainers
+- OpenAI GPT-6.1 Terra for FRQ grading, paper decoding, scenario explainers
 - Perplexity Sonar for the live News Translator with cited sources
 - FRED API for macro data (CPI, unemployment, fed funds, treasury yields)
 - BLS, BEA, NBER for primary source data
@@ -112,14 +112,18 @@ npm run build
 The Netlify Functions in `netlify/functions/` need three environment variables if you want the AI features to work:
 
 ```
-GEMINI_API_KEY=...
+OPENAI_API_KEY=...
 PERPLEXITY_API_KEY=...
 FRED_API_KEY=...
 ```
 
 Without these, every tool that uses live AI or live FRED data will fall back to a deterministic offline mode. The site still works, you just lose the live cited translations and the live FRED charts.
 
-See [`RATE_LIMITS.md`](./RATE_LIMITS.md) for the per-IP and global daily caps on each AI endpoint. The caps are sized so a normal student grinding FRQs at full speed will never hit them, but a bot scripting the endpoint will.
+The OpenAI calls use the Responses API with strict output schemas, image support for graph grading, disabled response storage, and no automatic retries. `OPENAI_MODEL` optionally overrides `gpt-6.1-terra` with another compatible vision/Structured Outputs model supporting `reasoning.effort: none`. Set `OPENAI_API_KEY` as a secret for Netlify Functions in the required deploy contexts and redeploy. Never use a `VITE_` prefix for credentials. The legacy `/api/gemini-*` URLs and quota bucket names remain for compatibility; FRED and Perplexity are unchanged.
+
+Run `npm test` and `npm run check` before deployment.
+
+See [`RATE_LIMITS.md`](./docs/RATE_LIMITS.md) for the per-IP and global daily caps on each AI endpoint. The caps are sized so a normal student grinding FRQs at full speed will never hit them, but a bot scripting the endpoint will.
 
 ---
 
@@ -136,7 +140,7 @@ econ-mom/
 │   │   └── index.css        # Tailwind + design tokens
 │   └── public/              # favicon, og image, robots, sitemap
 ├── netlify/
-│   └── functions/           # serverless endpoints (Gemini, Perplexity, FRED)
+│   └── functions/           # serverless endpoints (OpenAI, Perplexity, FRED)
 │       └── _lib/limits.ts   # shared rate limit wrapper
 ├── server/                  # Express (dev only, prod is static + functions)
 ├── shared/                  # zod schemas, shared types
