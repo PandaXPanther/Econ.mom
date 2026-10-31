@@ -9,7 +9,7 @@ import { TOOL_BY_SLUG } from "@/lib/tools";
 import { SECTORS, computeTariffImpact, Sector, TariffResult } from "@/lib/tariff-sectors";
 import { SEO } from "@/components/brand/SEO";
 import { TrendingDown, TrendingUp, Banknote, Users, AlertTriangle, Sparkles, Loader2 } from "lucide-react";
-import { GeminiProgress } from "@/components/GeminiProgress";
+import { OpenAIProgress } from "@/components/OpenAIProgress";
 
 interface LiveSector extends Sector {
   sources?: string[];
@@ -128,7 +128,7 @@ export default function TariffLab() {
                   ))}
                 </optgroup>
                 {customSectors.length > 0 && (
-                  <optgroup label="Live (Gemini)">
+                  <optgroup label="Live (OpenAI)">
                     {customSectors.map((s) => (
                       <option key={s.id} value={s.id}>
                         {s.label} · {s.hsPrefix}
@@ -143,7 +143,7 @@ export default function TariffLab() {
 
               {liveSector.generated && (
                 <div className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-1 font-mono text-[0.65rem] uppercase tracking-widest text-primary">
-                  <Sparkles size={10} /> Live · Gemini-fetched
+                  <Sparkles size={10} /> Live · OpenAI-fetched
                 </div>
               )}
 
@@ -154,7 +154,7 @@ export default function TariffLab() {
                   <Sparkles size={11} /> Fetch any sector (live)
                 </div>
                 <p className="text-[0.78rem] text-muted-foreground mb-3">
-                  Type any HS-coded import (e.g. "lithium batteries", "wine", "rare earths") and Gemini will return calibrated elasticities, baselines, and a 24-month world-price series.
+                  Type any HS-coded import (e.g. "lithium batteries", "wine", "rare earths") and OpenAI will return calibrated elasticities, baselines, and a 24-month world-price series.
                 </p>
                 <div className="flex gap-2">
                   <input
@@ -186,9 +186,9 @@ export default function TariffLab() {
                   </div>
                 )}
                 <div className="mt-3">
-                  <GeminiProgress
+                  <OpenAIProgress
                     active={fetchState === "loading"}
-                    label="Gemini is calibrating this sector"
+                    label="OpenAI is calibrating this sector"
                     etaSeconds={18}
                     stages={[
                       "Looking up HS code",
@@ -291,7 +291,7 @@ export default function TariffLab() {
               <SDGraph result={result} />
             </div>
 
-            {/* Live price series, only when Gemini-generated sector */}
+            {/* Live price series, only when OpenAI-generated sector */}
             {liveSector.priceSeries && liveSector.priceSeries.length > 0 && (
               <div className="mt-8 rounded-xl border border-primary/30 bg-card p-6 lg:p-8">
                 <div className="flex items-baseline justify-between mb-4">

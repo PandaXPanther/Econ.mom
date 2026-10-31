@@ -11,7 +11,7 @@ import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, X
 import { Download, Sparkles, Loader2 } from "lucide-react";
 import { BriefDocument } from "@/components/brief/BriefDocument";
 import { exportBriefAsPdf } from "@/lib/brief/exportBrief";
-import { GeminiProgress } from "@/components/GeminiProgress";
+import { OpenAIProgress } from "@/components/OpenAIProgress";
 
 // Linear simulator factory used for AI-generated scenarios:
 // counterfactual[i] = actual[i] + Σ coeff_k * (param_k − defaultActual_k)
@@ -50,7 +50,7 @@ export default function CounterfactualEngine() {
     setParamValues(Object.fromEntries(s.params.map((p) => [p.key, p.defaultCounterfactual])));
   }
 
-  // Gemini custom scenario
+  // OpenAI custom scenario
   const [aiPrompt, setAiPrompt] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState<string | null>(null);
@@ -165,7 +165,7 @@ export default function CounterfactualEngine() {
               <div className="text-[10px] uppercase tracking-[0.18em] text-primary mb-1 flex items-center gap-1.5">
                 <Sparkles className="h-3 w-3" /> Build a custom counterfactual
               </div>
-              <div className="text-xs text-muted-foreground mb-2">Describe a historical “what if”. Gemini calibrates parameters, sliders, and a baseline path.</div>
+              <div className="text-xs text-muted-foreground mb-2">Describe a historical “what if”. OpenAI calibrates parameters, sliders, and a baseline path.</div>
               <textarea
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
@@ -182,9 +182,9 @@ export default function CounterfactualEngine() {
           </div>
           {aiError && <div className="mt-2 text-xs text-destructive">{aiError}</div>}
           <div className="mt-3">
-            <GeminiProgress
+            <OpenAIProgress
               active={aiLoading}
-              label="Gemini is calibrating your counterfactual"
+              label="OpenAI is calibrating your counterfactual"
               etaSeconds={15}
               stages={[
                 "Reading historical context",

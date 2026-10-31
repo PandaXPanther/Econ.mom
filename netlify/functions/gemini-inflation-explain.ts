@@ -1,22 +1,22 @@
-// Netlify Function: Gemini-powered deep inflation decomposition explanation.
-// Critic flagged HTTP 504, Netlify Functions hard-cap at 10s. We use an
-// AbortController with an 8.5s budget so we always return a controlled error
-// (with a fallback narrative) instead of a generic gateway timeout.
+import { requestOpenAI, aiCacheKey } from "../../shared/openai";
+// Netlify Function: OpenAI-powered deep inflation decomposition explanation.
+// A bounded provider request returns a fallback narrative on timeout.
 
-import type { Handler } from "@netlify/functions";
+import type { LambdaHandler } from "@netlify/aws-lambda-compat";
+import { withRuntime } from "./_lib/runtime";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
-const GEMINI_TIMEOUT_MS = 8500; // leave ~1.5s headroom for Netlify's 10s cap
+const OPENAI_TIMEOUT_MS = 15000;
 
-export const handler: Handler = async (event) => {
+const handler: LambdaHandler = async (event) => {
   if (process.env.AI_DISABLED === "1") {
     return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
   }
 
   const blocked = await enforce(event, { service: "gemini-text", perMin: 6, perHour: 25, perDay: 60, perDayGlobal: 200, maxBodyBytes: 6144 });
   if (blocked) return blocked;
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return jsonResp(503, { error: "OPENAI_API_KEY not configured." });
 
   let body: any;
   try { body = JSON.parse(event.body || "{}"); } catch { return jsonResp(400, { error: "Invalid JSON body" }); }
@@ -26,12 +26,11 @@ export const handler: Handler = async (event) => {
     return jsonResp(400, { error: "Provide headlineCpi and components." });
   }
 
-  const cacheKey = `gemini:inflation:${hashStable({ headlineCpi: Math.round(headlineCpi * 100) / 100, components })}`;
+  const cacheKey = aiCacheKey("inflation", hashStable({ headlineCpi: Math.round(headlineCpi * 100) / 100, components }));
   const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 12);
   if (cached) return jsonResp(200, { ...cached, cached: true });
 
-  // Trimmed prompt for faster model latency. Anything longer than ~1.5KB pushes
-  // p99 latency over Netlify's 10s ceiling.
+  // Keep the prompt and answer concise for interactive use.
   const prompt = `You are an inflation economist. Explain this CPI print for an AP Macro student.
 
 Headline CPI YoY: ${headlineCpi.toFixed(2)}%
@@ -49,63 +48,17 @@ Return ONLY JSON, no markdown:
 
 Cite real Fed papers / NBER work. Numbers must sum approximately to headlineCpi. Be concrete (name actual goods, services, shocks). Keep total response under 1200 tokens.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
-
   try {
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.4,
-          responseMimeType: "application/json",
-          maxOutputTokens: 1200,
-        },
-      }),
-      signal: controller.signal,
-    });
-    clearTimeout(timer);
-
-    if (!r.ok) {
-      return jsonResp(502, {
-        error: `Gemini ${r.status}`,
-        detail: (await r.text()).slice(0, 300),
-        fallback: buildFallback(headlineCpi, components),
-      });
-    }
-
-    const data: any = await r.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
-
-    let parsed: any;
-    try { parsed = JSON.parse(text); }
-    catch {
-      const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-      try { parsed = JSON.parse(cleaned); }
-      catch {
-        return jsonResp(502, {
-          error: "Gemini returned malformed JSON.",
-          fallback: buildFallback(headlineCpi, components),
-        });
-      }
-    }
+    const parsed = await requestOpenAI(apiKey, "inflation", prompt, { maxOutputTokens: 1600, timeoutMs: OPENAI_TIMEOUT_MS });
     parsed.fetchedAt = new Date().toISOString();
     await setCachedJSON(cacheKey, parsed, 60 * 60 * 12);
     return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
-    clearTimeout(timer);
-    const aborted = err?.name === "AbortError";
     // Always return 200 with a fallback so the client can render something.
     return jsonResp(200, {
       ...buildFallback(headlineCpi, components),
       _degraded: true,
-      _reason: aborted ? "Gemini exceeded the 8.5s budget; returned a static explanation." : (err?.message || "Gemini call failed."),
+      _reason: err?.message || "OpenAI call failed.",
       fetchedAt: new Date().toISOString(),
     });
   }
@@ -157,3 +110,6 @@ function buildFallback(headlineCpi: number, components: any) {
 function jsonResp(statusCode: number, body: unknown) {
   return { statusCode, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
 }
+
+// The modern runtime supplies the Blobs context for quota and cache stores.
+export default withRuntime(handler);

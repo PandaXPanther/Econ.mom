@@ -1,0 +1,6 @@
+{
+  "extends": "./tsconfig.json",
+  "include": ["tests/**/*.ts", "shared/**/*.ts", "server/routes.ts", "netlify/functions/**/*.ts"],
+  "exclude": ["node_modules", "dist"],
+  "compilerOptions": { "incremental": false, "target": "ES2022" }
+}

@@ -1,19 +1,18 @@
+import { requestOpenAI, OpenAIError } from "../shared/openai";
 import type { Express, Request, Response } from "express";
-import { createServer } from 'node:http';
 import type { Server } from 'node:http';
-import { storage } from "./storage";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // AI FRQ grading via Gemini
+  // AI FRQ grading via OpenAI
   app.post("/api/grade-frq", async (req: Request, res: Response) => {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       return res
         .status(503)
-        .json({ error: "AI grading unavailable: GEMINI_API_KEY not configured." });
+        .json({ error: "AI grading unavailable: OPENAI_API_KEY not configured." });
     }
 
     try {
@@ -98,58 +97,11 @@ ${responsesBlock}
 
 Return ONLY the JSON object. Do not wrap in markdown code fences. Do not add commentary.`;
 
-      const model = process.env.GEMINI_MODEL || "gemini-3-flash-preview";
-      const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-      // Multimodal payload: text prompt followed by any attached graph images.
-      const userParts: any[] = [{ text: prompt }];
-      if (partImages && typeof partImages === "object") {
-        for (const [partId, dataUrl] of Object.entries(partImages as Record<string, string>)) {
-          if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) continue;
-          const m = dataUrl.match(/^data:(image\/(?:png|jpe?g|webp));base64,(.+)$/);
-          if (!m) continue;
-          userParts.push({ text: `[GRAPH FOR PART ${partId}]` });
-          userParts.push({ inlineData: { mimeType: m[1], data: m[2] } });
-        }
-      }
-
-      const geminiResp = await fetch(geminiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: userParts }],
-          generationConfig: {
-            temperature: 0.2,
-            responseMimeType: "application/json",
-          },
-        }),
-      });
-
-      if (!geminiResp.ok) {
-        const errText = await geminiResp.text();
-        return res
-          .status(502)
-          .json({ error: `Gemini API error: ${geminiResp.status}`, detail: errText.slice(0, 500) });
-      }
-
-      const data: any = await geminiResp.json();
-      const text =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ||
-        "";
-
-      let parsed: any;
-      try {
-        parsed = JSON.parse(text);
-      } catch {
-        // Strip code fences if present
-        const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-        parsed = JSON.parse(cleaned);
-      }
+      const parsed = await requestOpenAI(apiKey, "grade", prompt, { images: partImages, maxOutputTokens: 6000, timeoutMs: 35000 });
 
       return res.json(parsed);
     } catch (err: any) {
-      return res.status(500).json({ error: err?.message || "Unknown error" });
+      return res.status(err instanceof OpenAIError ? err.statusCode : 500).json({ error: err?.message || "Unknown error" });
     }
   });
 

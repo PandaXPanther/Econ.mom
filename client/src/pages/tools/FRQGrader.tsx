@@ -9,7 +9,7 @@ import { FRQ_LIBRARY, gradeFRQ, GradeResult, type FRQ } from "@/lib/frq-rubrics"
 import { SEO } from "@/components/brand/SEO";
 import { CheckCircle2, XCircle, MinusCircle, ArrowRight, Sparkles, FileText, Trophy, Zap, AlertTriangle, Wand2, Loader2 } from "lucide-react";
 import { GraphCanvas } from "@/components/brand/GraphCanvas";
-import { GeminiProgress } from "@/components/GeminiProgress";
+import { OpenAIProgress } from "@/components/OpenAIProgress";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function FRQGrader() {
@@ -124,7 +124,7 @@ export default function FRQGrader() {
     setShowIdeal(false);
 
     // Snapshot any drawn canvases as PNG data URLs, keyed by part id. Sent
-    // to the grader so Gemini's vision model can score the diagrams.
+    // to the grader so OpenAI's vision model can score the diagrams.
     const partImages: Record<string, string> = {};
     for (const partId of Object.keys(partsNeedingGraph)) {
       if (!hasDrawing[partId]) continue;
@@ -152,13 +152,13 @@ export default function FRQGrader() {
       } catch (e: any) {
         if (isGenerated) {
           setAiNotice(
-            "AI grader unavailable for this generated FRQ. Set GEMINI_API_KEY in Netlify to enable scoring."
+            "AI grader unavailable for this generated FRQ. Please try again later."
           );
           setGrading(false);
           return;
         }
         setAiNotice(
-          "AI grader unavailable, using built-in rubric matcher instead. (Server may be missing GEMINI_API_KEY.)"
+          "AI grader unavailable, using the built-in rubric matcher instead."
         );
       }
     }
@@ -209,7 +209,7 @@ export default function FRQGrader() {
           {/* FRQ selector + meta */}
           <aside className="lg:col-span-4">
             <div className="sticky top-24">
-              {/* FRQ Generator (Gemini) */}
+              {/* FRQ Generator (OpenAI) */}
               <div className="mb-6 rounded-lg border border-primary/30 bg-primary/5 p-4">
                 <button
                   onClick={() => setShowGenerator((v) => !v)}
@@ -262,9 +262,9 @@ export default function FRQGrader() {
                       {generating ? "Writing FRQ\u2026" : "Generate FRQ"}
                     </button></AIGate>
                     {genErr && <div className="text-[10px] text-destructive">{genErr}</div>}
-                    <GeminiProgress
+                    <OpenAIProgress
                       active={generating}
-                      label="Gemini is writing your FRQ"
+                      label="OpenAI is writing your FRQ"
                       etaSeconds={15}
                       stages={[
                         "Choosing AP-style parts",
@@ -274,7 +274,7 @@ export default function FRQGrader() {
                       ]}
                     />
                     <div className="text-[10px] text-muted-foreground">
-                      Powered by Gemini. Generated FRQs are AI-graded against an AI-written rubric, so they cannot fall back to the offline matcher.
+                      Powered by OpenAI. Generated FRQs are AI-graded against an AI-written rubric, so they cannot fall back to the offline matcher.
                     </div>
                   </div>
                 )}
@@ -329,7 +329,7 @@ export default function FRQGrader() {
 
               <div className="mt-6 rounded-md border border-dashed border-border p-4 text-[0.78rem] text-muted-foreground">
                 <div className="label-cap mb-2 text-foreground">Tip</div>
-                Graph parts get a built-in drawing canvas, sketch the diagram and Gemini grades the actual image against the rubric. Text-only parts: type your response below.
+                Graph parts get a built-in drawing canvas, sketch the diagram and OpenAI grades the actual image against the rubric. Text-only parts: type your response below.
               </div>
             </div>
           </aside>
@@ -407,7 +407,7 @@ export default function FRQGrader() {
                 {grading ? (
                   <>
                     <Sparkles size={16} className="animate-pulse" />
-                    {useAI ? "Grading with Gemini…" : "Grading…"}
+                    {useAI ? "Grading with OpenAI…" : "Grading…"}
                   </>
                 ) : (
                   <>
@@ -428,7 +428,7 @@ export default function FRQGrader() {
                   aria-label="Use AI grading"
                 />
                 <Zap size={14} className="text-primary" />
-                AI grading (Gemini)
+                AI grading (OpenAI)
               </label>
 
               {result && (
@@ -443,9 +443,9 @@ export default function FRQGrader() {
             </div>
 
             <div className="mt-4">
-              <GeminiProgress
+              <OpenAIProgress
                 active={grading}
-                label={useAI ? "Gemini is grading your response" : "Grading your response"}
+                label={useAI ? "OpenAI is grading your response" : "Grading your response"}
                 etaSeconds={useAI ? 25 : 5}
                 stages={useAI ? [
                   "Reading each part",
@@ -475,7 +475,7 @@ export default function FRQGrader() {
                   )}
                   {graderUsed === "ai" && (
                     <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 font-mono text-[0.7rem] uppercase tracking-[0.18em] text-primary" data-testid="badge-ai-graded">
-                      <Zap size={12} /> Graded by Gemini
+                      <Zap size={12} /> Graded by OpenAI
                     </div>
                   )}
                   <div className="rule-double" />

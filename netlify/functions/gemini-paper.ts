@@ -1,19 +1,22 @@
-// Netlify Function: Gemini-powered paper decoder. Accepts URL or pasted text.
+// Netlify Function: OpenAI-powered paper decoder. Accepts URL or pasted text.
 // Rate-limited via shared limits.ts and 24h-cached by url/text hash.
 // Body cap is larger (80KB) because users paste full paper text.
 
-import type { Handler } from "@netlify/functions";
+import { requestOpenAI, aiCacheKey, OpenAIError } from "../../shared/openai";
+
+import type { LambdaHandler } from "@netlify/aws-lambda-compat";
+import { withRuntime } from "./_lib/runtime";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
-export const handler: Handler = async (event) => {
+const handler: LambdaHandler = async (event) => {
   if (process.env.AI_DISABLED === "1") {
     return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
   }
 
   const blocked = await enforce(event, { service: "gemini-paper", perMin: 2, perHour: 8, perDay: 15, perDayGlobal: 40, maxBodyBytes: 80 * 1024 });
   if (blocked) return blocked;
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return jsonResp(503, { error: "OPENAI_API_KEY not configured." });
 
   let body: any;
   try { body = JSON.parse(event.body || "{}"); } catch { return jsonResp(400, { error: "Invalid JSON body" }); }
@@ -21,7 +24,7 @@ export const handler: Handler = async (event) => {
   const text = String(body.text || "").slice(0, 50000).trim();
   if (!url && !text) return jsonResp(400, { error: "Provide url or text." });
 
-  const cacheKey = `gemini:paper:${hashStable({ url, text: text.slice(0, 4000) })}`;
+  const cacheKey = aiCacheKey("paper", hashStable({ url, text }));
   const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 24);
   if (cached) return jsonResp(200, { ...cached, cached: true });
 
@@ -74,36 +77,21 @@ Rules:
 
 Return ONLY the JSON object.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   try {
-    const r = await fetch(apiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.3, responseMimeType: "application/json" },
-      }),
-    });
-    if (!r.ok) return jsonResp(502, { error: `Gemini ${r.status}`, detail: (await r.text()).slice(0, 500) });
-    const data: any = await r.json();
-    const respText = data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
-    let parsed: any;
-    try { parsed = JSON.parse(respText); }
-    catch {
-      const cleaned = respText.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-      parsed = JSON.parse(cleaned);
-    }
+    const result = await requestOpenAI(apiKey, "paper", prompt, { maxOutputTokens: 2600 });
+    const parsed = result;
     parsed.fetchedAt = new Date().toISOString();
     parsed.sourceUrl = url || null;
     await setCachedJSON(cacheKey, parsed, 60 * 60 * 24);
     return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
-    return jsonResp(500, { error: err?.message || "Gemini call failed" });
+    return jsonResp(err instanceof OpenAIError ? err.statusCode : 500, { error: err?.message || "OpenAI call failed" });
   }
 };
 
 function jsonResp(statusCode: number, body: unknown) {
   return { statusCode, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
 }
+
+// The modern runtime supplies the Blobs context for quota and cache stores.
+export default withRuntime(handler);

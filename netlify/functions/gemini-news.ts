@@ -1,25 +1,28 @@
-// Netlify Function: Gemini-powered news translator with numbers, analog, and forecast.
+// Netlify Function: OpenAI-powered news translator with numbers, analog, and forecast.
 // Rate-limited via shared limits.ts and 12h-cached by headline hash.
 
-import type { Handler } from "@netlify/functions";
+import { requestOpenAI, aiCacheKey, OpenAIError } from "../../shared/openai";
+
+import type { LambdaHandler } from "@netlify/aws-lambda-compat";
+import { withRuntime } from "./_lib/runtime";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
-export const handler: Handler = async (event) => {
+const handler: LambdaHandler = async (event) => {
   if (process.env.AI_DISABLED === "1") {
     return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
   }
 
   const blocked = await enforce(event, { service: "gemini-text", perMin: 6, perHour: 25, perDay: 60, perDayGlobal: 200, maxBodyBytes: 6144 });
   if (blocked) return blocked;
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return jsonResp(503, { error: "OPENAI_API_KEY not configured." });
 
   let body: any;
   try { body = JSON.parse(event.body || "{}"); } catch { return jsonResp(400, { error: "Invalid JSON body" }); }
   const headline = String(body.headline || "").slice(0, 500).trim();
   if (!headline) return jsonResp(400, { error: "Missing headline." });
 
-  const cacheKey = `gemini:news:${hashStable(headline.toLowerCase())}`;
+  const cacheKey = aiCacheKey("news", hashStable(headline.toLowerCase()));
   const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 12);
   if (cached) return jsonResp(200, { ...cached, cached: true });
 
@@ -65,35 +68,20 @@ Rules:
 
 Return ONLY the JSON object.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
   try {
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.4, responseMimeType: "application/json" },
-      }),
-    });
-    if (!r.ok) return jsonResp(502, { error: `Gemini ${r.status}`, detail: (await r.text()).slice(0, 500) });
-    const data: any = await r.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
-    let parsed: any;
-    try { parsed = JSON.parse(text); }
-    catch {
-      const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-      parsed = JSON.parse(cleaned);
-    }
+    const result = await requestOpenAI(apiKey, "news", prompt, { maxOutputTokens: 2400 });
+    const parsed = result;
     parsed.fetchedAt = new Date().toISOString();
     await setCachedJSON(cacheKey, parsed, 60 * 60 * 12);
     return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
-    return jsonResp(500, { error: err?.message || "Gemini call failed" });
+    return jsonResp(err instanceof OpenAIError ? err.statusCode : 500, { error: err?.message || "OpenAI call failed" });
   }
 };
 
 function jsonResp(statusCode: number, body: unknown) {
   return { statusCode, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
 }
+
+// The modern runtime supplies the Blobs context for quota and cache stores.
+export default withRuntime(handler);

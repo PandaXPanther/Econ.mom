@@ -1,11 +1,14 @@
-// Netlify Function: Gemini-powered AP FRQ generator.
+// Netlify Function: OpenAI-powered AP FRQ generator.
 // Takes a topic + exam (macro/micro) and returns a fully rubric-scaffolded FRQ
 // matching the FRQ_LIBRARY shape used by the AP FRQ Grader.
 
-import type { Handler } from "@netlify/functions";
+import { requestOpenAI, aiCacheKey, OpenAIError } from "../../shared/openai";
+
+import type { LambdaHandler } from "@netlify/aws-lambda-compat";
+import { withRuntime } from "./_lib/runtime";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
-export const handler: Handler = async (event) => {
+const handler: LambdaHandler = async (event) => {
   if (process.env.AI_DISABLED === "1") {
     return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
   }
@@ -13,9 +16,9 @@ export const handler: Handler = async (event) => {
   const blocked = await enforce(event, { service: "gemini-frq-gen", perMin: 4, perHour: 15, perDay: 30, perDayGlobal: 60, maxBodyBytes: 2048 });
   if (blocked) return blocked;
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    return jsonResp(503, { error: "GEMINI_API_KEY not configured." });
+    return jsonResp(503, { error: "OPENAI_API_KEY not configured." });
   }
 
   let body: any;
@@ -36,7 +39,7 @@ export const handler: Handler = async (event) => {
 
   if (!topic) return jsonResp(400, { error: "Missing topic." });
 
-  const cacheKey = `gemini:frq-gen:${hashStable({ t: topic.toLowerCase(), e: exam, d: difficulty, s: style })}`;
+  const cacheKey = aiCacheKey("frq-gen", hashStable({ t: topic.toLowerCase(), e: exam, d: difficulty, s: style }));
   const cached = await getCachedJSON<any>(cacheKey, 60 * 60 * 12);
   if (cached) return jsonResp(200, { ...cached, cached: true });
 
@@ -87,47 +90,12 @@ Topic to write the FRQ about: ${topic}
 
 Return ONLY the JSON object.`;
 
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
   try {
-    const r = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: [{ text: prompt }] }],
-        generationConfig: {
-          temperature: 0.7,
-          responseMimeType: "application/json",
-        },
-      }),
-    });
-
-    if (!r.ok) {
-      const errText = await r.text();
-      return jsonResp(502, {
-        error: `Gemini ${r.status}`,
-        detail: errText.slice(0, 500),
-      });
-    }
-
-    const data: any = await r.json();
-    const text =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      data?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") ||
-      "";
-
-    let parsed: any;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      const cleaned = text.replace(/^```json\s*/i, "").replace(/```\s*$/i, "").trim();
-      parsed = JSON.parse(cleaned);
-    }
-
+    const result = await requestOpenAI(apiKey, "frq", prompt, { maxOutputTokens: 5000, timeoutMs: 35000 });
+    const parsed = result;
     // Light validation + normalization
     if (!parsed?.parts || !Array.isArray(parsed.parts)) {
-      return jsonResp(502, { error: "Malformed FRQ from Gemini.", raw: parsed });
+      return jsonResp(502, { error: "Malformed FRQ from OpenAI.", raw: parsed });
     }
     parsed.id = parsed.id || `gen-${Date.now()}`;
     parsed.exam = exam;
@@ -136,7 +104,7 @@ Return ONLY the JSON object.`;
     await setCachedJSON(cacheKey, parsed, 60 * 60 * 12);
     return jsonResp(200, { ...parsed, cached: false });
   } catch (err: any) {
-    return jsonResp(500, { error: err?.message || "Generation failed" });
+    return jsonResp(err instanceof OpenAIError ? err.statusCode : 500, { error: err?.message || "Generation failed" });
   }
 };
 
@@ -147,3 +115,6 @@ function jsonResp(statusCode: number, body: unknown) {
     body: JSON.stringify(body),
   };
 }
+
+// The modern runtime supplies the Blobs context for quota and cache stores.
+export default withRuntime(handler);

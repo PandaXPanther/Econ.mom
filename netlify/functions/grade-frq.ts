@@ -1,15 +1,17 @@
+import { requestOpenAI, OpenAIError } from "../../shared/openai";
 // Netlify Function: AI-powered AP FRQ grader.
 // Called from the React app at /api/grade-frq (rewritten by netlify.toml).
-// Requires the GEMINI_API_KEY environment variable in Netlify site settings.
+// Requires the OPENAI_API_KEY environment variable in Netlify site settings.
 //
 // Rate-limited via shared limits.ts. Hard guardrails since this is the most
-// expensive endpoint (multimodal Gemini calls with image attachments).
+// expensive endpoint (multimodal OpenAI calls with image attachments).
 // NOT cached: responses are per-student.
 
-import type { Handler } from "@netlify/functions";
+import type { LambdaHandler } from "@netlify/aws-lambda-compat";
+import { withRuntime } from "./_lib/runtime";
 import { enforce } from "./_lib/limits";
 
-export const handler: Handler = async (event) => {
+const handler: LambdaHandler = async (event) => {
   if (process.env.AI_DISABLED === "1") {
     return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
   }
@@ -24,13 +26,13 @@ export const handler: Handler = async (event) => {
   });
   if (blocked) return blocked;
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return {
       statusCode: 503,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        error: "AI grading unavailable: GEMINI_API_KEY not configured.",
+        error: "AI grading unavailable: OPENAI_API_KEY not configured.",
       }),
     };
   }
@@ -124,66 +126,7 @@ ${responsesBlock}
 
 Return ONLY the JSON object. Do not wrap in markdown code fences. Do not add commentary.`;
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-    // Build the multimodal payload. Text prompt first, then any per-part graph images.
-    // Each image gets a small text label so the model can attribute it to the correct part.
-    const userParts: any[] = [{ text: prompt }];
-    if (partImages && typeof partImages === "object") {
-      for (const [partId, dataUrl] of Object.entries(partImages as Record<string, string>)) {
-        if (typeof dataUrl !== "string" || !dataUrl.startsWith("data:")) continue;
-        const m = dataUrl.match(/^data:(image\/(?:png|jpe?g|webp));base64,(.+)$/);
-        if (!m) continue;
-        userParts.push({ text: `[GRAPH FOR PART ${partId}]` });
-        userParts.push({
-          inlineData: { mimeType: m[1], data: m[2] },
-        });
-      }
-    }
-
-    const geminiResp = await fetch(geminiUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ role: "user", parts: userParts }],
-        generationConfig: {
-          temperature: 0.2,
-          responseMimeType: "application/json",
-        },
-      }),
-    });
-
-    if (!geminiResp.ok) {
-      const errText = await geminiResp.text();
-      return {
-        statusCode: 502,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          error: `Gemini API error: ${geminiResp.status}`,
-          detail: errText.slice(0, 500),
-        }),
-      };
-    }
-
-    const data: any = await geminiResp.json();
-    const text =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      data?.candidates?.[0]?.content?.parts
-        ?.map((p: any) => p.text)
-        .join("") ||
-      "";
-
-    let parsed: any;
-    try {
-      parsed = JSON.parse(text);
-    } catch {
-      const cleaned = text
-        .replace(/^```json\s*/i, "")
-        .replace(/```\s*$/i, "")
-        .trim();
-      parsed = JSON.parse(cleaned);
-    }
+    const parsed = await requestOpenAI(apiKey, "grade", prompt, { images: partImages, maxOutputTokens: 6000, timeoutMs: 35000 });
 
     return {
       statusCode: 200,
@@ -192,9 +135,12 @@ Return ONLY the JSON object. Do not wrap in markdown code fences. Do not add com
     };
   } catch (err: any) {
     return {
-      statusCode: 500,
+      statusCode: err instanceof OpenAIError ? err.statusCode : 500,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ error: err?.message || "Unknown error" }),
     };
   }
 };
+
+// The modern runtime supplies the Blobs context for quota and cache stores.
+export default withRuntime(handler);
