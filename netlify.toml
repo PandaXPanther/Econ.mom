@@ -51,6 +51,8 @@
 [[redirects]]
   from = "/api/tariff-sector-data"
   to   = "/.netlify/functions/tariff-sector-data"
+  status = 200
+  force  = true
 
 [[redirects]]
   from = "/api/ai-status"
