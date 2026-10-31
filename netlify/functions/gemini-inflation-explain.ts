@@ -2,12 +2,13 @@ import { requestOpenAI, aiCacheKey } from "../../shared/openai";
 // Netlify Function: OpenAI-powered deep inflation decomposition explanation.
 // A bounded provider request returns a fallback narrative on timeout.
 
-import type { Handler } from "@netlify/functions";
+import type { LambdaHandler } from "@netlify/aws-lambda-compat";
+import { withRuntime } from "./_lib/runtime";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
 const OPENAI_TIMEOUT_MS = 15000;
 
-export const handler: Handler = async (event) => {
+const handler: LambdaHandler = async (event) => {
   if (process.env.AI_DISABLED === "1") {
     return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
   }
@@ -109,3 +110,6 @@ function buildFallback(headlineCpi: number, components: any) {
 function jsonResp(statusCode: number, body: unknown) {
   return { statusCode, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
 }
+
+// The modern runtime supplies the Blobs context for quota and cache stores.
+export default withRuntime(handler);

@@ -4,10 +4,11 @@
 
 import { requestOpenAI, aiCacheKey, OpenAIError } from "../../shared/openai";
 
-import type { Handler } from "@netlify/functions";
+import type { LambdaHandler } from "@netlify/aws-lambda-compat";
+import { withRuntime } from "./_lib/runtime";
 import { enforce, getCachedJSON, setCachedJSON, hashStable } from "./_lib/limits";
 
-export const handler: Handler = async (event) => {
+const handler: LambdaHandler = async (event) => {
   if (process.env.AI_DISABLED === "1") {
     return { statusCode: 503, headers: { "Content-Type": "application/json" }, body: JSON.stringify({ error: "AI features temporarily disabled. Try again later." }) };
   }
@@ -157,3 +158,6 @@ function sanitizeWatchVariables(wv: any): { label: string; fredSeries: string | 
   }
   return out;
 }
+
+// The modern runtime supplies the Blobs context for quota and cache stores.
+export default withRuntime(handler);

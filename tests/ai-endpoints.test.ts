@@ -7,8 +7,13 @@ const originalEnv = { ...process.env };
 afterEach(() => { globalThis.fetch = originalFetch; process.env = { ...originalEnv }; });
 function setup() { process.env.OPENAI_API_KEY = "test-only-credential"; delete process.env.GEMINI_API_KEY; delete process.env.AI_DISABLED; }
 async function invoke(name: string, body: unknown, extra: Record<string, unknown> = {}) {
-  const { handler } = await import(`../netlify/functions/${name}.ts`);
-  return handler({ httpMethod: "POST", headers: { origin: "https://econ.mom", host: "econ.mom" }, body: JSON.stringify(body), ...extra }, {});
+  const module = await import(`../netlify/functions/${name}.ts`);
+  const event = { httpMethod: "POST", headers: { origin: "https://econ.mom", host: "econ.mom" }, body: JSON.stringify(body), ...extra };
+  const response = await module.default(new Request(`https://econ.mom/api/${name}`, {
+    method:event.httpMethod, headers:{"Content-Type":"application/json",...event.headers},
+    body:["GET","HEAD"].includes(event.httpMethod)?undefined:event.body,
+  }), {requestId:"test",ip:extra.contextIP || "198.51.100.10"});
+  return {statusCode:response.status,body:await response.text(),headers:Object.fromEntries(response.headers.entries())};
 }
 
 function withBlobs(output: unknown) {
@@ -66,6 +71,18 @@ test("the existing quota override still prevents spending after the cap", async 
   assert.equal(blocked.statusCode,429);
   assert.equal(JSON.parse(blocked.body).scope,"ip-min");
   assert.equal(fake.paidRequests(),1);
+});
+
+test("modern runtime quotas use authoritative context IP and separate users", async () => {
+  setup(); process.env.LIMIT_GEMINI_TEXT_PERMIN="1";
+  const fake=withBlobs(fixtures[0].output);
+  const headers={origin:"https://econ.mom",host:"econ.mom","x-forwarded-for":"forged-client"};
+  assert.equal((await invoke("gemini-shock",fixtures[0].input,{headers,contextIP:"198.51.100.10"})).statusCode,200);
+  assert.equal((await invoke("gemini-shock",fixtures[0].input,{headers,contextIP:"198.51.100.20"})).statusCode,200);
+  assert.equal((await invoke("gemini-shock",fixtures[0].input,{headers,contextIP:"198.51.100.10"})).statusCode,429);
+  assert.ok([...fake.store.keys()].some(key=>key.includes("198.51.100.10")));
+  assert.ok([...fake.store.keys()].some(key=>key.includes("198.51.100.20")));
+  assert.equal([...fake.store.keys()].some(key=>key.includes("forged-client")),false);
 });
 
 test("tariff classifier retains its unrecognized-sector response", async () => {

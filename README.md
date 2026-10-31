@@ -119,7 +119,7 @@ FRED_API_KEY=...
 
 Without these, every tool that uses live AI or live FRED data will fall back to a deterministic offline mode. The site still works, you just lose the live cited translations and the live FRED charts.
 
-The OpenAI calls use the Responses API with strict output schemas, image support for graph grading, disabled response storage, and no automatic retries. `OPENAI_MODEL` optionally overrides `gpt-6.1-terra` with another compatible vision/Structured Outputs model supporting `reasoning.effort: none`. Set `OPENAI_API_KEY` as a secret for Netlify Functions in the required deploy contexts and redeploy. Never use a `VITE_` prefix for credentials. The legacy `/api/gemini-*` URLs and quota bucket names remain for compatibility; FRED and Perplexity are unchanged.
+The OpenAI calls use the Responses API with strict output schemas, image support for graph grading, disabled response storage, and no automatic retries. `OPENAI_MODEL` optionally overrides `gpt-6.1-terra` with another compatible vision/Structured Outputs model supporting `reasoning.effort: none`. Set `OPENAI_API_KEY` as a secret for Netlify Functions in the required deploy contexts and redeploy. Never use a `VITE_` prefix for credentials. The legacy `/api/gemini-*` URLs and quota bucket names remain for compatibility; FRED and Perplexity are unchanged. AI functions export Netlify's `withLambda` adapter so their existing event handlers run on the modern runtime with automatic Blobs context for cache/quota access.
 
 Run `npm test` and `npm run check` before deployment.
 
